@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{% block head_title %}{% endblock %}</title>
-    <meta charset="utf-8">
-</head>
-<body>
+{% extends "bootstrap/layouts/base_navbar_responsive.html" %}
 
-<div id="container">
-    {% block content %}
-    {% endblock %}
-</div>
+{% block title %}IL-2 Horus Commander{% endblock %}
 
-</body>
-</html>
+{% block navbar_links %}
+    <a class="brand" href="{% url 'home' %}">IL-2 Horus Commander</a>
+    <div class="nav-collapse">
+        <ul class="nav">
+            <li class="active"><a href="{% url 'home' %}">Home</a></li>
+        </ul>
+    </div>
+{% endblock %}

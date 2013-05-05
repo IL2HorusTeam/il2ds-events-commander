@@ -119,6 +119,9 @@ ROOT_URLCONF = 'commander.urls'
 WSGI_APPLICATION = 'commander.wsgi.application'
 
 INSTALLED_APPS = (
+    'bootstrap',
+    'django_admin_bootstrapped',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -130,6 +133,28 @@ INSTALLED_APPS = (
 
     'commons',
     'website',
+)
+
+# Jinja2
+# -----------------------------------------------------------------------------
+JINJA2_EXTENSIONS = (
+    'jinja2.ext.i18n',
+    'compressor.contrib.jinja2ext.CompressorExtension',
+)
+
+JINJA2_TEMPLATE_DIRS = TEMPLATE_DIRS
+
+JINJA2_DISABLED_APPS = (
+    'admin',
+)
+
+JINJA2_DISABLED_TEMPLATES = (
+    r'admin/',
+)
+
+JINJA2_TEMPLATE_LOADERS = (
+    'django.template.loaders.app_directories.Loader',
+    'django.template.loaders.filesystem.Loader',
 )
 
 # A sample logging configuration. The only tangible logging
