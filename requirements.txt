@@ -1,0 +1,18 @@
+# Install all required third-party applications in a row using pip. Example::
+#
+#  pip install -r requirements.txt
+
+django==1.5.1
+django-extensions==1.1.1
+django-debug-toolbar==0.9.4
+django-admin-tools==0.5.1
+django-constance==0.6
+dj-database-url==0.2.1
+
+psycopg2
+south
+fabric
+jinja2
+coffin
+docutils
+logsna

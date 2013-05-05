@@ -1,0 +1,6 @@
+*~
+*.orig
+*.pyc
+*.pot
+*.log
+.directory
