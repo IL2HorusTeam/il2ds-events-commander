@@ -8,7 +8,7 @@ django-debug-toolbar==0.9.4
 django-admin-tools==0.5.1
 django-constance==0.6
 dj-database-url==0.2.1
-git+https://github.com/auzigog/jinja-bootstrap.git
+-e git+https://github.com/auzigog/jinja-bootstrap.git#egg=jinja-bootstrap
 django-admin-bootstrapped==0.3.2
 django-compressor==1.3
 
