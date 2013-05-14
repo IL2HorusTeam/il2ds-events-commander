@@ -4,6 +4,39 @@ import sys
 import dj_database_url
 import commander as project_module
 
+#-------------------------------------------------------------------------------
+#   Project's paths
+#-------------------------------------------------------------------------------
+
+PROJECT_DIR = os.path.dirname(os.path.realpath(project_module.__file__))
+APPS_ROOT = os.path.join(PROJECT_DIR, 'apps')
+LOG_ROOT = os.path.join(PROJECT_DIR, 'logs')
+
+try:
+    if not os.path.exists(LOG_ROOT):
+        os.mkdir(LOG_ROOT)
+except OSError:
+    pass
+
+sys.path.append(APPS_ROOT)
+
+#-------------------------------------------------------------------------------
+#   Connections
+#-------------------------------------------------------------------------------
+
+REDIS_DBS = {
+    'CACHE': 1,
+    'JOHNNY_CACHE': 2,
+}
+
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_PASSWORD = ''
+
+#-------------------------------------------------------------------------------
+#   Django commons
+#-------------------------------------------------------------------------------
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -17,6 +50,9 @@ DATABASES = {
     'default': dj_database_url.config(
         default = os.environ.get('IL2_HORUS_COMMANDER_DB_URL'))
 }
+
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = os.environ.get('IL2_HORUS_COMMANDER_SECRET_TOKEN')
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -45,17 +81,46 @@ USE_L10N = True
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
-PROJECT_DIR = os.path.dirname(os.path.realpath(project_module.__file__))
-APPS_ROOT = os.path.join(PROJECT_DIR, 'apps')
-LOG_ROOT = os.path.join(PROJECT_DIR, 'logs')
+# Python dotted path to the WSGI application used by Django's runserver.
+WSGI_APPLICATION = 'commander.wsgi.application'
 
-try:
-    if not os.path.exists(LOG_ROOT):
-        os.mkdir(LOG_ROOT)
-except OSError:
-    pass
+INSTALLED_APPS = (
+    'grappelli.dashboard',
+    'grappelli',
 
-sys.path.append(APPS_ROOT)
+    'admin_tools',
+    'admin_tools.theming',
+    'admin_tools.menu',
+    'admin_tools.dashboard',
+
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'django.contrib.admindocs',
+
+    'livesettings',
+    'keyedcache',
+    'compressor',
+
+    'commons',
+    'website',
+)
+
+#-------------------------------------------------------------------------------
+#   Django admin tools
+#-------------------------------------------------------------------------------
+
+GRAPPELLI_INDEX_DASHBOARD = 'admin_custom.dashboard.CommanderIndexDashboard'
+
+#-------------------------------------------------------------------------------
+#   URLs, static and media
+#-------------------------------------------------------------------------------
+
+ROOT_URLCONF = 'commander.urls'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
@@ -66,15 +131,16 @@ MEDIA_ROOT = ''
 # Examples: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = ''
 
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
+
+# Absolute path to the directory static files should be collected to.
+# Don't put anything in this directory yourself; store your static files
+# in apps' "static/" subdirectories and in STATICFILES_DIRS.
+# Example: "/var/www/example.com/static/"
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static', 'collected')
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -89,8 +155,9 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = os.environ.get('IL2_HORUS_COMMANDER_SECRET_TOKEN')
+#-------------------------------------------------------------------------------
+#   Templates
+#-------------------------------------------------------------------------------
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -103,40 +170,17 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_DIR, 'templates'),
 )
 
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.request",
+    "django.core.context_processors.i18n",
+    'django.contrib.messages.context_processors.messages',
 )
 
-ROOT_URLCONF = 'commander.urls'
+#-------------------------------------------------------------------------------
+#   Jinja2
+#-------------------------------------------------------------------------------
 
-# Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'commander.wsgi.application'
-
-INSTALLED_APPS = (
-    'bootstrap',
-    'django_admin_bootstrapped',
-
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.admin',
-    'django.contrib.admindocs',
-
-    'commons',
-    'website',
-)
-
-# Jinja2
-# -----------------------------------------------------------------------------
 JINJA2_EXTENSIONS = (
     'jinja2.ext.i18n',
     'compressor.contrib.jinja2ext.CompressorExtension',
@@ -146,16 +190,71 @@ JINJA2_TEMPLATE_DIRS = TEMPLATE_DIRS
 
 JINJA2_DISABLED_APPS = (
     'admin',
+    'admindocs',
+    'livesettings',
 )
 
 JINJA2_DISABLED_TEMPLATES = (
     r'admin/',
+    r'admin/doc/',
+    r'admin/settings/',
 )
 
 JINJA2_TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
     'django.template.loaders.filesystem.Loader',
 )
+
+#-------------------------------------------------------------------------------
+#   Middlewares
+#-------------------------------------------------------------------------------
+
+MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    # Uncomment the next line for simple clickjacking protection:
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
+)
+
+#-------------------------------------------------------------------------------
+#   Caching
+#-------------------------------------------------------------------------------
+
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '{0}:{1}'.format(REDIS_HOST, REDIS_PORT),
+        'OPTIONS': {
+            'DB': REDIS_DBS['CACHE'],
+            'PARSER_CLASS': 'redis.connection.HiredisParser'
+        },
+        'KEY_PREFIX': '',
+        'TIMEOUT': 60 * 60,
+    },
+    'johnny_cache': {
+        'BACKEND': 'johnny.backends.redis.RedisCache',
+        'LOCATION': '{}:{}'.format(REDIS_HOST, REDIS_PORT),
+        'JOHNNY_CACHE': True,
+        'OPTIONS': {
+            'DB': REDIS_DBS['JOHNNY_CACHE'],
+            'PARSER_CLASS': 'redis.connection.HiredisParser'
+        },
+    }
+}
+
+JOHNNY_MIDDLEWARE_KEY_PREFIX = 'jc_il2hc'
+
+CACHE_MIDDLEWARE_SECONDS = 1
+CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
+
+#-------------------------------------------------------------------------------
+#   Logging
+#-------------------------------------------------------------------------------
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -181,6 +280,10 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler'
+        },
         'commander': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -189,11 +292,17 @@ LOGGING = {
             'filename': os.path.join(LOG_ROOT, 'il2-horus-commander.log'),
             'formatter': 'logsna',
         },
+
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
+            'propagate': True,
+        },
+        'keyedcache': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': True,
         },
         'commons': {

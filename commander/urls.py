@@ -7,8 +7,13 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    (r'^admin/', include(admin.site.urls)),
+    url(r'^grappelli/', include('grappelli.urls')),
+
+    url(r'^admin/settings/', include('livesettings.urls')),
+
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^admintools/', include('admin_tools.urls')),
+    url(r'^admin/', include(admin.site.urls)),
 
     url(r'', include('website.urls')),
 )
