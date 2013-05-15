@@ -1,0 +1,15 @@
+#tabs label
+{
+    font-weight: bold;
+    font-size: 12px;
+}
+
+#tabs input
+{
+    width: 100%;
+}
+
+.help
+{
+    color: #666;
+}

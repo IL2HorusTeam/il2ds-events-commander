@@ -1,7 +1,7 @@
-{% block title %}IL-2 Horus Commander{% endblock %}
+{% block title %}{{PROJ_TITLE}}{% endblock %}
 
 {% block navbar_links %}
-    <a class="brand" href="{% url 'home' %}">IL-2 Horus Commander</a>
+    <a class="brand" href="{% url 'home' %}">{{PROJ_TITLE}}</a>
     <div class="nav-collapse">
         <ul class="nav">
             <li class="active"><a href="{% url 'home' %}">Home</a></li>

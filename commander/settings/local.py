@@ -109,13 +109,15 @@ INSTALLED_APPS = (
 
     'commons',
     'website',
+    'admin_custom',
 )
 
 #-------------------------------------------------------------------------------
-#   Django admin tools
+#   Grappelli
 #-------------------------------------------------------------------------------
 
 GRAPPELLI_INDEX_DASHBOARD = 'admin_custom.dashboard.CommanderIndexDashboard'
+GRAPPELLI_ADMIN_TITLE = "IL-2 Horus Commander Admin"
 
 #-------------------------------------------------------------------------------
 #   URLs, static and media

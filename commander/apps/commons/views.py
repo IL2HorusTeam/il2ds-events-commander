@@ -4,13 +4,17 @@ from __future__ import unicode_literals
 from django.views.generic import TemplateView
 from coffin.shortcuts import render
 
+from livesettings import config_value
+
 class BaseView(TemplateView):
     """
     Like the built in TemplateView, but adds self.extra_context dictionary
     and sets request to self.request
     """
     def __init__(self, *args, **kwargs):
-        self.extra_context = {}
+        self.extra_context = {
+            'PROJ_TITLE': config_value('Generic', 'PROJ_TITLE'),
+        }
         super(BaseView, self).__init__(*args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
