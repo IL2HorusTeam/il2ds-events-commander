@@ -16,4 +16,5 @@ def templates_autodiscover():
         if os.path.exists(path):
             settings.TEMPLATE_DIRS += (path,)
 
+module_autodiscover("config")
 templates_autodiscover()
