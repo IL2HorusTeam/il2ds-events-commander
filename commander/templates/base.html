@@ -1,10 +1,30 @@
-{% block title %}{{PROJ_TITLE}}{% endblock %}
+<!DOCTYPE html>
+{% load i18n %}
+<html>
+<head>
+    <title>
+        {% block title %}{{ PROJ_TITLE }}{% endblock %}
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
+    <link rel="shortcut icon" href="{{ STATIC_URL }}favicon.ico" type="image/x-icon" />
+
+    {% compress css %}
+    {% endcompress %}
+
+    {% compress js %}
+    {% endcompress %}
+</head>
+<body>
 {% block navbar_links %}
-    <a class="brand" href="{% url 'home' %}">{{PROJ_TITLE}}</a>
+    <a class="brand" href="{% url 'home' %}">{{ PROJ_TITLE }}</a>
     <div class="nav-collapse">
         <ul class="nav">
-            <li class="active"><a href="{% url 'home' %}">Home</a></li>
+            <li class="active"><a href="{% url 'home' %}">{% trans %}Home{% endtrans %}</a></li>
         </ul>
     </div>
 {% endblock %}
+{% block content %}
+{% endblock %}
+</body>
+</html>

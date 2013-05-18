@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 # Django settings for commander project.
 import os
 import sys
 import dj_database_url
 import commander as project_module
+
+from django.utils.translation import ugettext_lazy as _
 
 #-------------------------------------------------------------------------------
 #   Project's paths
@@ -18,6 +21,10 @@ try:
 except OSError:
     pass
 
+LOCALE_PATHS = (
+    os.path.join(PROJECT_DIR, 'locale'),
+)
+
 sys.path.append(APPS_ROOT)
 
 #-------------------------------------------------------------------------------
@@ -27,6 +34,7 @@ sys.path.append(APPS_ROOT)
 REDIS_DBS = {
     'CACHE': 1,
     'JOHNNY_CACHE': 2,
+    'SESSIONS': 3,
 }
 
 REDIS_HOST = 'localhost'
@@ -64,10 +72,6 @@ ALLOWED_HOSTS = ['*']
 # In a Windows environment this must be set to your system time zone.
 TIME_ZONE = 'America/Chicago'
 
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
-
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -80,6 +84,17 @@ USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
+
+# Language code for this installation. All choices can be found here:
+# http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = (
+    ('en', _(u'English')),
+    ('ru', _(u'Russian')),
+)
+
+DEFAULT_LANGUAGE = 1
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'commander.wsgi.application'
@@ -103,13 +118,13 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 
     'django_extensions',
-    'livesettings',
     'keyedcache',
     'compressor',
 
     'commons',
     'website',
     'admin_custom',
+    'livesettings',
 )
 
 #-------------------------------------------------------------------------------
@@ -117,7 +132,7 @@ INSTALLED_APPS = (
 #-------------------------------------------------------------------------------
 
 GRAPPELLI_INDEX_DASHBOARD = 'admin_custom.dashboard.CommanderIndexDashboard'
-GRAPPELLI_ADMIN_TITLE = "IL-2 Horus Commander Admin"
+GRAPPELLI_ADMIN_TITLE = _(u"IL-2 Horus Commander Admin")
 
 #-------------------------------------------------------------------------------
 #   URLs, static and media
@@ -143,7 +158,7 @@ STATIC_URL = '/static/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static', 'collected')
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static_collected')
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -156,6 +171,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 #-------------------------------------------------------------------------------
@@ -174,10 +190,16 @@ TEMPLATE_DIRS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.request",
-    "django.core.context_processors.i18n",
+    'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
+
+    'django.core.context_processors.debug',
+    'django.core.context_processors.request',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.static',
+    'django.core.context_processors.media',
+
+    'website.context_processors.settings',
 )
 
 #-------------------------------------------------------------------------------
@@ -218,6 +240,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'johnny.middleware.LocalStoreClearMiddleware',
@@ -305,7 +328,7 @@ LOGGING = {
         },
         'keyedcache': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'propagate': True,
         },
         'commons': {

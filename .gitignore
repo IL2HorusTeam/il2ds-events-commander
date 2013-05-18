@@ -4,4 +4,4 @@
 *.pot
 *.log
 .directory
-commander/static/collected/*
+commander/static_collected/*

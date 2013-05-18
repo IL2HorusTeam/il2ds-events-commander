@@ -10,11 +10,4 @@ def module_autodiscover(module_name):
         except:
             continue
 
-def templates_autodiscover():
-    for app in settings.INSTALLED_APPS:
-        path = os.path.join(settings.APPS_ROOT, app, 'templates')
-        if os.path.exists(path):
-            settings.TEMPLATE_DIRS += (path,)
-
 module_autodiscover("config")
-templates_autodiscover()
