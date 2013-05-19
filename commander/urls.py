@@ -13,7 +13,7 @@ urlpatterns = patterns('',
 urlpatterns += i18n_patterns('',
     url(r'^grappelli/', include('grappelli.urls')),
 
-    url(r'^admin/settings/', include('livesettings.urls')),
+    url(r'^admin/settings/', include('xlivesettings.urls')),
 
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin_tools/', include('admin_tools.urls')),

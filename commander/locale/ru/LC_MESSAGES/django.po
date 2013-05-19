@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-18 15:36-0500\n"
+"POT-Creation-Date: 2013-05-19 15:32+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,14 +32,10 @@ msgid "Settings"
 msgstr "Настройки"
 
 #: apps/admin_custom/dashboard.py:36
-#: apps/livesettings/templates/livesettings/group_settings.html:11
-#: apps/livesettings/templates/livesettings/site_settings.html:26
 msgid "Change password"
 msgstr "Изменить пароль"
 
 #: apps/admin_custom/dashboard.py:38
-#: apps/livesettings/templates/livesettings/group_settings.html:11
-#: apps/livesettings/templates/livesettings/site_settings.html:26
 msgid "Log out"
 msgstr "Выйти"
 
@@ -74,118 +70,6 @@ msgstr ""
 #: apps/admin_custom/dashboard.py:79
 msgid "Django irc channel"
 msgstr ""
-
-#: apps/livesettings/functions.py:68
-#, python-format
-msgid "%s config group does not exist"
-msgstr "Группа настроек %s не существует"
-
-#: apps/livesettings/functions.py:100
-msgid "value.group should be an instance of ConfigurationGroup"
-msgstr "value.group должно быть сущностью ConfigurationGroup"
-
-#: apps/livesettings/functions.py:141
-msgid "Configuration settings: "
-msgstr "Настройки параметров: "
-
-#: apps/livesettings/functions.py:180
-#, python-format
-msgid "No config %(grp)s.%(key)s"
-msgstr "Нет настроек %(grp)s.%(key)s"
-
-#: apps/livesettings/models.py:121 apps/livesettings/models.py:160
-msgid "Site"
-msgstr "Сайт"
-
-#: apps/livesettings/values.py:114
-msgid "Base Settings"
-msgstr "Базовые настройки"
-
-#: apps/livesettings/values.py:221
-msgid "Default value: \"\""
-msgstr "Значение по умолчанию: \"\""
-
-#: apps/livesettings/values.py:228
-msgid "Default value: "
-msgstr "Значение по умолчанию: "
-
-#: apps/livesettings/values.py:231
-#, python-format
-msgid "Default value: %s"
-msgstr "Значение по умолчанию: %s"
-
-#: apps/livesettings/views.py:26
-msgid "Site settings"
-msgstr "Настройки сайта"
-
-#: apps/livesettings/views.py:50
-#, python-format
-msgid "Updated %(key)s on %(grp)s"
-msgstr "Обновлено %(key)s в %(grp)s"
-
-#: apps/livesettings/templates/livesettings/_admin_site_views.html:4
-msgid "Sites"
-msgstr "Сайты"
-
-#: apps/livesettings/templates/livesettings/group_settings.html:11
-#: apps/livesettings/templates/livesettings/site_settings.html:26
-msgid "Documentation"
-msgstr "Документация"
-
-#: apps/livesettings/templates/livesettings/group_settings.html:14
-#: apps/livesettings/templates/livesettings/site_settings.html:30
-msgid "Home"
-msgstr "Главная"
-
-#: apps/livesettings/templates/livesettings/group_settings.html:15
-msgid "Edit Group Settings"
-msgstr "Изменить группу настроек"
-
-#: apps/livesettings/templates/livesettings/group_settings.html:31
-#: apps/livesettings/templates/livesettings/site_settings.html:54
-msgid "Please correct the error below."
-msgid_plural "Please correct the errors below."
-msgstr[0] "Пожалуйста, исправьте ошибку ниже."
-msgstr[1] "Пожалуйста, исправьте ошибки ниже."
-
-#: apps/livesettings/templates/livesettings/group_settings.html:37
-#, python-format
-msgid "Settings included in %(name)s."
-msgstr "Настройки включены в %(name)s."
-
-#: apps/livesettings/templates/livesettings/group_settings.html:62
-msgid "You don't have permission to edit values."
-msgstr "У Вас нет прав редактировать значения."
-
-#: apps/livesettings/templates/livesettings/site_settings.html:31
-msgid "Edit Site Settings"
-msgstr "Изменить настройки сайта"
-
-#: apps/livesettings/templates/livesettings/site_settings.html:47
-msgid "Livesettings are disabled for this site."
-msgstr "Livesettings отключено для этого сайта."
-
-#: apps/livesettings/templates/livesettings/site_settings.html:48
-msgid "All configuration options must be edited in the site settings.py file"
-msgstr "Все настройки дложны редактироваться в файле сайта settings.py"
-
-#: apps/livesettings/templates/livesettings/site_settings.html:75
-#, python-format
-msgid "Group settings: %(name)s"
-msgstr "Группа настроек: %(name)s"
-
-#: apps/livesettings/templates/livesettings/site_settings.html:101
-msgid "Update Settings"
-msgstr "Обновить настройки"
-
-#: apps/livesettings/templates/livesettings/site_settings.html:102
-msgid "Export"
-msgstr "Экспортировать"
-
-#: apps/livesettings/templates/livesettings/site_settings.html:105
-msgid ""
-"There are no values to configure or you don't have permission to edit them."
-msgstr "Отсутствуют значения или права для редактирования."
 
 #: apps/website/config.py:9
 msgid "Generic settings"
@@ -234,3 +118,19 @@ msgstr "Русский"
 #: settings/local.py:135
 msgid "IL-2 Horus Commander Admin"
 msgstr "Панель управления Ил-2 Хорус Коммандера"
+
+#: templates/xlivesettings/site_settings.html:11
+msgid "Home"
+msgstr ""
+
+#: templates/xlivesettings/site_settings.html:12
+msgid "Edit Site Settings"
+msgstr "Настройки"
+
+#: templates/xlivesettings/site_settings.html:17
+msgid "Update Settings"
+msgstr ""
+
+#: templates/xlivesettings/site_settings.html:18
+msgid "Export"
+msgstr ""

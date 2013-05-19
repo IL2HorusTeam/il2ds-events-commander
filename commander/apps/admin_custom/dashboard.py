@@ -32,7 +32,7 @@ class CommanderIndexDashboard(Dashboard):
             collapsible=False,
             children=[
                 [_('Return to site'), '/'],
-                [_('Settings'), reverse('satchmo_site_settings')],
+                [_('Settings'), reverse('site_live_settings')],
                 [_('Change password'),
                     reverse('%s:password_change' % site_name)],
                 [_('Log out'), reverse('%s:logout' % site_name)],

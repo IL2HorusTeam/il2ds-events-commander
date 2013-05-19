@@ -124,7 +124,7 @@ INSTALLED_APPS = (
     'commons',
     'website',
     'admin_custom',
-    'livesettings',
+    'xlivesettings',
 )
 
 #-------------------------------------------------------------------------------

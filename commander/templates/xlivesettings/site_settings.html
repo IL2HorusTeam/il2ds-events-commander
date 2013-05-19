@@ -1,0 +1,19 @@
+{% extends "xlivesettings/site_settings_base.html" %}
+{% load i18n admin_static %}{% load url from future %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "xlivesettings/style_extra.css" %}" />
+{% endblock %}
+
+{% block breadcrumbs %}{% if not is_popup %}
+<ul class="grp-horizontal-list">
+    <li><a href="{% url 'admin:index' %}">{% trans "Home" %}</a></li>
+    <li>{% trans "Edit Site Settings" %}</li>
+</ul>
+{% endif %}{% endblock %}
+
+{% block control_buttons %}
+    <input type="submit" value="{% trans 'Update Settings' %}" />
+    <a href="{% url 'settings_export' %}" class="grp-button">{% trans 'Export' %}</a>
+{% endblock %}

@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.views.generic import TemplateView
 from coffin.shortcuts import render
 
-from livesettings import config_value
+from xlivesettings import config_value
 
 class BaseView(TemplateView):
     """

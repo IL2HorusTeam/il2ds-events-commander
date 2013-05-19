@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from livesettings import config_register, ConfigurationGroup, StringValue
+from xlivesettings import config_register, ConfigurationGroup, StringValue
 from django.utils.translation import ugettext_lazy as _
 
 GENERIC_GROUP = ConfigurationGroup(
