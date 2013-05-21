@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # Django settings for commander project.
+from __future__ import unicode_literals
+
 import os
 import sys
 import dj_database_url
@@ -328,6 +330,11 @@ LOGGING = {
         },
         'keyedcache': {
             'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'xlivesettings': {
+            'handlers': ['commander'],
             'level': 'ERROR',
             'propagate': True,
         },
