@@ -348,5 +348,10 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
+        'game_server': {
+            'handlers': ['commander'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
     }
 }

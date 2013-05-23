@@ -12,18 +12,20 @@ IL-2 FB Horus Commander
 
 3. Install Redis
 
-4. Install dependencies:
+4. For running on Unix-like systems install Wine
+
+5. Install dependencies:
 
         pip install -r requirements.txt
 
-5. Sync database (you will be asked to create a superuser):
+6. Sync database (you will be asked to create a superuser):
 
         python ./manage.py syncdb
 
-6. Collect static files:
+7. Collect static files:
 
         python ./manage.py collectstatic
 
-7. Start application
+8. Start application
 
         python ./manage.py runserver
