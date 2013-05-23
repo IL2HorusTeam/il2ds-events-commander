@@ -1,23 +1,40 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from xlivesettings import (
-    config_register, config_register_list,
-    ConfigurationGroup, StringValue, LocalizedStringValue
-)
-
 from django.utils.translation import ugettext_lazy as _
 
-GENERIC_GROUP = ConfigurationGroup(
-    'Generic',
-    _(u"Generic settings"),
-    ordering=0
+from xlivesettings import (
+    config_register_list,
+    ConfigurationGroup, LocalizedStringValue
 )
+
+#-------------------------------------------------------------------------------
+# Config keys
+#-------------------------------------------------------------------------------
+
+PROJECT_GROUP_KEY = 'PROJ'
+
+TITLE_KEY = 'TITLE'
+DESCR_KEY = 'DESCR'
+
+#-------------------------------------------------------------------------------
+# Groups
+#-------------------------------------------------------------------------------
+
+PROJECT_GROUP = ConfigurationGroup(
+    PROJECT_GROUP_KEY,
+    _(u"Project settings"),
+    ordering = 0,
+)
+
+#-------------------------------------------------------------------------------
+# Configs
+#-------------------------------------------------------------------------------
 
 config_register_list(
     LocalizedStringValue(
-        GENERIC_GROUP,
-        'PROJ_TITLE',
+        PROJECT_GROUP,
+        TITLE_KEY,
         description = _(u"Project title"),
         help_text = _(u"Name of your server and site"),
         default = (
@@ -27,8 +44,8 @@ config_register_list(
         ordering = 0,
     ),
     LocalizedStringValue(
-        GENERIC_GROUP,
-        'PROJ_DESCR',
+        PROJECT_GROUP,
+        DESCR_KEY,
         description = _(u"Short project description"),
         help_text = _(u"Short description of your server and site"),
         default = (
@@ -36,13 +53,5 @@ config_register_list(
             ('ru', u"Хороший проект Ил-2 ЗС, управляемый с помощью Хорус Коммандера"),
         ),
         ordering = 1,
-    ),
-    StringValue(
-        GENERIC_GROUP,
-        'SERVER_PATH',
-        description = _(u"Path to server"),
-        help_text = _(u"Local path to your IL-2 FB server"),
-        default = "/opt/games/il2/server",
-        ordering = 2,
     ),
 )

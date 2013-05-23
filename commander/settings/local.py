@@ -120,13 +120,13 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 
     'django_extensions',
-    'keyedcache',
     'compressor',
+    'xlivesettings',
 
     'commons',
     'website',
     'admin_custom',
-    'xlivesettings',
+    'game_server',
 )
 
 #-------------------------------------------------------------------------------
