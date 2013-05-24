@@ -1,6 +1,11 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_static config_tags %}{% load url from future %}
 
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "game_server/css/game_server.css" %}" />
+{% endblock %}
+
 {% block breadcrumbs %}{% if not is_popup %}
 <ul class="grp-horizontal-list">
     <li><a href="{% url 'admin:index' %}">{% trans "Home" %}</a></li>
@@ -9,29 +14,13 @@
 {% endif %}{% endblock %}
 
 {% block content %}
-<style>
-div.field-row{
-  overflow:hidden;
-}
-div.field-row label{
-  width:160px;
-  display:block;
-  float:left;
-  text-align:left;
-}
-div.field-row .div{
-  margin-left:4px;
-  float:left;
-}
-</style>
-
 <span style="clear: both;"></span>
 <div id="content-main">
     <form method="post" id="settingsform">{% csrf_token %}
         <div class="field-row">
             <label>{% trans 'Status' %}:</label>
             <div>
-                <img src="{{ STATIC_URL }}img/icons/status/{{status_code}}.png" title="{{ status_verb | capfirst }}" style="margin-bottom:-4px;"/>
+                <img src="{{ STATIC_URL }}/game_server/img/{{status_code}}.png" title="{{ status_verb | capfirst }}" style="margin-bottom:-4px;"/>
                 {{ status_verb | capfirst }}
             </div>
         </div>

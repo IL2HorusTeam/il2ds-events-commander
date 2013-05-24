@@ -1,0 +1,18 @@
+div.field-row
+{
+    overflow:hidden;
+}
+
+div.field-row label
+{
+    width:160px;
+    display:block;
+    float:left;
+    text-align:left;
+}
+
+div.field-row .div
+{
+    margin-left:4px;
+    float:left;
+}
