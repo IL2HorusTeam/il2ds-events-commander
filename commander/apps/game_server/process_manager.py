@@ -92,7 +92,7 @@ def stop():
     LOG.debug("Stopping server")
     with __m.mutex:
         reset_message()
-        if __m.process_status == PROCESS_STATUS_STOPPED:
+        if __m.process_status != PROCESS_STATUS_RUNNING:
             __m.message = (messages.ERROR, _(u"Server is not running"))
             LOG.error("not running")
             return False
@@ -162,8 +162,8 @@ def process_runner(exe_path):
 
         LOG.debug("starting server %s" % exe_path)
         set_status(PROCESS_STATUS_STARTING)
-        __m.process = Popen(start_args, stdout=PIPE, stderr=PIPE)
 
+        __m.process = Popen(start_args, stdout=PIPE, stderr=PIPE)
         while True:
             line = __m.process.stdout.readline()
             if line.startswith("1>"):
@@ -171,10 +171,12 @@ def process_runner(exe_path):
 
         LOG.debug("server started")
         set_status(PROCESS_STATUS_RUNNING)
+
         __m.process.wait()
 
         LOG.debug("server stopped")
         set_status(PROCESS_STATUS_STOPPED, True)
+
         with __m.mutex:
             if __m.stop_requested:
                 break
