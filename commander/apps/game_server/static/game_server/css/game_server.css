@@ -11,8 +11,13 @@ div.field-row label
     text-align:left;
 }
 
-div.field-row .div
+div.field-row div
 {
     margin-left:4px;
     float:left;
+}
+
+div.field-row div img
+{
+    margin-bottom:-4px;
 }

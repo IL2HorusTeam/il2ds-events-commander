@@ -200,6 +200,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.static',
     'django.core.context_processors.media',
+    'django.core.context_processors.static',
 
     'website.context_processors.settings',
 )
@@ -233,6 +234,19 @@ JINJA2_TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
     'django.template.loaders.filesystem.Loader',
 )
+
+#-------------------------------------------------------------------------------
+#   Compress
+#-------------------------------------------------------------------------------
+
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.template.TemplateFilter',
+]
+
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'sass --scss {infile} {outfile}'),
+)
+COMPRESS_CSS_FILTERS = ()
 
 #-------------------------------------------------------------------------------
 #   Middlewares
@@ -315,7 +329,7 @@ LOGGING = {
             'class': 'logging.StreamHandler'
         },
         'commander': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'maxBytes': 1024*1024*5, # 5 MB
             'backupCount': 20,

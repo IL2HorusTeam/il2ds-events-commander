@@ -46,6 +46,7 @@ __m.restart_requested = False
 __m.crash_count = 0
 __m.work_time = None
 __m.message = (None, None)
+__m.status_update_time = None
 
 #-------------------------------------------------------------------------------
 # Global methods
@@ -55,6 +56,10 @@ def get_status():
     with __m.mutex:
         return __m.process_status
 
+def get_status_update_time():
+    with __m.mutex:
+        return __m.status_update_time
+
 def get_message():
     with __m.mutex:
         return __m.message
@@ -63,10 +68,10 @@ def get_crash_count():
     with __m.mutex:
         return __m.crash_count
 
-def get_workime():
+def get_worktime():
     with __m.mutex:
         if __m.work_time:
-            return (datetime.now().replace(microsecond=0) - __m.work_time.replace(microsecond=0))
+            return datetime.now() - __m.work_time
         else:
             return None
 
@@ -108,7 +113,7 @@ def restart(exe_path=None):
 
 def validate_status_for_start():
     reset_message()
-    result = __m.process_status in [PROCESS_STATUS_STOPPED, PROCESS_STATUS_WAITING]
+    result = __m.process_status == PROCESS_STATUS_STOPPED
     if result == False:
         __m.message = (messages.WARNING, _(u"Process is already running or starting yet."))
         LOG.warning("already running or starting")
@@ -156,9 +161,7 @@ def process_runner(exe_path):
             do_wait()
 
         LOG.debug("starting server %s" % exe_path)
-        with __m.mutex:
-            __m.process_status = PROCESS_STATUS_STARTING
-            __m.work_time = datetime.now()
+        set_status(PROCESS_STATUS_STARTING)
         __m.process = Popen(start_args, stdout=PIPE, stderr=PIPE)
 
         while True:
@@ -167,15 +170,12 @@ def process_runner(exe_path):
                 break
 
         LOG.debug("server started")
-        with __m.mutex:
-            __m.process_status = PROCESS_STATUS_RUNNING
-            __m.work_time = datetime.now()
+        set_status(PROCESS_STATUS_RUNNING)
         __m.process.wait()
 
         LOG.debug("server stopped")
+        set_status(PROCESS_STATUS_STOPPED, True)
         with __m.mutex:
-            __m.process_status = PROCESS_STATUS_STOPPED
-            __m.work_time = None
             if __m.stop_requested:
                 break
             __m.crash_count += 1
@@ -183,7 +183,15 @@ def process_runner(exe_path):
 
 def do_wait():
     LOG.debug("waiting")
-    with __m.mutex:
-        __m.process_status = PROCESS_STATUS_WAITING
-        __m.work_time = datetime.now()
+    set_status(PROCESS_STATUS_WAITING)
     sleep(get_server_restart_delay())
+    set_status(PROCESS_STATUS_STOPPED)
+
+def set_status(status, unset_work_time=False):
+    with __m.mutex:
+        __m.process_status = status
+        __m.status_update_time = datetime.now()
+        if unset_work_time:
+            __m.work_time = None
+        else:
+            __m.work_time = datetime.now()

@@ -1,9 +1,102 @@
 {% extends "admin/base_site.html" %}
-{% load i18n admin_static config_tags %}{% load url from future %}
+{% load i18n admin_static config_tags compress %}{% load url from future %}
 
 {% block extrastyle %}
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% static "game_server/css/game_server.css" %}" />
+{% endblock %}
+
+{% block extrahead %}{{ block.super }}
+{% compress js %}
+<script type="text/javascript">
+var last_update_time = 0;
+var current_worktime = 0;
+var timerId = 0;
+
+function updateServerInfo(worktime, status_code, status_verb, crashes, starting, waiting){
+    current_worktime = worktime;
+    refresh_worktime();
+
+    /* Stop worktime refreshing timer if running */
+    clearInterval(timerId);
+
+    /* Start worktime refreshing timer if needed */
+    if (status_code != 'stpd'){
+        timerId = setInterval(function () {
+            current_worktime ++;
+            refresh_worktime();
+        }, 1000);
+    }
+
+    /* Refresh current status */
+    var status_verb = status_verb.charAt(0).toUpperCase() + status_verb.slice(1);
+    var status_div = django.jQuery("#id_status");
+    status_div.empty()
+    status_div.append("<img src='{{ STATIC_URL }}game_server/img/"+status_code+".png' title='"+status_verb+"'/>"+status_verb)
+
+    /* Update crashes count */
+    django.jQuery("#id_crashes").text(crashes)
+
+    /* Update current worktime label */
+    if (starting)
+        var work_title = "{% trans 'Starting time' %}:";
+    else if (waiting)
+        var work_title = "{% trans 'Waiting time' %}:";
+    else
+        var work_title = "{% trans 'Uptime' %}:";
+    django.jQuery("#id_worktime_label").text(work_title);
+};
+
+function refresh_worktime(){
+    var tmp = current_worktime;
+
+    var hours = Math.floor(tmp / 3600);
+    tmp -= hours*3600;
+    var minutes = Math.floor(tmp / 60);
+    tmp -= minutes*60;
+    var seconds = tmp;
+
+    django.jQuery("#id_worktime").text(
+        (hours < 10 ? "0" + hours : hours)
+        + ":" + (minutes < 10 ? "0" + minutes : minutes)
+        + ":" + (seconds  < 10 ? "0" + seconds : seconds)
+    )
+}
+
+django.jQuery(function($) {
+    updateServerInfo(
+        {{ worktime }},
+        "{{status_code}}",
+        "{{status_verb}}",
+        {{ crashes }},
+        {{ starting }},
+        {{ waiting }}
+    );
+
+    window.setInterval(function() {
+        $.ajax({
+            type: "GET",
+            url: "{% url 'server_status' %}",
+            data: {
+                l_upd_time: last_update_time
+            },
+            success: function(response){
+                if (response.result == 'error') return;
+                last_update_time = response.l_upd_time;
+                updateServerInfo(
+                    response.worktime,
+                    response.status_code,
+                    response.status_verb,
+                    response.crashes,
+                    response.starting,
+                    response.waiting
+                );
+            },
+        });
+    }, 1000);
+});
+</script>
+{% endcompress %}
 {% endblock %}
 
 {% block breadcrumbs %}{% if not is_popup %}
@@ -19,29 +112,22 @@
     <form method="post" id="settingsform">{% csrf_token %}
         <div class="field-row">
             <label>{% trans 'Status' %}:</label>
-            <div>
-                <img src="{{ STATIC_URL }}/game_server/img/{{status_code}}.png" title="{{ status_verb | capfirst }}" style="margin-bottom:-4px;"/>
-                {{ status_verb | capfirst }}
+            <div id="id_status">
+                <!-- status placeholder -->
             </div>
         </div>
         <div class="field-row">
             <label>{% trans 'Crashes count' %}:</label>
-            <div>
-                {{ crashes }}
+            <div id="id_crashes">
+                <!-- crashes placeholder -->
             </div>
         </div>
         <div class="field-row">
-            <label>
-                {% if starting %}
-                    {% trans 'Starting time' %}:
-                {% elif waiting %}
-                    {% trans 'Waiting time' %}:
-                {% else %}
-                    {% trans 'Uptime' %}:
-                {% endif %}
+            <label id="id_worktime_label">
+                <!-- worktime label placeholder -->
             </label>
-            <div>
-                {{ workime }}
+            <div id="id_worktime">
+                <!-- worktime placeholder -->
             </div>
         </div>
         <br class="clear:both;" />
