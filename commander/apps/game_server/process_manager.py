@@ -122,8 +122,8 @@ def validate_status_for_start():
 def validate_path(exe_path):
     reset_message()
     if os.path.isfile(exe_path) == False:
-        __m.error_msg = _(u"Wrong path to server: \"%s\".") % exe_path
-        LOG.error(__m.error_msg)
+        __m.message = (messages.ERROR, _(u"Wrong path to server: \"%s\".") % exe_path)
+        LOG.error("wrong server path %s" % exe_path)
         return False
     dir_path = os.path.dirname(os.path.abspath(exe_path))
     if validate_server_file(dir_path, "server.cmd") == False:

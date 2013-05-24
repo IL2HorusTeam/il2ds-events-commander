@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-19 15:32+0300\n"
+"POT-Creation-Date: 2013-05-25 01:35+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,14 +28,17 @@ msgid "Return to site"
 msgstr "Вернуться на сайт"
 
 #: apps/admin_custom/dashboard.py:35
+#: templates/admin/includes_grappelli/header.html:34
 msgid "Settings"
 msgstr "Настройки"
 
 #: apps/admin_custom/dashboard.py:36
+#: templates/admin/includes_grappelli/header.html:19
 msgid "Change password"
 msgstr "Изменить пароль"
 
 #: apps/admin_custom/dashboard.py:38
+#: templates/admin/includes_grappelli/header.html:28
 msgid "Log out"
 msgstr "Выйти"
 
@@ -71,66 +74,148 @@ msgstr ""
 msgid "Django irc channel"
 msgstr ""
 
-#: apps/website/config.py:9
-msgid "Generic settings"
-msgstr "Общие настройки"
+#: apps/game_server/config.py:26
+msgid "Server settings"
+msgstr "Настройки сервера"
 
-#: apps/website/config.py:16
-msgid "Project title"
-msgstr "Название проекта"
-
-#: apps/website/config.py:17
-msgid "Name of your server and site"
-msgstr "Имя Вашего сервера и сайта"
-
-#: apps/website/config.py:18
-msgid "My IL-2 FB project"
-msgstr "Мой проект Ил-2 ЗС"
-
-#: apps/website/config.py:25
-msgid "Short project description"
-msgstr "Короткое описание проекта"
-
-#: apps/website/config.py:26
-msgid "Short description of your server and site"
-msgstr "Короткое описание Вашего сервера и сайта"
-
-#: apps/website/config.py:27
-msgid "Nice IL-2 FB project powered by Horus Commander"
-msgstr "Хороший проект Ил-2 ЗС, управляемый с помощью Хорус Коммандера"
-
-#: apps/website/config.py:34
+#: apps/game_server/config.py:39
 msgid "Path to server"
 msgstr "Путь к серверу"
 
-#: apps/website/config.py:35
-msgid "Local path to your IL-2 FB server"
-msgstr "Локальный путь к Вашему серверу Ил-2 ЗС"
+#: apps/game_server/config.py:40
+msgid "Local path to your IL-2 FB server executable file"
+msgstr "Локальный путь к исполняемому файлу Вашего сервера Ил-2 ЗС"
 
-#: settings/local.py:93
+#: apps/game_server/config.py:47
+msgid "Restart delay, secs"
+msgstr "Пауза перезапуска, сек"
+
+#: apps/game_server/config.py:48
+msgid "Delay in seconds before server restart"
+msgstr "Задержка в секундах перед перезапуском сервера"
+
+#: apps/game_server/process_manager.py:30
+msgid "stopped"
+msgstr "остановлен"
+
+#: apps/game_server/process_manager.py:31
+msgid "starting"
+msgstr "запускается"
+
+#: apps/game_server/process_manager.py:32
+msgid "running"
+msgstr "запущен"
+
+#: apps/game_server/process_manager.py:33
+msgid "waiting for start"
+msgstr "ожидание запуска"
+
+#: apps/game_server/process_manager.py:96
+msgid "Server is not running"
+msgstr "Сервер не запущен"
+
+#: apps/game_server/process_manager.py:118
+msgid "Process is already running or starting yet."
+msgstr "Процесс уде запущен или ещё запускается."
+
+#: apps/game_server/process_manager.py:125
+msgid "Wrong path to server: \"%s\"."
+msgstr "Неверный путь к серверу: \"%s\"."
+
+#: apps/game_server/process_manager.py:137
+msgid "Server file \"%s\" not found."
+msgstr "Файл сервера \"%s\" не найден."
+
+#: apps/game_server/views.py:30
+msgid "Server management"
+msgstr "Управление сервером"
+
+#: apps/game_server/templates/game_server/admin/index.html:42
+msgid "Starting time"
+msgstr "Время запуска"
+
+#: apps/game_server/templates/game_server/admin/index.html:44
+msgid "Waiting time"
+msgstr "Время ожидания"
+
+#: apps/game_server/templates/game_server/admin/index.html:46
+msgid "Uptime"
+msgstr "Время работы"
+
+#: apps/game_server/templates/game_server/admin/index.html:104
+#: templates/xlivesettings/site_settings.html:11
+msgid "Home"
+msgstr "Главная"
+
+#: apps/game_server/templates/game_server/admin/index.html:114
+msgid "Status"
+msgstr "Состояние"
+
+#: apps/game_server/templates/game_server/admin/index.html:120
+msgid "Crashes count"
+msgstr "Количество сбоев"
+
+#: apps/game_server/templates/game_server/admin/index.html:134
+msgid "Start"
+msgstr "Запустить"
+
+#: apps/game_server/templates/game_server/admin/index.html:135
+msgid "Stop"
+msgstr "Остановить"
+
+#: apps/game_server/templates/game_server/admin/index.html:136
+msgid "Restart"
+msgstr "Перезапустить"
+
+#: apps/website/config.py:26
+msgid "Project settings"
+msgstr "Настройки проекта"
+
+#: apps/website/config.py:38
+msgid "Project title"
+msgstr "Название проекта"
+
+#: apps/website/config.py:39
+msgid "Name of your server and site"
+msgstr "Имя Вашего сервера и сайта"
+
+#: apps/website/config.py:49
+msgid "Short project description"
+msgstr "Короткое описание проекта"
+
+#: apps/website/config.py:50
+msgid "Short description of your server and site"
+msgstr "Короткое описание Вашего сервера и сайта"
+
+#: settings/local.py:95
 msgid "English"
 msgstr "Английский"
 
-#: settings/local.py:94
+#: settings/local.py:96
 msgid "Russian"
 msgstr "Русский"
 
-#: settings/local.py:135
+#: settings/local.py:137
 msgid "IL-2 Horus Commander Admin"
 msgstr "Панель управления Ил-2 Хорус Коммандера"
 
-#: templates/xlivesettings/site_settings.html:11
-msgid "Home"
-msgstr ""
+#: templates/admin/includes_grappelli/header.html:33
+msgid "Server"
+msgstr "Сервер"
 
-#: templates/xlivesettings/site_settings.html:12
-msgid "Edit Site Settings"
-msgstr "Настройки"
+#: templates/admin/includes_grappelli/header.html:38
+msgid "Tests"
+msgstr "Тесты"
+
+#: templates/admin/includes_grappelli/header.html:43
+#, fuzzy
+msgid "Documentation"
+msgstr "Документация по Django"
 
 #: templates/xlivesettings/site_settings.html:17
 msgid "Update Settings"
-msgstr ""
+msgstr "Обновить настройки"
 
 #: templates/xlivesettings/site_settings.html:18
 msgid "Export"
-msgstr ""
+msgstr "Экспорт"
