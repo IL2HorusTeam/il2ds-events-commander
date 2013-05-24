@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from xlivesettings import (
-    config_register_list,
+    config_register_list, config_get_localized,
     ConfigurationGroup, LocalizedStringValue
 )
 
@@ -55,3 +55,13 @@ config_register_list(
         ordering = 1,
     ),
 )
+
+#-------------------------------------------------------------------------------
+# Getters
+#-------------------------------------------------------------------------------
+
+def get_project_title(lang_code):
+    return config_get_localized(PROJECT_GROUP_KEY, TITLE_KEY, lang_code)
+
+def get_project_descr(lang_code):
+    return config_get_localized(PROJECT_GROUP_KEY, DESCR_KEY, lang_code)

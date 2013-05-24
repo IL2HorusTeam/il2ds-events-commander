@@ -10,14 +10,10 @@ from subprocess import Popen, PIPE
 from threading import Thread, Lock
 from time import sleep
 
+from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
-from xlivesettings import config_get
-
-from config import (
-    SERVER_GROUP_KEY,
-    RESTART_DELAY_KEY
-)
+from config import get_server_path, get_server_restart_delay
 
 #-------------------------------------------------------------------------------
 # Defines
@@ -28,11 +24,13 @@ LOG = logging.getLogger(__name__)
 PROCESS_STATUS_STOPPED = 'stpd'
 PROCESS_STATUS_STARTING = 'strt'
 PROCESS_STATUS_RUNNING = 'rnng'
+PROCESS_STATUS_WAITING = 'wait'
 
 PROCESS_STATUSES = {
-    PROCESS_STATUS_STOPPED: _(u"Process is stopped"),
-    PROCESS_STATUS_STARTING: _(u"Process is starting"),
-    PROCESS_STATUS_RUNNING: _(u"Process is running"),
+    PROCESS_STATUS_STOPPED: _(u"stopped"),
+    PROCESS_STATUS_STARTING: _(u"starting"),
+    PROCESS_STATUS_RUNNING: _(u"running"),
+    PROCESS_STATUS_WAITING: _(u"waiting for start"),
 }
 
 class ProcessManagerBox:
@@ -44,9 +42,10 @@ __m.process = None
 __m.thread = None
 __m.process_status = PROCESS_STATUS_STOPPED
 __m.stop_requested = False
+__m.restart_requested = False
 __m.crash_count = 0
-__m.start_time = None
-__m.error_msg = None
+__m.work_time = None
+__m.message = (None, None)
 
 #-------------------------------------------------------------------------------
 # Global methods
@@ -56,28 +55,28 @@ def get_status():
     with __m.mutex:
         return __m.process_status
 
-def get_error_msg():
+def get_message():
     with __m.mutex:
-        return __m.error_msg
+        return __m.message
 
 def get_crash_count():
     with __m.mutex:
         return __m.crash_count
 
-def get_uptime():
+def get_workime():
     with __m.mutex:
-        if __m.process_status == PROCESS_STATUS_STOPPED:
-            return None
+        if __m.work_time:
+            return (datetime.now().replace(microsecond=0) - __m.work_time.replace(microsecond=0))
         else:
-            return datetime.now() - __m.start_time
+            return None
 
-def start(exe_path):
+def start(exe_path=None):
+    exe_path = exe_path or get_server_path()
     with __m.mutex:
         if validate_status_for_start() == False:
             return
         if validate_path(exe_path) == False:
             return
-        __m.stop_requested = False
         __m.thread = Thread(
             target = process_runner,
             args = (exe_path, ))
@@ -87,18 +86,20 @@ def start(exe_path):
 def stop():
     LOG.debug("Stopping server")
     with __m.mutex:
-        __m.error_msg = None
+        reset_message()
         if __m.process_status == PROCESS_STATUS_STOPPED:
-            __m.error_msg = _(u"Server is not running")
-            LOG.error(__m.error_msg)
+            __m.message = (messages.ERROR, _(u"Server is not running"))
+            LOG.error("not running")
             return False
         __m.stop_requested = True
         __m.process.kill()
     __m.thread.join()
     return True
 
-def restart(exe_path):
+def restart(exe_path=None):
     if stop():
+        with __m.mutex:
+            __m.restart_requested = True
         start(exe_path)
 
 #-------------------------------------------------------------------------------
@@ -106,15 +107,15 @@ def restart(exe_path):
 #-------------------------------------------------------------------------------
 
 def validate_status_for_start():
-    __m.error_msg = None
-    result = __m.process_status == PROCESS_STATUS_STOPPED
+    reset_message()
+    result = __m.process_status in [PROCESS_STATUS_STOPPED, PROCESS_STATUS_WAITING]
     if result == False:
-        __m.error_msg = _(u"Process is already running or starting yet.")
-        LOG.warning(__m.error_msg)
+        __m.message = (messages.WARNING, _(u"Process is already running or starting yet."))
+        LOG.warning("already running or starting")
     return result
 
 def validate_path(exe_path):
-    __m.error_msg = None
+    reset_message()
     if os.path.isfile(exe_path) == False:
         __m.error_msg = _(u"Wrong path to server: \"%s\".") % exe_path
         LOG.error(__m.error_msg)
@@ -128,13 +129,16 @@ def validate_path(exe_path):
 
 def validate_server_file(dir_path, file_name):
     if os.path.isfile(os.path.join(dir_path, file_name)) == False:
-        __m.error_msg = _(u"Server file \"%s\" not found.") % file_name
-        LOG.error(__m.error_msg)
+        __m.message = (messages.ERROR, _(u"Server file \"%s\" not found.") % file_name)
+        LOG.error("not found: %s" % file_name)
         return False
 
 #-------------------------------------------------------------------------------
-# Process runner
+# Inner methods
 #-------------------------------------------------------------------------------
+
+def reset_message():
+    __m.message = (None, None)
 
 def process_runner(exe_path):
     if platform.system() == "Windows":
@@ -143,9 +147,18 @@ def process_runner(exe_path):
         start_args = ["wine"]
     start_args.append(exe_path)
     while True:
-        LOG.debug("Starting server %s" % exe_path)
+        with __m.mutex:
+            need_wait = __m.restart_requested
+            __m.stop_requested = False
+            __m.restart_requested = False
+
+        if need_wait:
+            do_wait()
+
+        LOG.debug("starting server %s" % exe_path)
         with __m.mutex:
             __m.process_status = PROCESS_STATUS_STARTING
+            __m.work_time = datetime.now()
         __m.process = Popen(start_args, stdout=PIPE, stderr=PIPE)
 
         while True:
@@ -153,16 +166,24 @@ def process_runner(exe_path):
             if line.startswith("1>"):
                 break
 
-        LOG.debug("Server started")
+        LOG.debug("server started")
         with __m.mutex:
             __m.process_status = PROCESS_STATUS_RUNNING
-            __m.start_time = datetime.now()
+            __m.work_time = datetime.now()
         __m.process.wait()
 
-        LOG.debug("Server stopped")
+        LOG.debug("server stopped")
         with __m.mutex:
             __m.process_status = PROCESS_STATUS_STOPPED
+            __m.work_time = None
             if __m.stop_requested:
                 break
             __m.crash_count += 1
-        sleep(config_get(SERVER_GROUP_KEY, RESTART_DELAY_KEY).value)
+        do_wait()
+
+def do_wait():
+    LOG.debug("waiting")
+    with __m.mutex:
+        __m.process_status = PROCESS_STATUS_WAITING
+        __m.work_time = datetime.now()
+    sleep(get_server_restart_delay())

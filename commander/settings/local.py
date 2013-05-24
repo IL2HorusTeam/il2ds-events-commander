@@ -218,13 +218,15 @@ JINJA2_TEMPLATE_DIRS = TEMPLATE_DIRS
 JINJA2_DISABLED_APPS = (
     'admin',
     'admindocs',
-    'livesettings',
+    'xlivesettings',
+    'game_server',
 )
 
 JINJA2_DISABLED_TEMPLATES = (
     r'admin/',
     r'admin/doc/',
     r'admin/settings/',
+    r'admin/server/',
 )
 
 JINJA2_TEMPLATE_LOADERS = (

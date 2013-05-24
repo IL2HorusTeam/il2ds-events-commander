@@ -9,7 +9,7 @@
 {% block breadcrumbs %}{% if not is_popup %}
 <ul class="grp-horizontal-list">
     <li><a href="{% url 'admin:index' %}">{% trans "Home" %}</a></li>
-    <li>{% trans "Edit Site Settings" %}</li>
+    <li>{{ title }}</li>
 </ul>
 {% endif %}{% endblock %}
 

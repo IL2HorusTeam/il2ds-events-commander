@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from xlivesettings import (
-    config_register_list,
+    config_register_list, config_get,
     ConfigurationGroup, PositiveIntegerValue, StringValue
 )
 
@@ -27,6 +27,7 @@ SERVER_GROUP = ConfigurationGroup(
     ordering = 1,
 )
 
+
 #-------------------------------------------------------------------------------
 # Configs
 #-------------------------------------------------------------------------------
@@ -43,10 +44,20 @@ config_register_list(
     PositiveIntegerValue(
         SERVER_GROUP,
         RESTART_DELAY_KEY,
-        description = _(u"Restart delay, s"),
-        help_text = _(u"Delay in seconds before server restart after crash (if happenned)"),
+        description = _(u"Restart delay, secs"),
+        help_text = _(u"Delay in seconds before server restart"),
         default = 5,
         min_value = 1,
         ordering = 1,
     ),
 )
+
+#-------------------------------------------------------------------------------
+# Getters
+#-------------------------------------------------------------------------------
+
+def get_server_path():
+    return config_get(SERVER_GROUP_KEY, PATH_KEY).value
+
+def get_server_restart_delay():
+    return config_get(SERVER_GROUP_KEY, RESTART_DELAY_KEY).value

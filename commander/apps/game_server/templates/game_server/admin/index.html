@@ -1,0 +1,64 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static config_tags %}{% load url from future %}
+
+{% block breadcrumbs %}{% if not is_popup %}
+<ul class="grp-horizontal-list">
+    <li><a href="{% url 'admin:index' %}">{% trans "Home" %}</a></li>
+    <li>{{ title }}</li>
+</ul>
+{% endif %}{% endblock %}
+
+{% block content %}
+<style>
+div.field-row{
+  overflow:hidden;
+}
+div.field-row label{
+  width:160px;
+  display:block;
+  float:left;
+  text-align:left;
+}
+div.field-row .div{
+  margin-left:4px;
+  float:left;
+}
+</style>
+
+<span style="clear: both;"></span>
+<div id="content-main">
+    <form method="post" id="settingsform">{% csrf_token %}
+        <div class="field-row">
+            <label>{% trans 'Status' %}:</label>
+            <div>
+                <img src="{{ STATIC_URL }}img/icons/status/{{status_code}}.png" title="{{ status_verb | capfirst }}" style="margin-bottom:-4px;"/>
+                {{ status_verb | capfirst }}
+            </div>
+        </div>
+        <div class="field-row">
+            <label>{% trans 'Crashes count' %}:</label>
+            <div>
+                {{ crashes }}
+            </div>
+        </div>
+        <div class="field-row">
+            <label>
+                {% if starting %}
+                    {% trans 'Starting time' %}:
+                {% elif waiting %}
+                    {% trans 'Waiting time' %}:
+                {% else %}
+                    {% trans 'Uptime' %}:
+                {% endif %}
+            </label>
+            <div>
+                {{ workime }}
+            </div>
+        </div>
+        <br class="clear:both;" />
+        <input type="submit" value="{% trans 'Start' %}" name="_start"/>
+        <input type="submit" value="{% trans 'Stop' %}" name="_stop"/>
+        <input type="submit" value="{% trans 'Restart' %}" name="_restart"/>
+    </form>
+</div>
+{% endblock %}
