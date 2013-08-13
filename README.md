@@ -1,4 +1,4 @@
-IL-2 FB Dedicated Server commander
+IL-2 FB Dedicated Server Commander
 ==================================
 
 Installation
