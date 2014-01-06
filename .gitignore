@@ -36,3 +36,7 @@ nosetests.xml
 
 *.log
 *.pid
+
+# Virtualization
+.vagrant
+*.box

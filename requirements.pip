@@ -4,8 +4,10 @@
 #
 #     pip install -r requirements.pip
 
-django==1.5.2
+django==1.6
 twisted==13.1.0
+
+il2ds-middleware>=0.9.1
 
 simplejson==3.3.0
 south==0.7.6

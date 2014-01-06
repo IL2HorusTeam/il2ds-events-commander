@@ -1,13 +1,17 @@
-IL-2 FB Dedicated Server Commander
-==================================
+IL-2 DS Events Commander
+========================
 
-Installation
-------------
+For developers
+--------------
 
-    pip install -r requirements.pip
-    # TODO: syncdb
+Install:
 
-Launching
----------
+    python
+    vagrant (>=1.3)
+    virtualbox (>=4.0)
+    NFS server
+    fabric
 
-    twistd -ny server.py
+Run:
+
+    vagrant up
