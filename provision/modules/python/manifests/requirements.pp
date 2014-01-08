@@ -48,7 +48,7 @@ define python::requirements (
     default  => "--proxy=${proxy}",
   }
 
-  $req_crc = "/tmp/${requirements}.sha1"
+  $req_crc = "/tmp/requirements.pip.sha1"
 
   # This will ensure multiple python::virtualenv definitions can share the
   # the same requirements file.
