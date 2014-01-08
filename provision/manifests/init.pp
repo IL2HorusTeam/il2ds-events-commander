@@ -97,6 +97,11 @@ class application (
         owner        => $user,
         group        => $group,
     } ->
+    python::pip { "bpython":
+        ensure       => present,
+        virtualenv   => "$virtualenv",
+        owner        => $user,
+    } ->
 
     # Prepare project's structure ---------------------------------------------
     file { ["$virtualenv/var",
