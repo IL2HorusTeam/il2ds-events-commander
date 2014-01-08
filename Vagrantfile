@@ -35,8 +35,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         ubuntu.vm.provision :puppet, :options => ["--debug --trace --verbose"] do |puppet|
             puppet.manifests_path = "provision/manifests"
             puppet.module_path = "provision/modules"
-            puppet.manifest_file = "local.pp"
-            puppet.options = "-l console --fileserverconfig=/vagrant/provision/fileserver.conf"
+            puppet.manifest_file = "init.pp"
+            puppet.options = "-l console --verbose --fileserverconfig=/vagrant/provision/fileserver.conf"
             puppet.nfs = false
         end
     end
@@ -71,7 +71,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #     freebsd.vm.provision :puppet, :options => ["--debug --trace --verbose"] do |puppet|
     #         puppet.manifests_path = "provision/manifests"
     #         puppet.module_path = "provision/modules"
-    #         puppet.manifest_file = "local.pp"
+    #         puppet.manifest_file = "init.pp"
     #         puppet.options = "-l console --fileserverconfig=/vagrant/provision/fileserver.conf"
     #         puppet.nfs = true
     #     end
@@ -121,7 +121,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #     windows.vm.provision :puppet, :options => ["--debug --trace --verbose"] do |puppet|
     #         puppet.manifests_path = "provision/manifests"
     #         puppet.module_path = "provision/modules"
-    #         puppet.manifest_file = "local.pp"
+    #         puppet.manifest_file = "init.pp"
     #         puppet.options = "-l console --fileserverconfig=/vagrant/provision/fileserver.conf"
     #         puppet.nfs = false
     #     end
