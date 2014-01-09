@@ -17,7 +17,7 @@ vagrant boxes to `provision/boxes` (see Vagrantfile for names).
 
 **Copy** IL-2 DS directory to `provision/files/il2ds` so that executable file
 will be accessible as `provision/files/il2ds/il2server.exe`. You need to do
-this to provide access to config log files from virtual machine directly. Do
+this to provide access to config and log files from virtual machine directly. Do
 not mind if you have no local copy of IL-2 DS: it will be obtained during
 provisioning and placed to the directory as mentioned just above.
 
