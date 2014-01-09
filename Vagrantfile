@@ -11,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #---------------------------------------------------------------------------
 
     config.vm.define "ubuntu" do |ubuntu|
-        ubuntu.vm.hostname = "il2ds-ec-precise"
+        ubuntu.vm.hostname = "il2ec-precise"
         ubuntu.vm.box = "precise32"
         ubuntu.vm.box_url = "http://files.vagrantup.com/precise32.box"
 
@@ -47,7 +47,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # config.vm.define "freebsd" do |freebsd|
     #     freebsd.vm.guest = :freebsd
-    #     freebsd.vm.hostname = "il2ds-ec-freebsd"
+    #     freebsd.vm.hostname = "il2ec-freebsd"
     #     freebsd.vm.box = "freebsd64"
     #     freebsd.vm.box_url = "https://dl.dropboxusercontent.com/u/76022516/vagrant/freebsd92-64.box"
 
@@ -82,7 +82,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # #---------------------------------------------------------------------------
 
     # config.vm.define "windows" do |windows|
-    #     windows.vm.hostname = "il2ds-ec-win2008"
+    #     windows.vm.hostname = "il2ec-win2008"
     #     windows.vm.box = "win2008r2x64"
     #     windows.vm.box_url = "provision/boxes/win2008r2x64.box"
 
