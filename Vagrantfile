@@ -25,9 +25,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             guest: 80,
             host: 8010,
             id: "web"
+        ubuntu.vm.network :forwarded_port,
+            guest: 21000,
+            host: 21010,
+            id: "il2ds"
 
         ubuntu.vm.synced_folder "provision/files", "/etc/provision/files",
-            :nfs => false
+            :nfs => true
         ubuntu.vm.synced_folder ".", "/vagrant",
             id: "vagrant-root",
             :nfs => true
@@ -61,6 +65,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #         guest: 80,
     #         host: 8020,
     #         id: "web"
+    #     freebsd.vm.network :forwarded_port,
+    #        guest: 21000,
+    #        host: 21020,
+    #        id: "il2ds"
 
     #     freebsd.vm.synced_folder "provision/files", "/etc/provision/files",
     #         :nfs => true
@@ -104,6 +112,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #         host: 8030,
     #         id: "web"
     #     windows.vm.network :forwarded_port,
+    #        guest: 21000,
+    #        host: 21030,
+    #        id: "il2ds"
+    #     windows.vm.network :forwarded_port,
     #         guest: 5985,
     #         host: 5985,
     #         id: "WinRM"
@@ -128,7 +140,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # end
 
     config.vm.provider "virtualbox" do |vb|
-        vb.customize ["modifyvm", :id, "--memory", 700]
+        vb.customize ["modifyvm", :id, "--memory", 1024]
     end
 
 end

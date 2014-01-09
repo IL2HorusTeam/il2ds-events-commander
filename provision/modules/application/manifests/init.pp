@@ -79,6 +79,9 @@ class application (
         group => $group,
     } ->
 
+    # Install dedicated server ------------------------------------------------
+    class { "il2dsd": } ->
+
     # Update user's .bashrc ---------------------------------------------------
     utils::file::line { "bashrc-workon-venv":
         file => "/home/$user/.bashrc",
@@ -89,7 +92,7 @@ class application (
         line => "cd $project_base",
     }
 
-    # Update message of the day ------------------------------------------------
+    # Update message of the day -----------------------------------------------
     if motd {
         file { "/etc/motd":
             content => $motd,
