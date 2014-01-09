@@ -8,9 +8,6 @@ class system::software {
     package { "make":
         ensure => present,
     }
-    package { "wget":
-        ensure => present,
-    }
     package { "curl":
         ensure => present,
     }
