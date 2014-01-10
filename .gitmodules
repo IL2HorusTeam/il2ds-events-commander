@@ -1,8 +1,20 @@
-[submodule "provision/modules/python"]
-	path = provision/modules/python
-	url = https://github.com/oblalex/puppet-python.git
-    branch = master
 [submodule "provision/modules/stdlib"]
-	path = provision/modules/stdlib
-	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
+    path = provision/modules/stdlib
+    url = https://github.com/puppetlabs/puppetlabs-stdlib.git
     branch = master
+[submodule "provision/modules/python"]
+    path = provision/modules/python
+    url = https://github.com/oblalex/puppet-python.git
+    branch = master
+[submodule "provision/modules/redis"]
+    path = provision/modules/redis
+    url = https://github.com/fsalum/puppet-redis.git
+[submodule "provision/modules/postgis"]
+    path = provision/modules/postgis
+    url = https://github.com/camptocamp/puppet-postgis.git
+[submodule "provision/modules/postgresql"]
+	path = provision/modules/postgresql
+	url = https://github.com/puppetlabs/puppetlabs-postgresql.git
+[submodule "provision/modules/concat"]
+	path = provision/modules/concat
+	url = https://github.com/puppetlabs/puppetlabs-concat.git

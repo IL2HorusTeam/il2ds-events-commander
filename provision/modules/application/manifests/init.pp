@@ -79,8 +79,28 @@ class application (
         group => $group,
     } ->
 
-    # Install dedicated server ------------------------------------------------
+    # Install IL-2 DS --------------------------------------------------------
     class { "il2dsd": } ->
+
+    # Install databases -------------------------------------------------------
+    class { "redis": } ->
+
+    class { "postgresql::server":
+        postgres_password => "qwerty",
+        version           => "9.1",
+        encoding => "UTF8",
+        locale   => "en_US.UTF-8",
+    } ->
+    class { "postgis":
+        version => "9.1",
+    } ->
+    postgresql::server::db { "il2ec":
+        user     => $user,
+        password => "qwerty",
+        encoding => "UTF8",
+        locale   => "en_US.UTF-8",
+        template => "template_postgis",
+    }
 
     # Update user's .bashrc ---------------------------------------------------
     utils::file::line { "bashrc-workon-venv":
