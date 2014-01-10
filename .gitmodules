@@ -1,6 +1,8 @@
 [submodule "provision/modules/python"]
 	path = provision/modules/python
 	url = https://github.com/oblalex/puppet-python.git
+    branch = master
 [submodule "provision/modules/stdlib"]
 	path = provision/modules/stdlib
 	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
+    branch = master
