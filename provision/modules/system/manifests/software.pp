@@ -1,17 +1,13 @@
 class system::software {
-    package { "gcc":
-        ensure => present,
-    }
-    package { "gettext":
-        ensure => present,
-    }
-    package { "make":
-        ensure => present,
-    }
-    package { "curl":
-        ensure => present,
-    }
-    package { "vim":
+    package {
+        [
+            "curl",
+            "gcc",
+            "gettext",
+            "make",
+            "vim",
+            "unzip",
+        ]:
         ensure => present,
     }
 }

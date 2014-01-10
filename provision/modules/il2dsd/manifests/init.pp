@@ -4,10 +4,11 @@ class il2dsd (
     $cfg_path = "puppet:///files/conf/il2ds"
 
     # Check DS exists ---------------------------------------------------------
-    exec { "Check IL-2 DS host":
-        command => "bash <( curl https://raw2.github.com/IL2HorusTeam/il2dsd/master/scripts/il2ds-install ) -d /tmp -o ${src_path}",
-        onlyif  => "test ! -f ${src_path}/il2server.exe",
-        timeout => 0,
+    exec { "Check IL-2 DS existence":
+        command  => "bash -c '. <( curl https://raw2.github.com/IL2HorusTeam/il2dsd/master/scripts/il2ds-install ) -d /tmp -o ${src_path}'",
+        onlyif   => "test ! -f ${src_path}/il2server.exe",
+        timeout  => 0,
+        require  => Package["unzip"],
     }
 
     # Set configuration -------------------------------------------------------
