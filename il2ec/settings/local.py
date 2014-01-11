@@ -1,16 +1,12 @@
+# -*- coding: utf-8 -*-
 """
-Settings for local development.
+Settings for local development server.
 """
 from il2ec.settings.base import *   # pylint: disable=W0614,W0401
 
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-
-# ADMINS = (
-#     ('You', 'your@email'),
-# )
-# MANAGERS = ADMINS
 
 DATABASES = {
     'default': {

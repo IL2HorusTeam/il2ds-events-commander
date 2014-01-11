@@ -1,4 +1,7 @@
-"""Settings for Development Server"""
+# -*- coding: utf-8 -*-
+"""
+Settings for staging server.
+"""
 from il2ec.settings.base import *   # pylint: disable=W0614,W0401
 
 
@@ -10,8 +13,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'il2ec',
-#        'USER': 'dbuser',
-#        'PASSWORD': 'dbpassword',
+        'USER': 'dbuser',
+        'PASSWORD': 'dbpassword',
     }
 }
 

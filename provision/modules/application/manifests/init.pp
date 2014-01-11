@@ -75,7 +75,7 @@ class application (
     } ->
 
     # Install IL-2 DS --------------------------------------------------------
-    class { "il2dsd": } ->
+    class { "il2ds": } ->
 
     # Install databases -------------------------------------------------------
     class { "redis": } ->

@@ -1,4 +1,4 @@
-class il2dsd (
+class il2ds (
 ) {
     $src_path = "/vagrant/provision/files/il2ds"
     $cfg_path = "puppet:///files/conf/il2ds"
