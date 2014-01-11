@@ -103,13 +103,13 @@ class application (
         virtualenv => "$virtualenv",
         owner      => $user,
         group      => $group,
-    } ->
+    }
 
     # Update user's .bashrc ---------------------------------------------------
     utils::file::line { "bashrc-workon-venv":
         file => "/home/$user/.bashrc",
         line => "source $virtualenv/bin/activate",
-    } ->
+    }
     utils::file::line { "bashrc-cd-venv":
         file => "/home/$user/.bashrc",
         line => "cd $project_base",
