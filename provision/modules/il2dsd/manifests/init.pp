@@ -8,7 +8,11 @@ class il2dsd (
         command  => "bash -c '. <( curl https://raw2.github.com/IL2HorusTeam/il2dsd/master/scripts/il2ds-install ) -d /tmp -o ${src_path}'",
         onlyif   => "test ! -f ${src_path}/il2server.exe",
         timeout  => 0,
-        require  => Package["unzip"],
+        require  => [
+            Package[curl],
+            Package[unzip],
+            Package[wget],
+        ],
     }
 
     # Set configuration -------------------------------------------------------

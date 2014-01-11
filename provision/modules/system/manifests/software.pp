@@ -7,6 +7,7 @@ class system::software {
             "make",
             "vim",
             "unzip",
+            "wget",
         ]:
         ensure => present,
     }

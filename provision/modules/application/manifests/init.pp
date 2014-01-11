@@ -15,9 +15,9 @@ class application (
         ensure => present,
     } ->
     user { "$user":
-        home => "/home/$user",
-        ensure => present,
-        groups => "$group",
+        home       => "/home/$user",
+        ensure     => present,
+        groups     => "$group",
         membership => minimum,
     } ->
 
@@ -30,27 +30,22 @@ class application (
     # Prepare Python virtual environment --------------------------------------
     file { "$virtualenvs":
         ensure => directory,
-        mode => 755,
-        owner => $user,
-        group => $group,
+        mode   => 755,
+        owner  => $user,
+        group  => $group,
     } ->
     class { "python":
         version    => "system",
+        pip        => true,
         dev        => true,
         virtualenv => true,
     } ->
     python::virtualenv { "$virtualenv":
-        ensure       => present,
-        version      => "system",
-        requirements => "$src/requirements.pip",
-        systempkgs   => true,
-        owner        => $user,
-        group        => $group,
-    } ->
-    python::pip { "bpython":
-        ensure       => present,
-        virtualenv   => "$virtualenv",
-        owner        => $user,
+        ensure     => present,
+        version    => "system",
+        systempkgs => true,
+        owner      => $user,
+        group      => $group,
     } ->
 
     # Prepare project's structure ---------------------------------------------
@@ -60,23 +55,23 @@ class application (
             "$virtualenv/var/log",
             "$virtualenv/src", ]:
         ensure => directory,
-        mode => 770,
-        owner => $user,
-        group => $group,
+        mode   => 770,
+        owner  => $user,
+        group  => $group,
     } ->
     file { "$virtualenv/src/$project_name":
         ensure => link,
-        path => $project_base,
+        path   => $project_base,
         target => $src,
-        mode => 770,
-        owner => $user,
-        group => $group,
+        mode   => 770,
+        owner  => $user,
+        group  => $group,
     } ->
     file { "$virtualenv/var/log/$project_name.log":
         ensure => file,
-        mode => 660,
-        owner => $user,
-        group => $group,
+        mode   => 660,
+        owner  => $user,
+        group  => $group,
     } ->
 
     # Install IL-2 DS --------------------------------------------------------
@@ -91,6 +86,7 @@ class application (
         encoding => "UTF8",
         locale   => "en_US.UTF-8",
     } ->
+    package { "postgresql-server-dev-9.1": } ->
     class { "postgis":
         version => "9.1",
     } ->
@@ -100,7 +96,14 @@ class application (
         encoding => "UTF8",
         locale   => "en_US.UTF-8",
         template => "template_postgis",
-    }
+    } ->
+
+    # Update project's dependencies ------------------------------------------
+    python::requirements { "$src/requirements.pip":
+        virtualenv => "$virtualenv",
+        owner      => $user,
+        group      => $group,
+    } ->
 
     # Update user's .bashrc ---------------------------------------------------
     utils::file::line { "bashrc-workon-venv":

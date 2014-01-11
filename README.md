@@ -19,7 +19,6 @@ vagrant boxes to `provision/boxes` (see Vagrantfile for names).
 Clone the whole project:
 
     git clone --recursive git@github.com:IL2HorusTeam/il2ds-events-commander.git
-    git submodule foreach --recursive git checkout master
 
 **Copy** IL-2 DS directory to `provision/files/il2ds` so that executable file
 will be accessible as `provision/files/il2ds/il2server.exe`. You need to do
