@@ -13,9 +13,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'il2ec',
-        'USER': 'dbuser',
-        'PASSWORD': 'dbpassword',
+        'USER': 'vagrant',
+        'PASSWORD': 'qwerty',
+        'HOST': 'localhost',
+        'PORT': '', # use default
     }
 }
-
-# WSGI_APPLICATION = 'il2ec.wsgi.dev.application'

@@ -7,17 +7,21 @@ class application (
     $group,
     $motd = undef,
 ){
-    $virtualenv = "$virtualenvs/$project_name"
-    $project_base = "$virtualenv/src/$project_name"
+    $virtualenv    = "${virtualenvs}/${project_name}"
+    $project_base  = "${virtualenv}/src/${project_name}"
+    $django_config = "${project_name}.settings.local"
+    $uwsgi_config  = "${project_name}-local.ini"
+    $nginx_config  = "${project_name}-local.conf"
+    $nginx_certs   = "certificate-local"
 
     # Ensure given user and group exist ---------------------------------------
-    group { "$group":
+    group { $group:
         ensure => present,
     } ->
-    user { "$user":
-        home       => "/home/$user",
+    user { $user:
+        home       => "/home/${user}",
         ensure     => present,
-        groups     => "$group",
+        groups     => $group,
         membership => minimum,
     } ->
 
@@ -28,7 +32,7 @@ class application (
     } ->
 
     # Prepare Python virtual environment --------------------------------------
-    file { "$virtualenvs":
+    file { $virtualenvs:
         ensure => directory,
         mode   => 755,
         owner  => $user,
@@ -40,7 +44,7 @@ class application (
         dev        => true,
         virtualenv => true,
     } ->
-    python::virtualenv { "$virtualenv":
+    python::virtualenv { $virtualenv:
         ensure     => present,
         version    => "system",
         systempkgs => true,
@@ -48,18 +52,25 @@ class application (
         group      => $group,
     } ->
 
+    # Set Django settings variable --------------------------------------------
+    utils::env::setenv { "DJANGO_SETTINGS_MODULE":
+        variable  => "DJANGO_SETTINGS_MODULE",
+        value     => $django_config,
+        permanent => true,
+    } ->
+
     # Prepare project's structure ---------------------------------------------
-    file { ["$virtualenv/var",
-            "$virtualenv/var/static",
-            "$virtualenv/var/uploads",
-            "$virtualenv/var/log",
-            "$virtualenv/src", ]:
+    file { ["${virtualenv}/var",
+            "${virtualenv}/var/static",
+            "${virtualenv}/var/uploads",
+            "${virtualenv}/var/log",
+            "${virtualenv}/src", ]:
         ensure => directory,
         mode   => 770,
         owner  => $user,
         group  => $group,
     } ->
-    file { "$virtualenv/src/$project_name":
+    file { "${virtualenv}/src/${project_name}":
         ensure => link,
         path   => $project_base,
         target => $src,
@@ -67,14 +78,14 @@ class application (
         owner  => $user,
         group  => $group,
     } ->
-    file { "$virtualenv/var/log/$project_name.log":
+    file { "${virtualenv}/var/log/${project_name}.log":
         ensure => file,
         mode   => 660,
         owner  => $user,
         group  => $group,
     } ->
 
-    # Install IL-2 DS --------------------------------------------------------
+    # Install IL-2 DS ---------------------------------------------------------
     class { "il2ds": } ->
 
     # Install databases -------------------------------------------------------
@@ -83,14 +94,14 @@ class application (
     class { "postgresql::server":
         postgres_password => "qwerty",
         version           => "9.1",
-        encoding => "UTF8",
-        locale   => "en_US.UTF-8",
+        encoding          => "UTF8",
+        locale            => "en_US.UTF-8",
     } ->
     package { "postgresql-server-dev-9.1": } ->
     class { "postgis":
         version => "9.1",
     } ->
-    postgresql::server::db { "il2ec":
+    postgresql::server::db { $project_name:
         user     => $user,
         password => "qwerty",
         encoding => "UTF8",
@@ -98,21 +109,38 @@ class application (
         template => "template_postgis",
     } ->
 
-    # Update project's dependencies ------------------------------------------
-    python::requirements { "$src/requirements.pip":
-        virtualenv => "$virtualenv",
+    # Prepare web server ------------------------------------------------------
+    class { "uwsgi":
+        app_name          => $project_name,
+        config_name       => "${project_name}.ini",
+        config_source     => "puppet:///files/conf/uwsgi/${uwsgi_config}",
+        django_config     => $django_config,
+        path              => "${virtualenv}/bin",
+        touch_reload_file => "/tmp/uwsgi-touch-reload-${project_name}",
+    } ->
+    class { "nginx":
+        app_name      => $project_name,
+        config_name   => "${project_name}.conf",
+        config_source => "puppet:///files/conf/nginx/${nginx_config}",
+        credentials   => "puppet:///files/conf/nginx/${nginx_certs}",
+        user          => $user,
+    } ->
+
+    # Update project's dependencies -------------------------------------------
+    python::requirements { "${src}/requirements.pip":
+        virtualenv => $virtualenv,
         owner      => $user,
         group      => $group,
-    }
+    } ->
 
     # Update user's .bashrc ---------------------------------------------------
     utils::file::line { "bashrc-workon-venv":
-        file => "/home/$user/.bashrc",
-        line => "source $virtualenv/bin/activate",
+        file => "/home/${user}/.bashrc",
+        line => "source ${virtualenv}/bin/activate",
     }
     utils::file::line { "bashrc-cd-venv":
-        file => "/home/$user/.bashrc",
-        line => "cd $project_base",
+        file => "/home/${user}/.bashrc",
+        line => "cd ${project_base}",
     }
 
     # Update message of the day -----------------------------------------------

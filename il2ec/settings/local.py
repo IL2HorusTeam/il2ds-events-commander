@@ -18,6 +18,3 @@ DATABASES = {
         'PORT': '', # use default
     }
 }
-
-# ROOT_URLCONF = 'il2ec.urls.local'
-# WSGI_APPLICATION = 'il2ec.wsgi.local.application'
