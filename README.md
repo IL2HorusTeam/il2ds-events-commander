@@ -36,9 +36,10 @@ directory.
 Firstly, start a development virtual machine:
 
     vagrant up [ubuntu|freebsd|windows]
+    fab incarnate
 
 This will bring for you a clean virtual machine, install all of the necessary
-soft and configure it.
+soft, configure it and run web application.
 
 If database creation error will appear due to incompatible encoding, run:
 
