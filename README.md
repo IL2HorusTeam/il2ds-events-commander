@@ -85,3 +85,7 @@ To make your work with dedicated server on Linux easier, you can install
 `il2server.exe` in `/etc/il2dsd.conf` and start the service:
 
     sudo service il2dsd start
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/IL2HorusTeam/il2ds-events-commander/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
