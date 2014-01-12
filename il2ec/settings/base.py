@@ -211,12 +211,12 @@ CSRF_COOKIE_HTTPONLY = True
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '{host}:{port}:{db}'.format(
+        'LOCATION': '{host}:{port}'.format(
                         host=REDIS_HOST,
                         port=REDIS_PORT,
-                        db=REDIS_DBS['CACHE']
                     ),
         'OPTIONS': {
+            'DB': REDIS_DBS['CACHE'],
             'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
             'PARSER_CLASS': 'redis.connection.HiredisParser',
         },

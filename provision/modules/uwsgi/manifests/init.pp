@@ -6,8 +6,9 @@ class uwsgi (
     $config_name        = undef,
     $config_source      = undef,
     $django_config      = undef,
+    $owner              = undef,
     $touch_reload_file  = undef,
-    $path               = "/usr/bin"
+    $virtualenv         = undef,
 ) {
 
     include supervisor
@@ -21,10 +22,10 @@ class uwsgi (
         ensure => $ensure_touch_reload_file,
     } ->
 
-    package { "uwsgi":
-      ensure   => present,
-      provider => pip,
-      require  => [ Package["python-dev"], Package["python-pip"] ],
+    python::pip { "uwsgi":
+        virtualenv => $virtualenv,
+        owner      => $owner,
+        ensure     => present,
     } ->
 
     file { ["/etc/uwsgi",
@@ -41,6 +42,7 @@ class uwsgi (
     supervisor::service { "uwsgi":
         ensure      => present,
         environment => "DJANGO_SETTINGS_MODULE='${django_config}'",
-        command     => "${path}/uwsgi --ini /etc/uwsgi/conf.d/${config_name}",
+        command     => "${virtualenv}/bin/uwsgi --ini /etc/uwsgi/conf.d/${config_name}",
+        require     => Python::Pip["uwsgi"],
     }
 }

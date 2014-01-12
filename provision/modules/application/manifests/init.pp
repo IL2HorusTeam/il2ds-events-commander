@@ -120,7 +120,8 @@ class application (
         config_name       => "${project_name}.ini",
         config_source     => "puppet:///files/conf/uwsgi/${uwsgi_config}",
         django_config     => $django_config,
-        path              => "${virtualenv}/bin",
+        virtualenv        => $virtualenv,
+        owner             => $user,
         touch_reload_file => "/tmp/uwsgi-touch-reload-${project_name}",
     } ->
     class { "nginx":
