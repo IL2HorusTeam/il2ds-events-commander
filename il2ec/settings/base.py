@@ -90,6 +90,7 @@ INSTALLED_APPS = (
     'south',
     'transmeta',
 
+    'misc',
     'website',
 )
 
@@ -210,13 +211,13 @@ CSRF_COOKIE_HTTPONLY = True
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '{host}:{port}'.format(
+        'LOCATION': '{host}:{port}:{db}'.format(
                         host=REDIS_HOST,
                         port=REDIS_PORT,
+                        db=REDIS_DBS['CACHE']
                     ),
         'OPTIONS': {
-            "DB": REDIS_DBS['CACHE'],
-            "CLIENT_CLASS": "redis_cache.client.DefaultClient",
+            'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
             'PARSER_CLASS': 'redis.connection.HiredisParser',
         },
         'TIMEOUT': 60,
@@ -252,17 +253,25 @@ LOGGING = {
             'propagate': True,
         },
     },
+    'loggers': {
+        'misc': {
+            'handlers': ['il2ec'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+    'loggers': {
+        'website': {
+            'handlers': ['il2ec'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
 }
 
 #------------------------------------------------------------------------------
 # Third party app settings
 #------------------------------------------------------------------------------
-
-# Django admin tools ----------------------------------------------------------
-# ADMIN_TOOLS_INDEX_DASHBOARD = 'website.dashboard.AdminIndexDashboard'
-# ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'website.dashboard.AdminAppIndexDashboard'
-# ADMIN_TOOLS_MENU = 'website.menu.AdminMenu'
-# ADMIN_TOOLS_THEMING_CSS = 'lib/admin_tools/css/theming.css'
 
 # Django compressor -----------------------------------------------------------
 COMPRESS_PRECOMPILERS = (
@@ -273,6 +282,9 @@ COMPRESS_CSS_FILTERS = ()
 # Grappelli ------------------------------------------------------------------
 GRAPPELLI_ADMIN_TITLE = _(u"IL-2 Events Commander")
 GRAPPELLI_INDEX_DASHBOARD = 'website.dashboard.CustomIndexDashboard'
+
+# Django compressor  ----------------------------------------------------------
+COMPRESS_ENABLED = True
 
 #------------------------------------------------------------------------------
 # Miscellaneous project settings

@@ -1,0 +1,3 @@
+"""
+Functionality for Django management.
+"""

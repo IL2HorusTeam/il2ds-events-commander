@@ -11,7 +11,7 @@ STATIC_ROOT = os.path.join(VAR_ROOT, 'static')
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'il2ec',
         'USER': 'vagrant',
         'PASSWORD': 'qwerty',

@@ -1,86 +1,74 @@
-from fabric.api import task, env, run, local, roles, cd, execute, hide, puts,\
-    sudo
+# -*- coding: utf-8 -*-
+
 import posixpath
 import re
 
+from fabric.api import (task, env, run, local, roles, cd, execute, hide, puts,
+    sudo, )
+from fabric.contrib.console import confirm
+
+
 env.project_name = 'il2ec'
-env.repository = 'git@github.com:lincolnloop/il2ec.git'
+env.repository = 'git@github.com:IL2HorusTeam/il2ds-events-commander.git'
 env.local_branch = 'master'
 env.remote_ref = 'origin/master'
 env.requirements_file = 'requirements.pip'
 env.restart_command = 'supervisorctl restart {project_name}'.format(**env)
 env.restart_sudo = True
+env.logs = {
+    "uwsgi": "/var/log/supervisor/uwsgi/uwsgi.err",
+    "nginx": "/var/log/nginx/error.log",
+    "app": "",
+}
 
 
-#==============================================================================
+#------------------------------------------------------------------------------
 # Tasks which set up deployment environments
-#==============================================================================
+#------------------------------------------------------------------------------
+
+# @task
+# def staging():
+#     """
+#     Use the staging deployment environment.
+#     """
+#     server = 'il2ec-staging'
+#     env.roledefs = {
+#         'commander': [server],
+#         'db': [server],
+#         'web': [server],
+#     }
+#     env.system_users = {server: 'www-data'}
+#     env.virtualenv_dir = '/srv/www/{project_name}'.format(**env)
+#     env.project_dir = '{virtualenv_dir}/src/{project_name}'.format(**env)
+#     env.project_conf = '{project_name}.settings.local'.format(**env)
+
 
 @task
-def live():
+def vagrant():
     """
-    Use the live deployment environment.
+    Use the local development environment under Vagrant.
     """
-    server = 'il2ec.com'
+    server = 'localhost:2210' # See SSH port in Vagrantfile
     env.roledefs = {
-        'web': [server],
+        'commander': [server],
         'db': [server],
+        'web': [server],
     }
-    env.system_users = {server: 'www-data'}
-    env.virtualenv_dir = '/srv/www/{project_name}'.format(**env)
+    env.user = 'vagrant'
+    env.system_users = {server: env.user}
+    env.virtualenv_dir = '/var/virtualenvs/{project_name}'.format(**env)
     env.project_dir = '{virtualenv_dir}/src/{project_name}'.format(**env)
     env.project_conf = '{project_name}.settings.local'.format(**env)
-
-
-@task
-def dev():
-    """
-    Use the development deployment environment.
-    """
-    server = 'il2ec.dev.lincolnloop.com'
-    env.roledefs = {
-        'web': [server],
-        'db': [server],
-    }
-    env.system_users = {server: 'www-data'}
-    env.virtualenv_dir = '/srv/www/{project_name}'.format(**env)
-    env.project_dir = '{virtualenv_dir}/src/{project_name}'.format(**env)
-    env.project_conf = '{project_name}.conf.local'.format(**env)
+    env.key_filename = '~/.vagrant.d/insecure_private_key'
 
 
 # Set the default environment.
-dev()
+vagrant()
 
 
-#==============================================================================
-# Actual tasks
-#==============================================================================
-
-@task
-@roles('web', 'db')
-def bootstrap(action=''):
-    """
-    Bootstrap the environment.
-    """
-    with hide('running', 'stdout'):
-        exists = run('if [ -d "{virtualenv_dir}" ]; then echo 1; fi'\
-            .format(**env))
-    if exists and not action == 'force':
-        puts('Assuming {host} has already been bootstrapped since '
-            '{virtualenv_dir} exists.'.format(**env))
-        return
-    sudo('virtualenv {virtualenv_dir}'.format(**env))
-    if not exists:
-        sudo('mkdir -p {0}'.format(posixpath.dirname(env.virtualenv_dir)))
-        sudo('git clone {repository} {project_dir}'.format(**env))
-    sudo('{virtualenv_dir}/bin/pip install -e {project_dir}'.format(**env))
-    with cd(env.virtualenv_dir):
-        sudo('chown -R {user} .'.format(**env))
-        fix_permissions()
-    requirements()
-    puts('Bootstrapped {host} - database creation needs to be done manually.'\
-        .format(**env))
-
+#------------------------------------------------------------------------------
+# Publishing tasks
+#------------------------------------------------------------------------------
 
 @task
 @roles('web', 'db')
@@ -151,37 +139,105 @@ def update(action='check'):
         requirements()
 
 
+#------------------------------------------------------------------------------
+# Actual tasks
+#------------------------------------------------------------------------------
+
 @task
-@roles('web')
-def collectstatic():
+@roles('web', 'db')
+def incarnate():
+    execute(syncdb)
+    execute(dj, "create_superuser")
+    execute(restart)
+
+
+@task
+@roles('web', 'db')
+def reincarnate(force=False):
     """
-    Collect static files from apps and other locations in a single location.
+    IRREVESIBLY DESTROYS ALL DATA. Recreates existing environment, resets
+    database, deletes uploaded content and clears compiled static.
     """
-    dj('collectstatic --link --noinput')
-    with cd('{virtualenv_dir}/var/static'.format(**env)):
-        fix_permissions()
+    if not (force or confirm("WARNING. This command will destroy all data. "
+                             "Continue?")):
+        return
+    run("rm -rf {virtualenv_dir}/var/static/*".format(**env))
+    run("rm -rf {virtualenv_dir}/var/uploads/*".format(**env))
+    execute(reset_db, "noinput")
+    execute(incarnate)
 
 
 @task
 @roles('db')
 def syncdb(sync=True, migrate=True):
     """
-    Synchronize the database.
+    Creates the database tables for all apps in INSTALLED_APPS whose tables
+    have not already been created.
     """
     dj('syncdb --migrate --noinput')
+
+
+@task
+@roles('db')
+def flush_db(noinput=False, no_initial_data=False):
+    """
+    Returns the database to the state it was in immediately after syncdb was
+    executed.
+    """
+    ensure_noinput = "--noinput" if noinput else ""
+    ensure_no_initial_data = "--no-initial-data" if no_initial_data else ""
+    dj("flush {0} {1}".format(ensure_noinput, ensure_no_initial_data))
+
+
+@task
+@roles('db')
+def reset_db(noinput=None):
+    """
+    Destroys database completely.
+    """
+    ensure_noinput = "--noinput" if noinput else ""
+    dj("reset_db --router=default {0}".format(ensure_noinput))
+
+
+@task
+@roles('db')
+def dbshell():
+    """
+    Runs the command-line client for the database engine specified in ENGINE
+    setting.
+    """
+    dj("dbshell")
+
+
+@task
+@roles('web')
+def collectstatic():
+    """
+    Collect static files from apps and other locations in a single location.
+    """
+    dj("collectstatic -c --noinput --verbosity 0")
 
 
 @task
 @roles('web')
 def restart():
     """
-    Restart the web service.
+    Clear sessions, cache, static, reload code and restart server.
     """
-    if env.restart_sudo:
-        cmd = sudo
-    else:
-        cmd = run
-    cmd(env.restart_command)
+    execute(dj, "clear_redis")
+    execute(reload)
+
+
+@task
+@roles('web')
+def reload():
+    """
+    Reloads all project code, static and restarts application server.
+    """
+    run("find {virtualenv_dir}/src/{project_name}/ -name '*.pyc' -exec "
+        "rm -rf {{}} \\;".format(**env))
+    execute(collectstatic)
+    execute(restart_uwsgi)
 
 
 @task
@@ -209,16 +265,43 @@ def requirements():
                 fix_permissions()
 
 
-#==============================================================================
+@task
+@roles('web', 'db', 'commander')
+def log(service=None):
+    """
+    Output log to condole.
+
+    Optional parameters:
+      service - log name to show
+
+    Example:
+      fab log:uwsgi
+    """
+    if service in env.logs.keys():
+        sudo("tail -f {0}".format(env.logs[service]))
+    else:
+        sudo("tail -f {virtualenv_dir}/var/log/{project_name}.log"\
+             .format(**env))
+
+
+#------------------------------------------------------------------------------
 # Helper functions
-#==============================================================================
+#------------------------------------------------------------------------------
 
 def dj(command):
     """
     Run a Django manage.py command on the server.
     """
-    run('{virtualenv_dir}/bin/manage.py {dj_command} '
-        '--settings {project_conf}'.format(dj_command=command, **env))
+    with cd(env.project_dir):
+        run('{virtualenv_dir}/bin/python manage.py {dj_command} '
+            '--settings {project_conf}'.format(dj_command=command, **env))
+
+
+def restart_uwsgi():
+    """
+    Restarts the uWSGI application server.
+    """
+    sudo("touch /tmp/uwsgi-touch-reload-{project_name}".format(**env))
 
 
 def fix_permissions(path='.'):

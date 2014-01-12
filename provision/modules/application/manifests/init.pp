@@ -101,8 +101,13 @@ class application (
     class { "postgis":
         version => "9.1",
     } ->
+    postgresql::server::role { $user:
+        password_hash => postgresql_password($user, "qwerty"),
+        createdb      => true,
+    } ->
     postgresql::server::db { $project_name:
         user     => $user,
+        owner    => $user,
         password => "qwerty",
         encoding => "UTF8",
         locale   => "en_US.UTF-8",

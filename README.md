@@ -13,7 +13,7 @@ Install:
     virtualbox (>=4.0)
     NFS server
     fabric
-    wine (>=1.6) # for work on linux only
+    wine (>=1.6) # to develop work on Linux only
 
 If you need to run project on guest FreeBSD or Windows then copy propper
 vagrant boxes to `provision/boxes` (see Vagrantfile for names).
