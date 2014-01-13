@@ -65,10 +65,6 @@ LANGUAGES = (
 LANGUAGE_CODE = 'en'
 LANGUAGE_CODES = [code for (code, lang) in LANGUAGES]
 
-# Make this unique, and don't share it with anybody.
-# TODO: read SECRET_KEY from OS environment for dev settings
-SECRET_KEY = '22mrx$5(7iik*hw!w-9x!7z78$f861**q#qv0bt7tewb1d-7+='
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -90,6 +86,7 @@ INSTALLED_APPS = (
     'south',
     'transmeta',
 
+    'commander',
     'misc',
     'website',
 )

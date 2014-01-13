@@ -2,11 +2,19 @@
 """
 Settings for local development server.
 """
+import os
+
 from il2ec.settings.base import *   # pylint: disable=W0614,W0401
 
+#------------------------------------------------------------------------------
+# Main project settings
+#------------------------------------------------------------------------------
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = '22mrx$5(7iik*hw!w-9x!7z78$f861**q#qv0bt7tewb1d-7+='
 
 DATABASES = {
     'default': {
@@ -19,37 +27,57 @@ DATABASES = {
     }
 }
 
+#------------------------------------------------------------------------------
+# Third party app settings
+#------------------------------------------------------------------------------
+
 # Django Debug Toolbar --------------------------------------------------------
-INTERNAL_IPS = ('127.0.0.1', )
-MIDDLEWARE_CLASSES += (
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-)
 
-INSTALLED_APPS += (
-    'debug_toolbar',
-)
+if DEBUG:
+    INTERNAL_IPS = ('127.0.0.1', )
+    MIDDLEWARE_CLASSES += (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )
 
-def show_dj_toolbar_callback(*args):
-    return True
+    INSTALLED_APPS += (
+        'debug_toolbar',
+    )
 
-DEBUG_TOOLBAR_PATCH_SETTINGS = False
-DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False,
-    'ENABLE_STACKTRACES': True,
-    'SHOW_TOOLBAR_CALLBACK': 'il2ec.settings.local.show_dj_toolbar_callback',
-}
+    def show_dj_toolbar_callback(*args):
+        return True
 
-DEBUG_TOOLBAR_PANELS = (
-    # 'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-    'debug_toolbar.panels.templates.TemplatesPanel',
-    'debug_toolbar.panels.cache.CachePanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.logging.LoggingPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel',
-)
+    DEBUG_TOOLBAR_PATCH_SETTINGS = False
+    DEBUG_TOOLBAR_CONFIG = {
+        'INTERCEPT_REDIRECTS': False,
+        'ENABLE_STACKTRACES': True,
+        'SHOW_TOOLBAR_CALLBACK':
+            'il2ec.settings.local.show_dj_toolbar_callback',
+    }
+
+    DEBUG_TOOLBAR_PANELS = (
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.settings.SettingsPanel',
+        'debug_toolbar.panels.headers.HeadersPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.sql.SQLPanel',
+        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        'debug_toolbar.panels.templates.TemplatesPanel',
+        'debug_toolbar.panels.cache.CachePanel',
+        'debug_toolbar.panels.signals.SignalsPanel',
+        'debug_toolbar.panels.logging.LoggingPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+        'debug_toolbar.panels.versions.VersionsPanel',
+    )
+
+#------------------------------------------------------------------------------
+# Miscellaneous project settings
+#------------------------------------------------------------------------------
+
+# Commander settitngs ---------------------------------------------------------
+IL2_VERSION = '4.12.2'
+IL2_LOCAL_HOST = 'il2ds-host'
+IL2_USER_HOST = HOSTNAME
+IL2_CONSOLE_PORT = 20000
+IL2_DEVICE_LINK_PORT = 10000
+IL2_EVENTS_LOG = os.path.join(os.path.dirname(PROJECT_DIR),
+    'provision', 'files', 'il2ds', 'log', 'events.log')

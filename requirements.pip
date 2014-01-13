@@ -27,4 +27,4 @@ psycopg2==2.5.2
 redis==2.9.0
 simplejson==3.3.0
 south==0.7.6
-twisted==13.1.0
+twisted==13.2.0

@@ -246,7 +246,7 @@ def requirements():
     """
     Update the requirements.
     """
-    run('{virtualenv_dir}/bin/pip install -r {project_dir}/requirements.txt'\
+    run('{virtualenv_dir}/bin/pip install -r {project_dir}/requirements.pip'\
         .format(**env))
     with cd('{virtualenv_dir}/src'.format(**env)):
         with hide('running', 'stdout', 'stderr'):
