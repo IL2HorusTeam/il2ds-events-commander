@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
-Application for IL-2 Dedicated Server Events Commander.
+Django application of IL-2 Dedicated Server events commander.
 """

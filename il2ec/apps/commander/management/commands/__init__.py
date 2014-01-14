@@ -1,3 +1,3 @@
 """
-Commander management commands.
+Commander Django management commands.
 """

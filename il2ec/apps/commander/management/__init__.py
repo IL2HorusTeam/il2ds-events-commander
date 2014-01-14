@@ -1,3 +1,3 @@
 """
-Functionality for commander management.
+Functionality for Django management.
 """

@@ -169,6 +169,7 @@ AUTHENTICATION_BACKENDS += (
 REDIS_DBS = {
     'SESSIONS': 1,
     'CACHE': 2,
+    'COMMANDER': 3,
 }
 
 REDIS_HOST = 'localhost'
@@ -264,6 +265,13 @@ LOGGING = {
             'propagate': True,
         },
     },
+    'commander': {
+        'website': {
+            'handlers': ['il2ec'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
 }
 
 #------------------------------------------------------------------------------
@@ -286,3 +294,7 @@ COMPRESS_ENABLED = True
 #------------------------------------------------------------------------------
 # Miscellaneous project settings
 #------------------------------------------------------------------------------
+
+# Commander -------------------------------------------------------------------
+COMMANDER_API_HOST = '127.0.0.1'
+COMMANDER_API_PORT = 20001

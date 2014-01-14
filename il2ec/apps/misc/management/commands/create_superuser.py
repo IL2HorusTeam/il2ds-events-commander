@@ -2,8 +2,6 @@
 """
 Implement 'create_superuser' Django management command.
 """
-from __future__ import unicode_literals
-
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 

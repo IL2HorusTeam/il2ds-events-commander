@@ -2,7 +2,7 @@
 """
 Settings for commander app.
 """
-from __future__ import unicode_literals
+import os
 
 from django.conf import settings
 
@@ -23,5 +23,16 @@ IL2_CONSOLE_PORT = getattr(settings, 'IL2_CONSOLE_PORT', 20000)
 # Server's DeviceLink port for commander to connect to
 IL2_DEVICE_LINK_PORT = getattr(settings, 'IL2_DEVICE_LINK_PORT', 10000)
 
+# Path to server's config file for commander to read to
+IL2_CONFIG_PATH = getattr(settings, 'IL2_CONFIG_PATH',
+    os.path.join('il2ds', 'confs.ini'))
+
 # Path to server's events log file for commander to read to
-IL2_EVENTS_LOG = getattr(settings, 'IL2_EVENTS_LOG', 'il2ds/log/events.evt')
+IL2_EVENTS_LOG_PATH = getattr(settings, 'IL2_EVENTS_LOG_PATH',
+    os.path.join('il2ds', 'log', 'events.log'))
+
+# Host for commander to listen commands on
+COMMANDER_API_HOST = getattr(settings, 'COMMANDER_API_HOST', '127.0.0.1')
+
+# Port for commander to listen commands on
+COMMANDER_API_PORT = getattr(settings, 'COMMANDER_API_PORT', 20001)

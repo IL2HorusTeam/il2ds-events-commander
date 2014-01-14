@@ -284,6 +284,15 @@ def log(service=None):
              .format(**env))
 
 
+# @task
+# @roles('commander')
+# def commander(action='start'):
+#     """
+#     Start, stop server commander; get events, console or chat log.
+#     """
+#     execute(dj, "commander_{0}".format(action))
+
+
 #------------------------------------------------------------------------------
 # Helper functions
 #------------------------------------------------------------------------------

@@ -79,5 +79,8 @@ IL2_LOCAL_HOST = 'il2ds-host'
 IL2_USER_HOST = HOSTNAME
 IL2_CONSOLE_PORT = 20000
 IL2_DEVICE_LINK_PORT = 10000
-IL2_EVENTS_LOG = os.path.join(os.path.dirname(PROJECT_DIR),
-    'provision', 'files', 'il2ds', 'log', 'events.log')
+
+IL2_SERVER_PATH = os.path.join(
+    os.path.dirname(PROJECT_DIR), 'provision', 'files', 'il2ds')
+IL2_CONFIG_PATH = os.path.join(IL2_SERVER_PATH, 'confs.ini')
+IL2_EVENTS_LOG_PATH = os.path.join(IL2_SERVER_PATH, 'log', 'events.log')
