@@ -15,7 +15,7 @@ managed by [Vagrant](http://www.vagrantup.com/) and provisioned by
 into the abyss of knowledge about how these things are working. If you are not
 familiar with DevOps, just let the magic happen to you: run few commands and
 look how the entire system borns and gets configured automatically. You can
-access the gues machine via SSH or use [Fabric](http://docs.fabfile.org/en/1.8/)
+access the guest machine via SSH or use [Fabric](http://docs.fabfile.org/en/1.8/)
 to run some commands.
 
 During provisioning you will get installed and configured Postgres 9.1, PostGIS 1.5,
@@ -35,13 +35,13 @@ To start development on this project, you will need:
 3. Get IL-2 DS somewhere and place it to project's directory. In case
 you've got no one, maybe this [full and clean 4.12.2](https://drive.google.com/file/d/0B4hbTGD5PQqQOUtBVTJqWEFhaU0/edit?usp=sharing) will help you (Its size is ~2 GB, so take some patience).
 Or you can leave this task up to automatic provisioning stage.
-4. Start VM and automatically provision all needed stuff. This will bring up
+4. Start VM and automatically provision all needed stuff. This will start
 the web application.
 5. Update 'hosts' file.
 6. Start IL-2 DS.
 7. Run commander.
 
-### Install:
+### Install tools
 
 1. git
 2. vagrant (>=1.3)
@@ -53,7 +53,7 @@ the web application.
 If you need to run project on guest FreeBSD or Windows then copy propper
 vagrant boxes to `provision/boxes` (see Vagrantfile for names).
 
-### Getting sourses
+### Get sourses
 
 Clone the whole project:
 
