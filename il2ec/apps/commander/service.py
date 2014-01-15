@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-Commander services.
+Commander twisted services.
 """
 import logging
 
-from django.conf import settings
 from twisted.application import service
 from twisted.internet.protocol import Factory
 
-from commander.protocol import APIServerProtocol
+from commander import log
+from commander import settings
+from commander.protocol.async import APIServerProtocol
 
 
-LOG = logging.getLogger(__name__)
+LOG = log.get_logger(__name__)
 
 
 class APIService(service.Service):
@@ -27,8 +28,8 @@ class APIService(service.Service):
         factory.protocol = APIServerProtocol
 
         from twisted.internet import reactor
-        self.listener = reactor.listenTCP(settings.COMMANDER_API_PORT,
-            factory, interface=settings.COMMANDER_API_HOST)
+        self.listener = reactor.listenTCP(settings.COMMANDER_API['port'],
+            factory, interface=settings.COMMANDER_API['host'])
 
     def stopService(self):
         self.listener.stopListening()
@@ -43,4 +44,5 @@ class Commander(service.MultiService):
 
     def stop(self):
         from twisted.internet import reactor
-        reactor.stop()
+        if reactor.running:
+            reactor.stop()

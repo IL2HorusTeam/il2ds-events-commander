@@ -238,9 +238,9 @@ LOGGING = {
         'il2ec': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'maxBytes': 1024 * 1024 * 5, # 5 MiB
             'backupCount': 20,
-            'filename': os.path.join(LOG_ROOT, 'il2ec.log'),
+            'filename': os.path.join(LOG_ROOT, 'il2ec-web.log'),
             'formatter': 'logsna',
         },
     },
@@ -296,5 +296,7 @@ COMPRESS_ENABLED = True
 #------------------------------------------------------------------------------
 
 # Commander -------------------------------------------------------------------
-COMMANDER_API_HOST = '127.0.0.1'
-COMMANDER_API_PORT = 20001
+COMMANDER_API = {
+    'host': '127.0.0.1',
+    'port': 20001,
+}

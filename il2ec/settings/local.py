@@ -84,3 +84,9 @@ IL2_SERVER_PATH = os.path.join(
     os.path.dirname(PROJECT_DIR), 'provision', 'files', 'il2ds')
 IL2_CONFIG_PATH = os.path.join(IL2_SERVER_PATH, 'confs.ini')
 IL2_EVENTS_LOG_PATH = os.path.join(IL2_SERVER_PATH, 'log', 'events.log')
+
+COMMANDER_PID_FILE = os.path.join(PROJECT_DIR, 'il2ec-daemon.pid')
+COMMANDER_LOG = {
+    'filename': os.path.join(LOG_ROOT, 'il2ec-daemon.log'),
+    'level': "DEBUG",
+}

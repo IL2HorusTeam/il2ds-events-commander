@@ -6,21 +6,60 @@ IL-2 DS Events Commander
 For developers
 --------------
 
-Install:
+### Development process overview
 
-    git
-    vagrant (>=1.3)
-    virtualbox (>=4.0)
-    NFS server
-    fabric
-    wine (>=1.6) # to develop work on Linux only
+Development of this project is a fully isolated process. All services and
+servers (except game server) are running on a VirtualBox guest machine. It is
+managed by [Vagrant](http://www.vagrantup.com/) and provisioned by
+[Puppet](http://puppetlabs.com/puppet/what-is-puppet). You do not need to dive
+into the abyss of knowledge about how these things are working. If you are not
+familiar with DevOps, just let the magic happen to you: run few commands and
+look how the entire system borns and gets configured automatically. You can
+access the gues machine via SSH or use [Fabric](http://docs.fabfile.org/en/1.8/)
+to run some commands.
+
+During provisioning you will get installed and configured Postgres 9.1, PostGIS 1.5,
+Redis, Nginx+uWSGI, isolated Python environment (by [virtualenv](http://www.virtualenv.org/en/latest/)),
+configured project and other stuff. Due to certain problems with running
+IL-2 Dedicated Server on VirtualBox under Wine, IL-2 DS must be located on the
+host machine.
+
+The approach, described above, provides identical development environment for
+every developer. This environment is close to the real production server
+environment, so minimal amount of deployment issues is expected.
+
+To start development on this project, you will need:
+
+1. Install needed software.
+2. Clone git repository.
+3. Get IL-2 DS somewhere and place it to project's directory. In case
+you've got no one, maybe this [full and clean 4.12.2](https://drive.google.com/file/d/0B4hbTGD5PQqQOUtBVTJqWEFhaU0/edit?usp=sharing) will help you (Its size is ~2 GB, so take some patience).
+Or you can leave this task up to automatic provisioning stage.
+4. Start VM and automatically provision all needed stuff. This will bring up
+the web application.
+5. Update 'hosts' file.
+6. Start IL-2 DS.
+7. Run commander.
+
+### Install:
+
+1. git
+2. vagrant (>=1.3)
+3. virtualbox (>=4.0)
+4. NFS server
+5. fabric
+6. wine (>=1.6) # to develop work on Linux only
 
 If you need to run project on guest FreeBSD or Windows then copy propper
 vagrant boxes to `provision/boxes` (see Vagrantfile for names).
 
+### Getting sourses
+
 Clone the whole project:
 
     git clone --recursive git@github.com:IL2HorusTeam/il2ds-events-commander.git
+
+### Get IL-2 DS
 
 **Copy** IL-2 DS directory to `provision/files/il2ds` so that executable file
 will be accessible as `provision/files/il2ds/il2server.exe`. You need to do
@@ -32,6 +71,8 @@ provisioning and placed to the directory as mentioned just above.
 development. Their content will be taken from `provision/files/conf/l2dsd`.
 Place all your custom server commands to `user.cmd` inside server root
 directory.
+
+### Start VM and let some magic happen
 
 Firstly, start a development virtual machine:
 
@@ -50,6 +91,8 @@ If database creation error will appear due to incompatible encoding, run:
     exit
     exit
     vagrant provision
+
+### Update 'hosts'
 
 To make your IL-2 server accessible from the outer world, you need to set
 a `localHost` parameter in server's config file. This parameter specifies an IP
@@ -76,6 +119,8 @@ Run this command on the guest machine also (for any host machine):
     sudo bash -c 'echo "XXX.XXX.XXX.XXX    il2ds-host" >> /etc/hosts'
     exit
 
+### Run game server
+
 Then you can start your dedicated server: on Windows run `il2server.exe` as
 usual. On Linux you can run it as:
 
@@ -86,3 +131,9 @@ To make your work with dedicated server on Linux easier, you can install
 `il2server.exe` in `/etc/il2dsd.conf` and start the service:
 
     sudo service il2dsd start
+
+### Run commander
+
+Execute next command to run commander as daemon:
+
+    fab commander:run

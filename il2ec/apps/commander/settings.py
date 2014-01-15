@@ -6,33 +6,67 @@ import os
 
 from django.conf import settings
 
+#------------------------------------------------------------------------------
+# Information about IL-2 Dedicated Server
+#------------------------------------------------------------------------------
 
-# Version to display for users
+# Version to display for users.
 IL2_VERSION = getattr(settings, 'IL2_VERSION', '4.12.2')
 
-# Host name for commander to connect to
+# Host name for commander to connect to.
 IL2_LOCAL_HOST = getattr(settings, 'IL2_LOCAL_HOST', 'localhost')
 
 # Host name for game clients (users) to connect to. Usually it's an external
-# name or IP
+# name or IP.
 IL2_USER_HOST = getattr(settings, 'IL2_USER_HOST', settings.HOSTNAME)
 
-# Server's console port for commander to connect to
+# Server's console port for commander to connect to.
 IL2_CONSOLE_PORT = getattr(settings, 'IL2_CONSOLE_PORT', 20000)
 
-# Server's DeviceLink port for commander to connect to
+# Server's DeviceLink port for commander to connect to.
 IL2_DEVICE_LINK_PORT = getattr(settings, 'IL2_DEVICE_LINK_PORT', 10000)
 
-# Path to server's config file for commander to read to
+# Path to server's config file for commander to read to.
 IL2_CONFIG_PATH = getattr(settings, 'IL2_CONFIG_PATH',
     os.path.join('il2ds', 'confs.ini'))
 
-# Path to server's events log file for commander to read to
+# Path to server's events log file for commander to read to.
 IL2_EVENTS_LOG_PATH = getattr(settings, 'IL2_EVENTS_LOG_PATH',
     os.path.join('il2ds', 'log', 'events.log'))
 
-# Host for commander to listen commands on
-COMMANDER_API_HOST = getattr(settings, 'COMMANDER_API_HOST', '127.0.0.1')
+#------------------------------------------------------------------------------
+# Commander settings
+#------------------------------------------------------------------------------
 
-# Port for commander to listen commands on
-COMMANDER_API_PORT = getattr(settings, 'COMMANDER_API_PORT', 20001)
+# API listener settings
+COMMANDER_API_DEFAULTS = {
+    'host': '127.0.0.1',
+    'port': 20001,
+}
+COMMANDER_API_USER = getattr(settings, 'COMMANDER_API', {})
+COMMANDER_API = COMMANDER_API_DEFAULTS.copy()
+COMMANDER_API.update(COMMANDER_API_USER)
+
+# Path to a file, where commander's PID will be stored. Use this file to
+# stop commander by executing 'kill `cat /path/to/pid`'. If this value is set
+# to 'None', then commander will run as non-daemon (it's OK for Windows).
+COMMANDER_PID_FILE = getattr(settings, 'COMMANDER_PID_FILE', None)
+
+# Logger settings
+COMMANDER_LOG_DEFAULTS = {
+    # Full path to a file, where commander's logs will be stored. If this value
+    # is set to 'None', then commander will output logs to STDOUT.
+    'filename': None,
+    # Logging level
+    'level': 'INFO',
+    # Format string that will be passed to strftime(). Default twisted
+    # formatting will be used if 'None'
+    'timeFormat': None,
+    # Max size (in bytes) of a single log file
+    'maxBytes': 1024 * 1024 * 10, # 10 MiB
+    # Max number of log files
+    'backupCount': 10,
+}
+COMMANDER_LOG_USER = getattr(settings, 'COMMANDER_LOG', {})
+COMMANDER_LOG = COMMANDER_LOG_DEFAULTS.copy()
+COMMANDER_LOG.update(COMMANDER_LOG_USER)

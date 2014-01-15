@@ -1,68 +1,12 @@
 # -*- coding: utf-8 -*-
-"""
-Commander network protocols and protocol factories.
-"""
 import logging
-import simplejson as json
 import socket
 
-from django.conf import settings
-from twisted.protocols.basic import LineOnlyReceiver
-
-from commander.constants import API_OPCODE
+from commander import settings
+from commander.protocol.async import APIServerProtocol
 
 
 LOG = logging.getLogger(__name__)
-
-
-class APIServerProtocol(LineOnlyReceiver):
-    """
-    This is an implementation of commander-side version of protocol for
-    communicating with commander from the outside world.
-    """
-    def __init__(self):
-        self.handlers = {
-            API_OPCODE.QUIT: self.on_quit,
-        }
-
-    def lineReceived(self, line):
-        peer = self.transport.getPeer()
-
-        try:
-            code_value, payload = tuple(json.loads(line))
-        except json.JSONDecodeError as e:
-            LOG.error(
-                "Failed to decode JSON request from {host}:{port} in request "
-                "'{request}': {err}".format(host=peer.host, port=peer.port,
-                                            request=line, err=unicode(e)))
-            self.transport.loseConnection()
-            return
-        except ValueError as e:
-            LOG.error("Invalid request from {host}:{port} in request "
-                      "'{request}': {err}" .format(
-                      host=peer.host, port=peer.port, request=line,
-                      err=unicode(e)))
-            self.transport.loseConnection()
-            return
-
-        try:
-            opcode = API_OPCODE.lookupByValue(code_value)
-        except ValueError as e:
-            LOG.error("Failed to parse opcode '{code}' from {host}:{port} in "
-                      "request '{request}': {err}".format(code=code_value,
-                      host=peer.host, port=peer.port, request=line,
-                      err=unicode(e)))
-            self.transport.loseConnection()
-            return
-
-        handler = self.handlers.get(opcode)
-        if handler is None:
-            LOG.error("No handler for opcode {opcode}!".format(opcode=opcode))
-        else:
-            handler(payload)
-
-    def on_quit(self, _):
-        self.factory.commander.stop()
 
 
 class api_socket(socket.socket):
@@ -126,8 +70,8 @@ class api_socket(socket.socket):
 
 def api_create_client_socket():
     """
-    Create a socket for interaction with commander via commander's API and
-    make a connection.
+    Create a blocking socket for interaction with commander via commander's API
+    and make a connection.
     """
     try:
         s = api_socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -136,7 +80,8 @@ def api_create_client_socket():
                   err=unicode(e)))
         raise e
     try:
-        s.connect((settings.COMMANDER_API_HOST, settings.COMMANDER_API_PORT))
+        s.connect((settings.COMMANDER_API['host'],
+                   settings.COMMANDER_API['port']))
     except socket.error as e:
         LOG.error("Failed to connect to server API socket: {err}".format(
                   err=unicode(e)))
@@ -147,7 +92,8 @@ def api_create_client_socket():
 
 def api_send_noreply_message(message, socket=None):
     """
-    Send a noreply message to commander. Message is a string with JSON inside.
+    Send a noreply message to commander in blocking mode. Message is a string
+    with JSON inside.
     """
     if socket:
         if not isinstance(socket, api_socket):

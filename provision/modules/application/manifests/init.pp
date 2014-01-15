@@ -78,7 +78,8 @@ class application (
         owner  => $user,
         group  => $group,
     } ->
-    file { "${virtualenv}/var/log/${project_name}.log":
+    file { ["${virtualenv}/var/log/${project_name}-web.log",
+            "${virtualenv}/var/log/${project_name}-daemon.log"]:
         ensure => file,
         mode   => 660,
         owner  => $user,

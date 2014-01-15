@@ -16,9 +16,8 @@ env.requirements_file = 'requirements.pip'
 env.restart_command = 'supervisorctl restart {project_name}'.format(**env)
 env.restart_sudo = True
 env.logs = {
-    "uwsgi": "/var/log/supervisor/uwsgi/uwsgi.err",
-    "nginx": "/var/log/nginx/error.log",
-    "app": "",
+    'uwsgi': "/var/log/supervisor/uwsgi/uwsgi.err",
+    'nginx': "/var/log/nginx/error.log",
 }
 
 
@@ -60,6 +59,12 @@ def vagrant():
     env.project_dir = '{virtualenv_dir}/src/{project_name}'.format(**env)
     env.project_conf = '{project_name}.settings.local'.format(**env)
     env.key_filename = '~/.vagrant.d/insecure_private_key'
+
+    log_base = '{virtualenv_dir}/var/log/{project_name}'.format(**env)
+    env.logs.update({
+        'web': '{0}-web.log'.format(log_base),
+        'daemon': '{0}-daemon.log'.format(log_base),
+    })
 
 
 # Set the default environment.
@@ -267,7 +272,7 @@ def requirements():
 
 @task
 @roles('web', 'db', 'commander')
-def log(service=None):
+def log(service='web'):
     """
     Output log to condole.
 
@@ -280,17 +285,23 @@ def log(service=None):
     if service in env.logs.keys():
         sudo("tail -f {0}".format(env.logs[service]))
     else:
-        sudo("tail -f {virtualenv_dir}/var/log/{project_name}.log"\
-             .format(**env))
+        print("Unknown service '{0}'!".format(service))
 
 
-# @task
-# @roles('commander')
-# def commander(action='start'):
-#     """
-#     Start, stop server commander; get events, console or chat log.
-#     """
-#     execute(dj, "commander_{0}".format(action))
+@task
+@roles('commander')
+def commander(action):
+    """
+    Run or stop the IL-2 DS commander.
+
+    Arguments:
+
+    `action` - 'run' or 'stop'.
+
+    Example:
+      fab commander:run
+    """
+    dj("{0}_commander".format(action))
 
 
 #------------------------------------------------------------------------------
