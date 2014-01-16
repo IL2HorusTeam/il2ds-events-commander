@@ -6,6 +6,8 @@ import os
 
 from django.conf import settings
 
+from il2ds_middleware.constants import REQUEST_TIMEOUT
+
 #------------------------------------------------------------------------------
 # Information about IL-2 Dedicated Server
 #------------------------------------------------------------------------------
@@ -73,3 +75,13 @@ COMMANDER_LOG_DEFAULTS = {
 COMMANDER_LOG_USER = getattr(settings, 'COMMANDER_LOG', {})
 COMMANDER_LOG = COMMANDER_LOG_DEFAULTS.copy()
 COMMANDER_LOG.update(COMMANDER_LOG_USER)
+
+# Timeouts (float values of seconds) for game server's console requests
+# and DeviceLink requests
+COMMANDER_TIMEOUT_DEFAULTS = {
+    'console': REQUEST_TIMEOUT,
+    'device_link': REQUEST_TIMEOUT,
+}
+COMMANDER_TIMEOUT_USER = getattr(settings, 'COMMANDER_TIMEOUT', {})
+COMMANDER_TIMEOUT = COMMANDER_TIMEOUT_DEFAULTS.copy()
+COMMANDER_TIMEOUT.update(COMMANDER_TIMEOUT_USER)

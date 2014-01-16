@@ -24,9 +24,16 @@ class Command(BaseCommand):
             # Mostly for Windows only
             api_send_noreply_message(API_OPCODE.QUIT.to_request())
         else:
+            if not os.path.exists(settings.COMMANDER_PID_FILE):
+                print("PID file {path} does not exist. Is daemon running?"
+                      .format(path=settings.COMMANDER_PID_FILE))
+                return
             with open(settings.COMMANDER_PID_FILE, 'r') as pid_file:
                 pid = pid_file.read().strip()
-            os.kill(int(pid), signal.SIGTERM)
+            try:
+                os.kill(int(pid), signal.SIGTERM)
+            except OSError as e:
+                print("Failed to terminate daemon: {e}".format(e=unicode(e)))
 
 
 
