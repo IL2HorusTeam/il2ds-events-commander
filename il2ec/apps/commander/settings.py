@@ -13,18 +13,21 @@ from django.conf import settings
 # Version to display for users.
 IL2_VERSION = getattr(settings, 'IL2_VERSION', '4.12.2')
 
-# Host name for commander to connect to.
-IL2_LOCAL_HOST = getattr(settings, 'IL2_LOCAL_HOST', 'localhost')
-
 # Host name for game clients (users) to connect to. Usually it's an external
 # name or IP.
 IL2_USER_HOST = getattr(settings, 'IL2_USER_HOST', settings.HOSTNAME)
 
-# Server's console port for commander to connect to.
-IL2_CONSOLE_PORT = getattr(settings, 'IL2_CONSOLE_PORT', 20000)
-
-# Server's DeviceLink port for commander to connect to.
-IL2_DEVICE_LINK_PORT = getattr(settings, 'IL2_DEVICE_LINK_PORT', 10000)
+IL2_CONNECTION_DEFAULTS = {
+    # Host name of interface for commander to connect to.
+    'host': 'localhost',
+    # Server's console port for commander to connect to.
+    'cl_port': 20000,
+    # Server's DeviceLink port for commander to interact with.
+    'dl_port': 10000,
+}
+IL2_CONNECTION_USER = getattr(settings, 'IL2_CONNECTION', {})
+IL2_CONNECTION = IL2_CONNECTION_DEFAULTS.copy()
+IL2_CONNECTION.update(IL2_CONNECTION_USER)
 
 # Path to server's config file for commander to read to.
 IL2_CONFIG_PATH = getattr(settings, 'IL2_CONFIG_PATH',

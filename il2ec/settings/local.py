@@ -75,10 +75,13 @@ if DEBUG:
 
 # Commander settitngs ---------------------------------------------------------
 IL2_VERSION = '4.12.2'
-IL2_LOCAL_HOST = 'il2ds-host'
 IL2_USER_HOST = HOSTNAME
-IL2_CONSOLE_PORT = 20000
-IL2_DEVICE_LINK_PORT = 10000
+
+IL2_CONNECTION = {
+    'host': 'il2ds-host',
+    'cl_port': 20000,
+    'dl_port': 10000,
+}
 
 IL2_SERVER_PATH = os.path.join(
     os.path.dirname(PROJECT_DIR), 'provision', 'files', 'il2ds')
