@@ -27,8 +27,3 @@ class API_OPCODE(Values):
     """
     QUIT = APICommandValueConstant(1)
 
-
-KEY_SERVER_RUNNING = 'ds_running'
-KEY_SERVER_DIFFICULTY = 'ds_difficulty'
-KEY_SERVER_USER_PORT = 'ds_user_port'
-KEY_SERVER_NAME = 'ds_name'

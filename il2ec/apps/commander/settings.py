@@ -12,30 +12,29 @@ from il2ds_middleware.constants import REQUEST_TIMEOUT
 # Information about IL-2 Dedicated Server
 #------------------------------------------------------------------------------
 
-# Version to display for users.
+# Version to display for users
 IL2_VERSION = getattr(settings, 'IL2_VERSION', '4.12.2')
 
-# Host name for game clients (users) to connect to. Usually it's an external
-# name or IP.
-IL2_USER_HOST = getattr(settings, 'IL2_USER_HOST', settings.HOSTNAME)
+# External address for game clients (users) to connect to
+IL2_EXTERNAL_ADDRESS = getattr(settings, 'IL2_EXTERNAL_ADDRESS', None)
 
 IL2_CONNECTION_DEFAULTS = {
-    # Host name of interface for commander to connect to.
+    # Host name of interface for commander to connect to
     'host': 'localhost',
-    # Server's console port for commander to connect to.
+    # Server's console port for commander to connect to
     'cl_port': 20000,
-    # Server's DeviceLink port for commander to interact with.
+    # Server's DeviceLink port for commander to interact with
     'dl_port': 10000,
 }
 IL2_CONNECTION_USER = getattr(settings, 'IL2_CONNECTION', {})
 IL2_CONNECTION = IL2_CONNECTION_DEFAULTS.copy()
 IL2_CONNECTION.update(IL2_CONNECTION_USER)
 
-# Path to server's config file for commander to read to.
+# Path to server's config file for commander to read to
 IL2_CONFIG_PATH = getattr(settings, 'IL2_CONFIG_PATH',
     os.path.join('il2ds', 'confs.ini'))
 
-# Path to server's events log file for commander to read to.
+# Path to server's events log file for commander to read to
 IL2_EVENTS_LOG_PATH = getattr(settings, 'IL2_EVENTS_LOG_PATH',
     os.path.join('il2ds', 'log', 'events.log'))
 
@@ -54,13 +53,13 @@ COMMANDER_API.update(COMMANDER_API_USER)
 
 # Path to a file, where commander's PID will be stored. Use this file to
 # stop commander by executing 'kill `cat /path/to/pid`'. If this value is set
-# to 'None', then commander will run as non-daemon (it's OK for Windows).
+# to 'None', then commander will run as non-daemon (it's OK for Windows)
 COMMANDER_PID_FILE = getattr(settings, 'COMMANDER_PID_FILE', None)
 
 # Logger settings
 COMMANDER_LOG_DEFAULTS = {
     # Full path to a file, where commander's logs will be stored. If this value
-    # is set to 'None', then commander will output logs to STDOUT.
+    # is set to 'None', then commander will output logs to STDOUT
     'filename': None,
     # Logging level
     'level': 'INFO',

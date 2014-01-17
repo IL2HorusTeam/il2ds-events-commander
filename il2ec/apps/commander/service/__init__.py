@@ -2,7 +2,7 @@
 """
 Commander main services.
 """
-import logging
+import ConfigParser
 
 from il2ds_middleware.parser import (ConsoleParser, DeviceLinkParser,
     EventLogParser, )
@@ -15,6 +15,9 @@ from twisted.internet.protocol import Factory
 
 from commander import log
 from commander import settings
+from commander.sharing import (get_storage, KEY_SERVER_RUNNING,
+    KEY_SERVER_NAME, KEY_SERVER_LOCAL_ADDRESS, KEY_SERVER_USER_PORT,
+    KEY_SERVER_CHANNELS, KEY_SERVER_DIFFICULTY, )
 from commander.protocol.async import APIServerProtocol, ConsoleClientFactory
 
 
@@ -48,8 +51,14 @@ class CommanderService(MultiService, CommanderServiceMixin):
     dl_parser = None
     log_parser = None
 
+    confs = None
+
     def __init__(self):
         MultiService.__init__(self)
+
+        # Init shared storage which is used to share information about server
+        # to the ouside world
+        self.shared_storage = get_storage()
 
         # Init pilots service
         from commander.service.pilots import PilotService
@@ -76,12 +85,34 @@ class CommanderService(MultiService, CommanderServiceMixin):
 
     def startService(self):
         MultiService.startService(self)
-        # update redis
-        # read settings
+        self._load_server_config()
+        self._share_data()
+
+    def _load_server_config(self):
+        config = ConfigParser.ConfigParser()
+        config.read(settings.IL2_CONFIG_PATH)
+
+        self.confs = {
+            'name'      : config.get('NET', 'serverName'),
+            'user_port' : config.get('NET', 'localPort'),
+            'channels'  : config.get('NET', 'serverChannels'),
+            'difficulty': config.get('NET', 'difficulty'),
+        }
+
+    def _share_data(self):
+        self.shared_storage.set(KEY_SERVER_RUNNING, True)
+        self.shared_storage.set(KEY_SERVER_NAME, self.confs['name'])
+        self.shared_storage.set(KEY_SERVER_LOCAL_ADDRESS,
+                                self.cl_client.transport.getHost().host)
+        self.shared_storage.set(KEY_SERVER_USER_PORT, self.confs['user_port'])
+        self.shared_storage.set(KEY_SERVER_CHANNELS, self.confs['channels'])
+        self.shared_storage.set(KEY_SERVER_DIFFICULTY,
+                                self.confs['difficulty'])
 
     def stopService(self):
         d = MultiService.stopService(self)
-        # clean-up redis
+        if not self.shared_storage.flushdb():
+            LOG.error("Failed to flush commander's shared storage")
         return d
 
 

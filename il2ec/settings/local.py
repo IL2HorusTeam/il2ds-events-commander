@@ -75,7 +75,7 @@ if DEBUG:
 
 # Commander settitngs ---------------------------------------------------------
 IL2_VERSION = '4.12.2'
-IL2_USER_HOST = HOSTNAME
+IL2_EXTERNAL_ADDRESS = None
 
 IL2_CONNECTION = {
     'host': 'il2ds-host',
