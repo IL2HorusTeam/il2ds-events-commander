@@ -55,7 +55,7 @@ class APIServerProtocol(LineOnlyReceiver):
             handler(payload)
 
     def on_quit(self, _):
-        self.factory.commander.stop()
+        self.factory.root_service.stop()
 
 
 class ConsoleClientFactory(ReconnectingClientFactory):

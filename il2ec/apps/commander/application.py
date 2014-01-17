@@ -13,7 +13,7 @@ from twisted.python.log import ILogObserver
 from twisted.python.logfile import LogFile
 
 from commander.log import LevelFileLogObserver
-from commander.service import Commander
+from commander.service import RootService
 from commander.settings import COMMANDER_LOG as LOG_SETTINGS
 
 
@@ -36,5 +36,5 @@ application.setComponent(ILogObserver, observer.emit)
 
 
 # Init commander service ------------------------------------------------------
-commander = Commander()
-commander.setServiceParent(application)
+root_service = RootService()
+root_service.setServiceParent(application)
