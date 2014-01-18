@@ -3,7 +3,7 @@ import simplejson as json
 
 from il2ds_middleware.constants import REQUEST_TIMEOUT
 from il2ds_middleware.parser import ConsolePassthroughParser
-from il2ds_middleware.protocol import ConsoleClient
+from il2ds_middleware.protocol import ConsoleClient as DefaultConsoleClient
 
 from twisted.internet import defer
 from twisted.internet.error import ConnectionDone
@@ -12,6 +12,8 @@ from twisted.protocols.basic import LineOnlyReceiver
 
 from commander import log
 from commander.constants import API_OPCODE
+from commander.protocol.requests import (REQ_KICK_CALLSIGN, REQ_KICK_NUMBER,
+    REQ_USERS_ALL, )
 
 
 LOG = log.get_logger(__name__)
@@ -56,6 +58,69 @@ class APIServerProtocol(LineOnlyReceiver):
 
     def on_quit(self, _):
         self.factory.root_service.stop()
+
+
+class ConsoleClient(DefaultConsoleClient):
+
+    # FUTURE: merge into 'il2-ds-middleware' library.
+
+    def kick_callsign(self, callsign):
+        """
+        Kick user by callsign.
+
+        Input:
+        `callsign` # callsign of the user to be kicked
+        """
+        self.sendLine(REQ_KICK_CALLSIGN.format(callsign))
+
+    def kick_number(self, number):
+        """
+        Kick user by number, assigned by server (execute 'user' on server or
+        press 'S' in game to see user numbers).
+
+        Input:
+        `number`  # number of the user to be kicked
+        """
+        self.sendLine(REQ_KICK_NUMBER.format(number))
+
+    def kick_all(self, max_count):
+        """
+        Kick everyone from server.
+
+        Input:
+        `max_count`  # maximal possible number of users on server. See
+                     # 'NET/serverChannels' in 'confs.ini' for this value
+        """
+        for i in range(max_count):
+            # Kick 1st user in cycle. It's important to kick all of the users.
+            # Do not rely on 'user_count' method in this situation: number
+            # of users may change between getting current user list and kicking
+            # the last user. It's OK if number of users will decrease, but if
+            # it will increase, then someone may not be kicked. There is still
+            # a little chance that someone will connect to server during
+            # kicking process, but nothing can be done with this due to current
+            # server functionality.
+            self.kick_number(1)
+
+    @defer.inlineCallbacks
+    def user_count(self):
+        """
+        Get count users of connected users.
+        Returns deferred.
+        """
+        strings = yield self._request_user_table()
+        defer.returnValue(len(strings) - 1) # '1' is for user table's header
+
+    def _request_user_table(self):
+        """
+        Request output from 'user' command.
+        Returns deferred, which is invoked with server output strings
+        containing users table. E.g.:
+
+        " N       Name           Ping    Score   Army        Aircraft"
+        " 1      oblalex          3       0      (0)None             "
+        """
+        return self._send_request(REQ_USERS_ALL)
 
 
 class ConsoleClientFactory(ReconnectingClientFactory):

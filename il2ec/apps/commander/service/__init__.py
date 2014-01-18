@@ -4,6 +4,8 @@ Commander main services.
 """
 import ConfigParser
 
+from django.utils.translation import ugettext_lazy as _
+
 from il2ds_middleware.parser import (ConsoleParser, DeviceLinkParser,
     EventLogParser, )
 from il2ds_middleware.protocol import DeviceLinkClient
@@ -11,6 +13,7 @@ from il2ds_middleware.service import LogWatchingService
 
 from twisted.application.service import MultiService, Service
 from twisted.internet import defer
+from twisted.internet import task
 from twisted.internet.protocol import Factory
 
 from commander import log
@@ -84,19 +87,22 @@ class CommanderService(MultiService, CommanderServiceMixin):
         self.dl_parser = DeviceLinkParser()
 
     def startService(self):
-        MultiService.startService(self)
+        def on_everyone_kicked(unused):
+            MultiService.startService(self)
+
         self._load_server_config()
         self._share_data()
+        self._greet_n_kick_all().addCallback(on_everyone_kicked)
 
     def _load_server_config(self):
         config = ConfigParser.ConfigParser()
         config.read(settings.IL2_CONFIG_PATH)
 
         self.confs = {
-            'name'      : config.get('NET', 'serverName'),
-            'user_port' : config.get('NET', 'localPort'),
-            'channels'  : config.get('NET', 'serverChannels'),
-            'difficulty': config.get('NET', 'difficulty'),
+            'name'      : config.get(   'NET', 'serverName'),
+            'user_port' : config.getint('NET', 'localPort'),
+            'channels'  : config.getint('NET', 'serverChannels'),
+            'difficulty': config.getint('NET', 'difficulty'),
         }
 
     def _share_data(self):
@@ -109,11 +115,52 @@ class CommanderService(MultiService, CommanderServiceMixin):
         self.shared_storage.set(KEY_SERVER_DIFFICULTY,
                                 self.confs['difficulty'])
 
-    def stopService(self):
-        d = MultiService.stopService(self)
+    @defer.inlineCallbacks
+    def _greet_n_kick_all(self):
+        """
+        Kick every connected user, so information about them will be obtained
+        after they reconnect. If there are some connected users, notify them
+        about kick during 5 seconds.
+        """
+        count = yield self.cl_client.user_count()
+        if not count:
+            LOG.debug("No users to kick")
+            defer.returnValue(None)
+
+        def notify_users(seconds_left):
+            msg1 = _("Everyone will be kicked in {sec}...").format(
+                     sec=seconds_left) if seconds_left else \
+                   _("Everyone will be kicked NOW!")
+            msg2 = _("Please, reconnect after kick.")
+            self.cl_client.chat_all("{0} {1}".format(unicode(msg1),
+                                                     unicode(msg2)))
+
+        self.cl_client.chat_all(
+            _("Hello everyone! This server is captured by {commander}.")
+            .format(commander=unicode(settings.COMMANDER_NAME)))
+
+        LOG.debug("Greeting users with notification about kick")
+        from twisted.internet import reactor
+        for i in range(5, -1, -1):
+            yield task.deferLater(reactor, 1, notify_users, i)
+
+        LOG.debug("Kicking all users")
+        self.cl_client.kick_all(self.confs['channels'])
+
+    @defer.inlineCallbacks
+    def stopService(self, clean_stop=False):
+        # If commander was stopped manually instead of connection was lost
+        if clean_stop:
+            count = yield self.cl_client.user_count()
+            if count:
+                LOG.debug("Notifying users about quitting")
+                self.cl_client.chat_all(
+                    _("{commander} is quitting. Goodbye everyone!").format(
+                      commander=unicode(settings.COMMANDER_NAME)))
+
+        yield MultiService.stopService(self)
         if not self.shared_storage.flushdb():
             LOG.error("Failed to flush commander's shared storage")
-        return d
 
 
 class APIService(Service):
@@ -196,29 +243,27 @@ class RootService(Service):
             settings.IL2_CONNECTION['host'],
             settings.IL2_CONNECTION['cl_port'], self.client_factory)
 
+    @defer.inlineCallbacks
     def stopService(self):
         """
         Stop everything. This method is called automatically when the reactor
         is stopped.
         """
-        dlist = []
+        # Stop commander service if running
+        if self.commander.running:
+            yield self.commander.stopService(clean_stop=True)
+
         # Stop API listener
-        dlist.append(self.api_service.stopService())
+        yield self.api_service.stopService()
 
         # Stop DeviceLink UDP listener
-        dlist.append(defer.maybeDeferred(self.dl_connector.stopListening))
+        yield defer.maybeDeferred(self.dl_connector.stopListening)
 
         # Disconnect from game server's console, if connecting was started
         # or if connection was already established
         if self.cl_connector:
             self.client_factory.stopTrying()
             self.cl_connector.disconnect()
-
-        if self.commander.running:
-            dlist.append(self.commander.stopService())
-
-        # Return deferred to make reactor wait until everything is finished
-        return defer.DeferredList(dlist)
 
     def stop(self):
         """
