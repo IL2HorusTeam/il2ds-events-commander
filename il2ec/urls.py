@@ -13,7 +13,8 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += i18n_patterns('',
-    # url(r'', include('il2ec.apps.')),
+    url(r'', include('website.urls')),
+
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),

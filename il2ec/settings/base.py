@@ -124,6 +124,8 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django.core.context_processors.request',
     'django.core.context_processors.i18n',
     'django.contrib.messages.context_processors.messages',
+
+    'website.context_processors.settings',
 )
 
 TEMPLATE_LOADERS = (
@@ -142,7 +144,8 @@ STATICFILES_FINDERS += (
 #------------------------------------------------------------------------------
 
 MIDDLEWARE_CLASSES += (
-    'django.middleware.cache.UpdateCacheMiddleware', # This middleware must be first on the list
+    # Disable caching for development
+    # 'django.middleware.cache.UpdateCacheMiddleware', # This middleware must be first on the list
 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
