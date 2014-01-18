@@ -50,7 +50,10 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ID = 1
+
+PROJECT_NAME = _("Awesome IL-2 Project")
 HOSTNAME = 'il2ec.dev'
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 TIME_ZONE = 'Europe/Kiev'
@@ -126,6 +129,7 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django.contrib.messages.context_processors.messages',
 
     'website.context_processors.settings',
+    'website.context_processors.project_name',
 )
 
 TEMPLATE_LOADERS = (

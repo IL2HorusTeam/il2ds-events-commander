@@ -13,3 +13,7 @@ def settings(request):
     Inject application settings to template context.
     """
     return {'settings': app_settings}
+
+
+def project_name(request):
+    return {'PROJECT_NAME': unicode(app_settings.PROJECT_NAME)}
