@@ -41,7 +41,7 @@ body {
   background-position: 5px 9px;
   height: 50px;
   width: 50px;
-  padding: 0px;
+  padding: 0;
 }
 
 .navbar-brand:hover {
@@ -53,6 +53,21 @@ body {
   margin-right: 0px;
 }
 
+#nav-wrapper {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  border-style: none;
+}
+
+#nav-wrapper td {
+  padding: 0;
+}
+
+.nav-side {
+  width: 200px;
+}
+
 /* Navbar project name ----------------------------------------------------- */
 
 #project-name {
@@ -61,12 +76,10 @@ body {
   font-size: 20px;
   text-align: center;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  float: left;
-  position: fixed;
-  left: 50%;
-  padding-top: 12px;
-  margin-left: -110px;
   outline: none;
+
+  display: table;
+  margin: 0 auto;
 }
 
 #project-name a {

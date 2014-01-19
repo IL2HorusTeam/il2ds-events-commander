@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <link rel="shortcut icon" href="{{ STATIC_URL }}favicon.ico" type="image/x-icon" />
 
-   {% compress css %}
+  {% compress css %}
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap.min.css">
   <!-- Optional theme -->
@@ -23,14 +23,24 @@
 <!-- Fixed navbar -->
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div id="nav-container" class="container">
-    <div class='navbar-brand'></div>
-    <div id='project-name'>
-      <a href="/">{{ PROJECT_NAME }}</a>
-    </div>
-    <ul id='navbar-side' class="nav navbar-nav navbar-right">
-      <li><a href="#">Static top</a></li>
-      <li class='active'><a href="./">Fixed top</a></li>
-    </ul>
+    <table id='nav-wrapper'>
+      <tr>
+        <td class='nav-side'>
+          <div class='navbar-brand'></div>
+        </td>
+        <td>
+          <div id='project-name'>
+            <a href="/">{{ PROJECT_NAME }}</a>
+          </div>
+        </td>
+        <td class='nav-side'>
+          <ul id='navbar-side' class="nav navbar-nav navbar-right">
+            <li><a href="#">Static top</a></li>
+            <li class='active'><a href="./">Fixed top</a></li>
+          </ul>
+        </td>
+      </tr>
+    </table>
   </div>
 </div>
 
