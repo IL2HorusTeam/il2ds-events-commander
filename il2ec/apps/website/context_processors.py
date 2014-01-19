@@ -15,5 +15,9 @@ def settings(request):
     return {'settings': app_settings}
 
 
-def project_name(request):
-    return {'PROJECT_NAME': unicode(app_settings.PROJECT_NAME)}
+def language(request):
+    """
+    Inject current language name.
+    """
+    return {'LANGUAGE': dict(app_settings.LANGUAGES).get(
+                        request.LANGUAGE_CODE, request.LANGUAGE_CODE)}

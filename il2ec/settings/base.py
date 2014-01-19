@@ -60,13 +60,15 @@ TIME_ZONE = 'Europe/Kiev'
 USE_TZ = True
 USE_I18N = True
 USE_L10N = True
-LANGUAGES = (
-    ('en', _(u'English')),
-    ('ru', _(u'Russian')),
+
+LANGUAGES_INFO = (
+# -- code ----- name ---- native name
+    ('en', _(u'English'), u'English'),
+    ('ru', _(u'Russian'), u'Русский'),
 )
-# Main language code
-LANGUAGE_CODE = 'en'
-LANGUAGE_CODES = [code for (code, lang) in LANGUAGES]
+LANGUAGES = tuple([(code, name) for (code, name, native) in LANGUAGES_INFO])
+LANGUAGE_CODE = 'en' # Main language code
+LANGUAGE_CODES = tuple([code for (code, name) in LANGUAGES])
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -130,8 +132,8 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django.core.context_processors.i18n',
     'django.contrib.messages.context_processors.messages',
 
+    'website.context_processors.language',
     'website.context_processors.settings',
-    'website.context_processors.project_name',
 )
 
 TEMPLATE_LOADERS = (
@@ -306,6 +308,7 @@ JINJA2_DISABLED_TEMPLATES = (
 JINJA2_TEMPLATE_LOADERS = TEMPLATE_LOADERS
 
 # Django compressor -----------------------------------------------------------
+COMPRESS_ENABLED = True
 COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'sass --scss {infile} {outfile}'),
 )
@@ -314,9 +317,6 @@ COMPRESS_CSS_FILTERS = ()
 # Grappelli ------------------------------------------------------------------
 GRAPPELLI_ADMIN_TITLE = _(u"IL-2 Events Commander")
 GRAPPELLI_INDEX_DASHBOARD = 'website.dashboard.CustomIndexDashboard'
-
-# Django compressor  ----------------------------------------------------------
-COMPRESS_ENABLED = True
 
 #------------------------------------------------------------------------------
 # Miscellaneous project settings

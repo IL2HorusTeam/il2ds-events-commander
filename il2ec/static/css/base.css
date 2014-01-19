@@ -54,12 +54,17 @@ body {
 }
 
 .nav-side {
-  width: 200px;
+  width: 260px;
 }
 
-.nav-side ul .navbar:before,
-.nav-side ul .navbar:before {
-  display: none;
+.navbar-nav > .dropdown > a:active,
+.navbar-nav > .dropdown > a:hover,
+.navbar-nav > .dropdown.open > a {
+  background-image: -webkit-linear-gradient(top,#222 0,#282828 100%);
+  background-image: linear-gradient(to bottom,#222 0,#282828 100%);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff222222',endColorstr='#ff282828',GradientType=0);
+  -webkit-box-shadow: inset 0 3px 9px rgba(0,0,0,0.25);
 }
 
 /* Navbar project name ----------------------------------------------------- */
@@ -71,7 +76,7 @@ body {
   text-align: center;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   outline: none;
-
+  line-height: 50px;
   display: table;
   margin: 0 auto;
 }
@@ -91,15 +96,6 @@ body {
 }
 .dropdown-large > a {
   padding: 9px 15px !important;
-}
-.dropdown-large > a:active,
-.dropdown-large > a:hover,
-.dropdown-large.open > a {
-  background-image: -webkit-linear-gradient(top,#222 0,#282828 100%);
-  background-image: linear-gradient(to bottom,#222 0,#282828 100%);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff222222',endColorstr='#ff282828',GradientType=0);
-  -webkit-box-shadow: inset 0 3px 9px rgba(0,0,0,0.25);
 }
 .dropdown-menu-large {
   margin-left: 16px;

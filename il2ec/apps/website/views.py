@@ -25,7 +25,15 @@ class BaseView(TemplateView):
         return super(BaseView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        self.update_context(request, *args, **kwargs)
         return render(request, self.template_name, self.extra_context)
+
+    def update_context(self, request, *args, **kwargs):
+        # Get path to current page without leading language code
+        full_path = request.get_full_path()
+        self.extra_context.update({
+            'current_path': full_path[full_path.index('/', 1):],
+        })
 
 
 class IndexView(BaseView):
