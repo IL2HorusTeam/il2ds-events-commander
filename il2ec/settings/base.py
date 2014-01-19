@@ -82,13 +82,15 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
 
-    'redis_sessions',
-    'compressor',
+    # 3rd-party applications
     'django_extensions',
-    'django_jinja',
+    'coffin',
+    'compressor',
+    'redis_sessions',
     'south',
     'transmeta',
 
+    # Project applications
     'commander',
     'misc',
     'website',
@@ -134,8 +136,8 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 
 TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader', (
-        'django_jinja.loaders.FileSystemLoader',
-        'django_jinja.loaders.AppLoader',
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
     )),
 )
 
@@ -284,6 +286,24 @@ LOGGING = {
 #------------------------------------------------------------------------------
 # Third party app settings
 #------------------------------------------------------------------------------
+
+# Jinja2 ----------------------------------------------------------------------
+JINJA2_EXTENSIONS = (
+    'jinja2.ext.i18n',
+    'compressor.contrib.jinja2ext.CompressorExtension',
+)
+
+JINJA2_TEMPLATE_DIRS = TEMPLATE_DIRS
+
+JINJA2_DISABLED_APPS = (
+    'admin',
+)
+
+JINJA2_DISABLED_TEMPLATES = (
+    r'admin/',
+)
+
+JINJA2_TEMPLATE_LOADERS = TEMPLATE_LOADERS
 
 # Django compressor -----------------------------------------------------------
 COMPRESS_PRECOMPILERS = (

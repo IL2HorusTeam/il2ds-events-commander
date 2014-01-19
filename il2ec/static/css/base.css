@@ -1,0 +1,79 @@
+/*
+ * Styles for base template
+ */
+
+/* Common layout ----------------------------------------------------------- */
+html,
+body {
+  height: 100%;
+}
+body {
+  /* For fixed navbar */
+  padding-top: 70px;
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto;
+  /* Negative indent footer by its height */
+  margin: 0 auto -60px;
+  /* Pad bottom by footer height */
+  padding: 0 0 60px;
+}
+
+/* Set the fixed height of the footer here */
+#footer {
+  height: 60px;
+  background-color: #f5f5f5;
+}
+
+.container .text-muted {
+  margin: 20px 0;
+}
+
+/* Navbar ------------------------------------------------------------------ */
+
+.navbar-brand {
+  margin-left: 0px !important;
+  background-image: url(/static/images/logo-grey.png);
+  background-repeat: no-repeat;
+  background-position: 5px 9px;
+  height: 50px;
+  width: 50px;
+  padding: 0px;
+}
+
+.navbar-brand:hover {
+  background-image: url(/static/images/logo-white.png);
+  cursor: pointer;
+}
+
+#navbar-side {
+  margin-right: 0px;
+}
+
+/* Navbar project name ----------------------------------------------------- */
+
+#project-name {
+  color: #F0F0F0 !important;
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  float: left;
+  position: fixed;
+  left: 50%;
+  padding-top: 12px;
+  margin-left: -110px;
+  outline: none;
+}
+
+#project-name a {
+  color: inherit;
+}
+
+#project-name a:hover, #project-name a:active, #project-name a:focus {
+  text-decoration: none;
+  outline: none;
+}

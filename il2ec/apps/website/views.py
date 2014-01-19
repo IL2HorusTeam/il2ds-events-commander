@@ -4,7 +4,7 @@ Main project views.
 """
 import logging
 
-from django.shortcuts import render
+from coffin.shortcuts import render
 from django.views.generic import TemplateView
 
 
