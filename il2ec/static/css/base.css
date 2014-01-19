@@ -67,6 +67,29 @@ body {
   -webkit-box-shadow: inset 0 3px 9px rgba(0,0,0,0.25);
 }
 
+#signin-menu{
+  padding: 0 15px 15px 15px;
+  min-width: 300px;
+}
+#remember_pswd {
+  margin-right: 10px;
+}
+.or-box {
+  position: relative;
+  border-top: 1px solid #dfdfdf;
+  padding-top: 20px;
+  margin-top:20px;
+}
+.or {
+  color: #666666;
+  background-color: #ffffff;
+  position: absolute;
+  text-align: center;
+  top: -10px;
+  width: 40px;
+  left: 115px;
+}
+
 /* Navbar project name ----------------------------------------------------- */
 
 #project-name {
