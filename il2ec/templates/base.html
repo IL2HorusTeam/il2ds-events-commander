@@ -115,7 +115,7 @@
             </li>
             <!-- Language selector END -->
             <!-- Sign in START -->
-            <li class="dropdown">
+            <li id="dropdown-signin" class="dropdown">
                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans %}Sign in{% endtrans %} <b class="caret"></b></a>
                <ul id="signin-menu" class="dropdown-menu">
                   <li>
@@ -123,21 +123,22 @@
                       <div class="col-md-12">
                         <div class="tab-content">
                           <!-- Sign in tab START -->
-                          <div class="tab-pane active" id="login">
+                          <div class="tab-pane active" id="tab-signin">
                             <h3 class="form-signin-heading">{% trans %}Sign in{% endtrans %}</h3>
-                            <form class="form" role="form" method="post" action="#" accept-charset="UTF-8" id="login-nav">
+                            <form class="form" role="form" method="post" id="form-signin">
+                              {% csrf_token %}
                               <div class="form-group">
                                 <div class="input-group">
-                                  <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
-                                  <input type="email" class="form-control" id="login_email" placeholder="{% trans %}Email address{% endtrans %}" required>
+                                  <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                                  <input type="text" class="form-control" id="signin-login-email" placeholder="{% trans %}Login or email{% endtrans %}" required>
                                 </div>
                               </div>
                               <div class="form-group">
                                 <div class="input-group">
                                   <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-                                  <input type="password" class="form-control" id="login_password" placeholder="{% trans %}Password{% endtrans %}" required>
+                                  <input type="password" class="form-control" id="signin-password" placeholder="{% trans %}Password{% endtrans %}" required>
                                 </div>
-                                <a href="#forgotpassword" data-toggle="tab">{% trans %}Forgot password?{% endtrans %}</a>
+                                <a href="#tab-forgot-something" data-toggle="tab">{% trans %}Forgot something?{% endtrans %}</a>
                               </div>
                               <button type="submit" class="btn btn-lg btn-block btn-primary">{% trans %}Sign In{% endtrans %}</button>
                               <label class="checkbox">
@@ -147,19 +148,20 @@
                             </form>
                           </div>
                           <!-- Sign in tab END -->
-                          <!-- Remember password tab START -->
-                          <div class="tab-pane fade" id="forgotpassword">
-                            <h3 class="form-signin-heading">{% trans %}Remind password{% endtrans %}</h3>
-                            <form method="post" action='#' name="forgot_password">
-                              <p>{% trans %}Type your email and we will send you instructions for resetting your password{% endtrans %}.</p>
+                          <!-- Remind data tab START -->
+                          <div class="tab-pane fade" id="tab-forgot-something">
+                            <h3 class="form-signin-heading">{% trans %}Remind me{% endtrans %}</h3>
+                            <form class="form" role="form" method="post" id="form-forgot-something">
+                              {% csrf_token %}
+                              <p>{% trans %}Give us your email or login and get your login with instructions for resetting password{% endtrans %}.</p>
                               <div class="form-group">
                                 <div class="input-group">
-                                  <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
-                                  <input type="email" class="form-control" id="login_email" placeholder="{% trans %}Email address{% endtrans %}" required>
+                                  <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                                  <input type="text" class="form-control" id="forgot-login-email" placeholder="{% trans %}Login or email{% endtrans %}" required>
                                 </div>
                               </div>
-                              <button id="remember_pswd" type="submit" class="btn btn-primary">{% trans %}Submit{% endtrans %}</button>
-                              <a href="#login" data-toggle="tab">{% trans %}Wait, I remember it{% endtrans %}</a>
+                              <button id="remind-data" type="submit" class="btn btn-primary">{% trans %}Submit{% endtrans %}</button>
+                              <a href="#tab-signin" data-toggle="tab">{% trans %}Wait, I remember{% endtrans %}</a>
                             </form>
                           </div>
                         </div>
@@ -197,8 +199,7 @@
   </div>
 </div>
 
-<!-- Placed at the end of the document so the pages load faster -->
-
+<!-- Place Javascript at the end of the document so the pages load faster -->
 {% compress js %}
 <!-- Latest compiled and minified jQuery -->
 <script src="{{ STATIC_URL }}lib/jquery/jquery-1.10.2.min.js" type="text/javascript" charset="utf-8"></script>
@@ -211,13 +212,24 @@
     placement: 'bottom',
     delay: { show: 500, hide: 100 }
   })
-  /* Process selecting language */
+</script>
+
+<!-- Anonymous section START -->
+{% if user.is_anonymous() %}
+<script type="text/javascript">
+  /* Process language selecting */
   $('.change_language').click(function(e) {
     e.preventDefault()
     $('#language_value').val($(this).attr('lang_code'))
     $('#language_form').submit()
   })
+  /* Fix 'focus lost' for sign in dropdown menu due to usage of tabs */
+  $('#dropdown-signin').on('hide.bs.dropdown', function() {
+    $(this).removeClass('active')
+  })
 </script>
+{% endif %}
+<!-- Anonymous section END -->
 {% endcompress %}
 
 {% block script_extras %}
