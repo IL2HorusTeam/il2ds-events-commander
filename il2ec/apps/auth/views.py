@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils.http import is_safe_url
 from django.utils.translation import ugettext as _
 
+from auth.decorators import anonymous_required
 from website.responses import JSONResponse
 
 
@@ -27,6 +28,7 @@ LOG = logging.getLogger(__name__)
 @sensitive_post_parameters()
 @csrf_protect
 @never_cache
+@anonymous_required
 def login(request, template_name='auth/login.html',
           redirect_field_name=REDIRECT_FIELD_NAME,
           authentication_form=AuthenticationForm,
