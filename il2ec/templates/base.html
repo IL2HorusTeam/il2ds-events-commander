@@ -11,6 +11,8 @@
   {% compress css %}
   <!-- Optional theme -->
   <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap-theme.min.css">
+  <!-- Ladda button spinner -->
+  <link rel="stylesheet" href="{{ STATIC_URL }}lib/ladda/ladda-themeless.min.css">
   <!-- Application's styles  -->
   <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css">
   {% endcompress %}
@@ -92,7 +94,7 @@
         </td>
         <td>
           <div id="project-name" data-toggle="nav-tooltip" title="{% trans %}Go to homepage{% endtrans %}">
-            <a href="{% url website.index %}">{{ settings.PROJECT_NAME }}</a>
+            <a href="{% url website-index %}">{{ settings.PROJECT_NAME }}</a>
           </div>
         </td>
         <td class='nav-side'>
@@ -125,24 +127,31 @@
                           <!-- Sign in tab START -->
                           <div class="tab-pane active" id="tab-signin">
                             <h3 class="form-signin-heading">{% trans %}Sign in{% endtrans %}</h3>
-                            <form class="form" role="form" method="post" id="form-signin">
+                            <form class="form" role="form" id="form-signin" action="{% url auth-login %}" method="post">
                               {% csrf_token %}
+                              <div class="alert alert-success alerts-placeholder">
+                                <strong>{% trans %}Success{% endtrans %}!</strong> <span class='form-message'>{% trans %}Reloading page{% endtrans %}...</span>
+                              </div>
+                              <div class="alert alert-danger alert-dismissable alerts-placeholder">
+                                <button type="button" class="close" aria-hidden="true">&times;</button>
+                                <strong>{% trans %}Oops{% endtrans %}!</strong> <span class='form-message'></span>
+                              </div>
                               <div class="form-group">
                                 <div class="input-group">
                                   <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                                  <input type="text" class="form-control" id="signin-login-email" placeholder="{% trans %}Login or email{% endtrans %}" required>
+                                  <input type="text" class="form-control" name="username" id="signin-login-email" placeholder="{% trans %}Login or email{% endtrans %}" required>
                                 </div>
                               </div>
                               <div class="form-group">
                                 <div class="input-group">
                                   <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-                                  <input type="password" class="form-control" id="signin-password" placeholder="{% trans %}Password{% endtrans %}" required>
+                                  <input type="password" class="form-control" name="password" id="signin-password" placeholder="{% trans %}Password{% endtrans %}" required>
                                 </div>
                                 <a href="#tab-forgot-something" data-toggle="tab">{% trans %}Forgot something?{% endtrans %}</a>
                               </div>
-                              <button type="submit" class="btn btn-lg btn-block btn-primary">{% trans %}Sign In{% endtrans %}</button>
+                              <button type="submit" id="submit-signin" class="btn btn-lg btn-block btn-primary ladda-button" data-style="zoom-out">{% trans %}Sign In{% endtrans %}</button>
                               <label class="checkbox">
-                                <input type="checkbox" value="remember-me" />
+                                <input type="checkbox" value="remember-me" name="remember-me" />
                                 {% trans %}Remember me{% endtrans %}
                               </label>
                             </form>
@@ -157,7 +166,7 @@
                               <div class="form-group">
                                 <div class="input-group">
                                   <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                                  <input type="text" class="form-control" id="forgot-login-email" placeholder="{% trans %}Login or email{% endtrans %}" required>
+                                  <input type="text" class="form-control" name="username" id="forgot-login-email" placeholder="{% trans %}Login or email{% endtrans %}" required>
                                 </div>
                               </div>
                               <button id="remind-data" type="submit" class="btn btn-primary">{% trans %}Submit{% endtrans %}</button>
@@ -205,6 +214,9 @@
 <script src="{{ STATIC_URL }}lib/jquery/jquery-1.10.2.min.js" type="text/javascript" charset="utf-8"></script>
 <!-- Latest compiled and minified JavaScript -->
 <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+<!-- Ladda button spinner -->
+<script src="{{ STATIC_URL }}lib/ladda/spin.min.js"></script>
+<script src="{{ STATIC_URL }}lib/ladda/ladda.min.js"></script>
 
 <script type="text/javascript">
   /* Enable tooltips */
@@ -217,6 +229,19 @@
 <!-- Anonymous section START -->
 {% if user.is_anonymous() %}
 <script type="text/javascript">
+  /* Setup AJAX CSRF token */
+  function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  }
+  $.ajaxSetup({
+    crossDomain: false, // obviates need for sameOrigin test
+    beforeSend: function(xhr, settings) {
+      if (!csrfSafeMethod(settings.type)) {
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}")
+      }
+    }
+  });
   /* Process language selecting */
   $('.change_language').click(function(e) {
     e.preventDefault()
@@ -226,6 +251,47 @@
   /* Fix 'focus lost' for sign in dropdown menu due to usage of tabs */
   $('#dropdown-signin').on('hide.bs.dropdown', function() {
     $(this).removeClass('active')
+  })
+  /* Hide sign in error message */
+  $('#form-signin .alert .close').click(function() {
+    $(this).parent().hide()
+  })
+  /* Submit sign in request */
+  $('#form-signin').submit(function(e) {
+    e.preventDefault()
+    var frm = $(this)
+    , url = frm.attr('action')
+    , button = frm.find('#submit-signin').get(0)
+    , l = Ladda.create(button)
+
+    function show_error(message) {
+      frm.find('.alert-danger .form-message').text(message)
+      frm.find('.alert-danger').show()
+    }
+
+    frm.find('.alert-danger').hide()
+    l.start()
+    $.post(url
+      , frm.serialize()
+      , function(response) {
+        if (response.status == 'success') {
+          frm.find('.alert-success').show()
+          /* Do not call 'reload' - authorized user's language may differ from
+           * current
+           */
+          window.location = "{{ current_path }}"
+        } else {
+          show_error(response.error.message)
+        }
+      }
+      , "json"
+    ).fail(function(request, status, error) {
+      show_error("{% trans %}Request error{% endtrans %}")
+    }).always(function() {
+      l.stop()
+    })
+
+    return false
   })
 </script>
 {% endif %}

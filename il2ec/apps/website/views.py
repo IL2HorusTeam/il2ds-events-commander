@@ -41,3 +41,4 @@ class IndexView(BaseView):
     View for the site frontpage.
     """
     template_name = "website/pages/index.html"
+

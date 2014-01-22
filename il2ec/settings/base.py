@@ -93,6 +93,7 @@ INSTALLED_APPS = (
     'transmeta',
 
     # Project applications
+    'auth',
     'commander',
     'misc',
     'website',
@@ -169,8 +170,8 @@ MIDDLEWARE_CLASSES += (
 # Auth / security
 #------------------------------------------------------------------------------
 
-AUTHENTICATION_BACKENDS += (
-    'django.contrib.auth.backends.ModelBackend',
+AUTHENTICATION_BACKENDS = (
+    'auth.backends.CustomModelBackend',
 )
 
 #------------------------------------------------------------------------------
@@ -276,8 +277,15 @@ LOGGING = {
             'propagate': True,
         },
     },
-    'commander': {
-        'website': {
+    'loggers': {
+        'commander': {
+            'handlers': ['il2ec'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+    'loggers': {
+        'auth': {
             'handlers': ['il2ec'],
             'level': 'INFO',
             'propagate': True,
