@@ -4,7 +4,6 @@ import logging
 from django.conf import settings
 from django.contrib.auth import (REDIRECT_FIELD_NAME, authenticate,
     login as auth_login, )
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import get_current_site
 
 from django.http import HttpResponseRedirect
@@ -19,6 +18,7 @@ from django.utils.http import is_safe_url
 from django.utils.translation import ugettext as _
 
 from auth.decorators import anonymous_required
+from auth.forms import AuthenticationForm
 from website.responses import JSONResponse
 
 
@@ -36,27 +36,33 @@ def login(request, template_name='auth/login.html',
     """
     Displays the login form and handles the login action with AJAX support.
     """
+    def check_remember_me(value=None):
+        duration = 31536000 if value is not None \
+            else settings.SESSION_COOKIE_AGE # 365 days or default
+        request.session.set_expiry(duration)
+
+    if request.is_ajax() and request.method == "POST":
+        user = authenticate(username=request.REQUEST.get('username'),
+                            password=request.REQUEST.get('password'))
+        if user is None:
+            return JSONResponse.error(message=_("Wrong login or password"))
+        if user.is_active:
+            auth_login(request, user)
+            check_remember_me(request.REQUEST.get('remember-me'))
+            return JSONResponse.success()
+        else:
+            return JSONResponse.error(message=_("Account is disabled"))
+
     redirect_to = request.REQUEST.get(redirect_field_name, '')
 
     if request.method == "POST":
-        if request.is_ajax():
-            user = authenticate(
-                username=request.REQUEST.get('username'),
-                password=request.REQUEST.get('password'))
-            if user is None:
-                return JSONResponse.error(message=_("Wrong login or password"))
-            if user.is_active:
-                auth_login(request, user)
-                return JSONResponse.success()
-            else:
-                return JSONResponse.error(message=_("Account is disabled"))
-        else:
-            form = authentication_form(request, data=request.POST)
-            if form.is_valid():
-                if not is_safe_url(url=redirect_to, host=request.get_host()):
-                    redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
-                auth_login(request, form.get_user())
-                return HttpResponseRedirect(redirect_to)
+        form = authentication_form(request, data=request.POST)
+        if form.is_valid():
+            if not is_safe_url(url=redirect_to, host=request.get_host()):
+                redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
+            auth_login(request, form.get_user())
+            check_remember_me(form.cleaned_data.get('remember-me'))
+            return HttpResponseRedirect(redirect_to)
     else:
         form = authentication_form(request)
 

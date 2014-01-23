@@ -147,13 +147,13 @@
                                   <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
                                   <input type="password" class="form-control" name="password" id="signin-password" placeholder="{% trans %}Password{% endtrans %}" required>
                                 </div>
-                                <a href="#tab-forgot-something" data-toggle="tab">{% trans %}Forgot something?{% endtrans %}</a>
                               </div>
-                              <button type="submit" id="submit-signin" class="btn btn-lg btn-block btn-primary ladda-button" data-style="zoom-out">{% trans %}Sign In{% endtrans %}</button>
+                              <a href="#tab-forgot-something" class="pull-right" data-toggle="tab">{% trans %}Forgot something?{% endtrans %}</a>
                               <label class="checkbox">
-                                <input type="checkbox" value="remember-me" name="remember-me" />
+                                <input type="checkbox" name="remember-me" />
                                 {% trans %}Remember me{% endtrans %}
                               </label>
+                              <button type="submit" id="submit-signin" class="btn btn-lg btn-block btn-primary ladda-button" data-style="zoom-out">{% trans %}Sign In{% endtrans %}</button>
                             </form>
                           </div>
                           <!-- Sign in tab END -->

@@ -6,7 +6,7 @@ def anonymous_required(view_function, redirect_to=None):
     return AnonymousRequired(view_function, redirect_to)
 
 
-class AnonymousRequired( object ):
+class AnonymousRequired(object):
     def __init__(self, view_function, redirect_to):
         if redirect_to is None:
             from django.conf import settings
