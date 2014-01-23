@@ -1,0 +1,70 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="tab-content">
+      <!-- Sign in tab START -->
+      <div class="tab-pane active" id="tab-signin">
+        <h3 class="form-signin-heading">{% trans %}Sign in{% endtrans %}</h3>
+        <form class="form" role="form" id="form-signin" action="{% url auth-sign-in %}" method="post">
+          {% csrf_token %}
+          {% if signin_page %}
+            {% set form_errors = form.non_field_errors() %}
+            {% if form_errors %}
+            <div class="alert alert-danger alert-dismissable">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              {{ form_errors|safe }}
+            </div>
+            {% endif %} <!-- form_errors -->
+          {% else %}
+            <div class="alert alert-success alerts-placeholder">
+              <span class='form-message'>{% trans %}Success{% endtrans %}!</span>
+            </div>
+            <div class="alert alert-danger alert-dismissable alerts-placeholder">
+              <button type="button" class="close" aria-hidden="true">&times;</button>
+              <span class='form-message'></span>
+            </div>
+          {% endif %} <!-- signin_page -->
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+              <input type="text" class="form-control" name="username" id="signin-login-email" placeholder="{% trans %}Login or email{% endtrans %}" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+              <input type="password" class="form-control" name="password" id="signin-password" placeholder="{% trans %}Password{% endtrans %}" required>
+            </div>
+          </div>
+          <a href="#tab-forgot-something" class="pull-right" data-toggle="tab">{% trans %}Forgot something?{% endtrans %}</a>
+          <label class="checkbox">
+            <input type="checkbox" name="remember-me" />
+            {% trans %}Remember me{% endtrans %}
+          </label>
+          <button type="submit" id="submit-signin" class="btn btn-lg btn-block btn-primary ladda-button" data-style="zoom-out">{% trans %}Sign In{% endtrans %}</button>
+        </form>
+      </div>
+      <!-- Sign in tab END -->
+      <!-- Remind data tab START -->
+      <div class="tab-pane fade" id="tab-forgot-something">
+        <h3 class="form-signin-heading">{% trans %}Remind me{% endtrans %}</h3>
+        <form class="form" role="form" method="post" id="form-forgot-something">
+          {% csrf_token %}
+          <p>{% trans %}Give us your email or login and get your login with instructions for resetting password{% endtrans %}.</p>
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+              <input type="text" class="form-control" name="username" id="forgot-login-email" placeholder="{% trans %}Login or email{% endtrans %}" required>
+            </div>
+          </div>
+          <button id="remind-data" type="submit" class="btn btn-primary">{% trans %}Submit{% endtrans %}</button>
+          <a href="#tab-signin" data-toggle="tab">{% trans %}Wait, I remember{% endtrans %}</a>
+        </form>
+      </div>
+    </div>
+    <!-- Remember password tab END -->
+    <div class="or-box">
+      <span class="or">OR</span>
+      <button type="button" class="btn btn-default btn-sm btn-block">{% trans %}Create an account{% endtrans %}</button>
+    </div>
+  </div>
+</div>

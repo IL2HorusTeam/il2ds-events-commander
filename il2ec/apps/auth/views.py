@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 
+from coffin.shortcuts import render
+
 from django.conf import settings
 from django.contrib.auth import (REDIRECT_FIELD_NAME, authenticate,
     login as auth_login, )
@@ -8,7 +10,6 @@ from django.contrib.sites.models import get_current_site
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import resolve_url
-from django.template.response import TemplateResponse
 
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.cache import never_cache
@@ -29,7 +30,7 @@ LOG = logging.getLogger(__name__)
 @csrf_protect
 @never_cache
 @anonymous_required
-def login(request, template_name='auth/login.html',
+def sign_in(request, template_name='auth/pages/sign-in.html',
           redirect_field_name=REDIRECT_FIELD_NAME,
           authentication_form=AuthenticationForm,
           current_app=None, extra_context=None):
@@ -45,13 +46,15 @@ def login(request, template_name='auth/login.html',
         user = authenticate(username=request.REQUEST.get('username'),
                             password=request.REQUEST.get('password'))
         if user is None:
-            return JSONResponse.error(message=_("Wrong login or password"))
+            return JSONResponse.error(message=unicode(
+                authentication_form.error_messages['invalid_login']))
         if user.is_active:
             auth_login(request, user)
             check_remember_me(request.REQUEST.get('remember-me'))
             return JSONResponse.success()
         else:
-            return JSONResponse.error(message=_("Account is disabled"))
+            return JSONResponse.error(message=unicode(
+                authentication_form.error_messages['inactive']))
 
     redirect_to = request.REQUEST.get(redirect_field_name, '')
 
@@ -73,8 +76,8 @@ def login(request, template_name='auth/login.html',
         redirect_field_name: redirect_to,
         'site': current_site,
         'site_name': current_site.name,
+        'signin_page': True,
     }
     if extra_context is not None:
         context.update(extra_context)
-    return TemplateResponse(request, template_name, context,
-                            current_app=current_app)
+    return render(request, template_name, context)

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="signin-block">
+
+{% include "auth/blocks/sign-in.html" %}
+
+</div>
+{% endblock %}
+
+{% block script_extras %}
+{% compress js %}
+
+<script type="text/javascript">
+  $('#form-signin').submit(function(e) {
+    var button = $(this).find('#submit-signin').get(0)
+    Ladda.create(button).start()
+  })
+</script>
+
+{% endcompress %}
+{% endblock %}

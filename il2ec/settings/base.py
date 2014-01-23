@@ -105,8 +105,8 @@ INSTALLED_APPS = (
 
 ROOT_URLCONF = 'il2ec.urls'
 
-LOGIN_URL = '/login/'
-LOGOUT_URL = '/logout/'
+LOGIN_URL = '/sign-in/'
+LOGOUT_URL = '/sign-out/'
 LOGIN_REDIRECT_URL = '/'
 
 STATIC_URL = '/static/'

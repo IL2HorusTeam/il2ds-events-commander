@@ -71,6 +71,10 @@ body {
   padding: 0 15px 15px 15px;
   min-width: 300px;
 }
+#signin-block {
+  width: 268px;
+  margin: 0 auto 35px auto;
+}
 #remind-data {
   margin-right: 10px;
 }
