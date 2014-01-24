@@ -51,9 +51,6 @@ TEMPLATE_DEBUG = DEBUG
 
 SITE_ID = 1
 
-PROJECT_NAME = _("Awesome IL-2 Project")
-HOSTNAME = 'il2ec.dev'
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 TIME_ZONE = 'Europe/Kiev'
@@ -69,6 +66,12 @@ LANGUAGES_INFO = (
 LANGUAGES = tuple([(code, name) for (code, name, native) in LANGUAGES_INFO])
 LANGUAGE_CODE = 'en' # Main language code
 LANGUAGE_CODES = tuple([code for (code, name) in LANGUAGES])
+
+HOSTNAME = 'il2ec.dev'
+PROJECT_NAME = {
+    'en': u"Awesome IL-2 Project",
+    'ru': u"Потрясающий проект Ил-2",
+}
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -134,6 +137,7 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django.contrib.messages.context_processors.messages',
 
     'website.context_processors.language',
+    'website.context_processors.project_name',
     'website.context_processors.settings',
 )
 

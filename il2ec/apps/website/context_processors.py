@@ -21,3 +21,10 @@ def language(request):
     """
     return {'LANGUAGE': dict(app_settings.LANGUAGES).get(
                         request.LANGUAGE_CODE, request.LANGUAGE_CODE)}
+
+def project_name(request):
+    """
+    Inject project name due to current language.
+    """
+    return {'PROJECT_NAME': app_settings.PROJECT_NAME.get(
+                            request.LANGUAGE_CODE)}
