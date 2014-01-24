@@ -168,8 +168,13 @@ def reincarnate(force=False):
         return
     run("rm -rf {virtualenv_dir}/var/static/*".format(**env))
     run("rm -rf {virtualenv_dir}/var/uploads/*".format(**env))
+    celeryd('stop')
+    celerybeat('stop')
+    execute(purge_celery, force=True)
     execute(reset_db, "noinput")
     execute(incarnate)
+    celeryd('start')
+    celerybeat('start')
 
 
 @task
@@ -205,6 +210,17 @@ def reset_db(noinput=None):
 
 
 @task
+@roles('web', 'db', 'commander')
+def purge_celery(force=False):
+    """
+    Deletes all background tasks from the Celery task queue.
+    """
+    ensure_force = "-f" if force else ""
+    execute(dj, "celery purge {force}".format(force=ensure_force),
+                settings_arg="--config")
+
+
+@task
 @roles('db')
 def dbshell():
     """
@@ -230,7 +246,9 @@ def restart():
     Clear sessions, cache, static, reload code and restart server.
     """
     execute(dj, "clear_redis")
-    execute(reload)
+    run("rm -rf {virtualenv_dir}/var/static/CACHE/*".format(**env))
+    execute(collectstatic)
+    execute(restart_uwsgi)
 
 
 @task
@@ -243,6 +261,8 @@ def reload():
         "rm -rf {{}} \\;".format(**env))
     execute(collectstatic)
     execute(restart_uwsgi)
+    celeryd('restart')
+    celerybeat('restart')
 
 
 @task
@@ -308,13 +328,16 @@ def commander(action):
 # Helper functions
 #------------------------------------------------------------------------------
 
-def dj(command):
+def dj(command, settings_arg=None):
     """
     Run a Django manage.py command on the server.
     """
+    settings_arg = settings_arg or "--settings"
     with cd(env.project_dir):
-        run('{virtualenv_dir}/bin/python manage.py {dj_command} '
-            '--settings {project_conf}'.format(dj_command=command, **env))
+        run("{virtualenv_dir}/bin/python manage.py {dj_command} "
+            "{settings_arg} {project_conf}".format(dj_command=command,
+                                                   settings_arg=settings_arg,
+                                                   **env))
 
 
 def restart_uwsgi():
@@ -322,6 +345,20 @@ def restart_uwsgi():
     Restarts the uWSGI application server.
     """
     sudo("touch /tmp/uwsgi-touch-reload-{project_name}".format(**env))
+
+
+def celeryd(action):
+    """
+    Applies given action to Celery deamon.
+    """
+    sudo("sudo /etc/init.d/celeryd {0}".format(action))
+
+
+def celerybeat(action):
+    """
+    Applies given action to Celery beat deamon.
+    """
+    sudo("sudo /etc/init.d/celerybeat {0}".format(action))
 
 
 def fix_permissions(path='.'):

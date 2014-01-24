@@ -1,0 +1,43 @@
+# Python interpreter from environment.
+ENV_PYTHON="<%= @python_path %>/python"
+
+# Name of nodes to start
+# here we have a single node
+CELERYD_NODES="w1"
+# or we could have three nodes:
+# CELERYD_NODES="w1 w2 w3"
+
+# Full path to the Django project directory.
+CELERYD_CHDIR="<%= @dj_manage_path %>"
+
+# 5 minute hard time limit for tasks + enable events at startup.
+CELERYD_OPTS="--time-limit=300 -E -B --concurrency=1"
+
+CELERYD_MULTI="$ENV_PYTHON $CELERYD_CHDIR/manage.py celeryd_multi"
+CELERYD_STATUS="$ENV_PYTHON $CELERYD_CHDIR/manage.py celery status"
+
+# %n will be replaced with the nodename.
+CELERYD_LOG_FILE="/var/log/celery/%n.log"
+CELERYD_PID_FILE="/var/run/celery/%n.pid"
+
+# Workers should run as an unprivileged user.
+CELERYD_USER="<%= @owner %>"
+CELERYD_GROUP="<%= @group %>"
+
+# celerybeat
+CELERYBEAT_USER="<%= @owner %>"
+CELERYBEAT_GROUP="<%= @group %>"
+CELERYBEAT="$ENV_PYTHON $CELERYD_CHDIR/manage.py celerybeat"
+CELERYBEAT_OPTS="-S djcelery.schedulers.DatabaseScheduler"
+CELERYBEAT_LOG_FILE="/var/log/celery/beat.log"
+CELERYBEAT_PID_FILE="/var/run/celery/beat.pid"
+
+# celeryevcam
+CELERYEV="$CELERYD_CHDIR/manage.py celeryev"
+CELERYEV_USER="<%= @owner %>"
+CELERYEV_GROUP="<%= @group %>"
+CELERYEV_CAM="djcelery.snapshot.Camera"
+CELERYEV_LOG_FILE="/var/log/celery/evcam.log"
+CELERYEV_PID_FILE="/var/run/celery/evcam.pid"
+
+export DJANGO_SETTINGS_MODULE="<%= @django_config %>"

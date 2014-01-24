@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 # Calculation of directories relative to the project module location
 #------------------------------------------------------------------------------
 
+import djcelery
 import os
 import sys
 import warnings
@@ -89,6 +90,7 @@ INSTALLED_APPS = (
 
     # 3rd-party applications
     'django_extensions',
+    'djcelery',
     'coffin',
     'compressor',
     'redis_sessions',
@@ -186,6 +188,8 @@ REDIS_DBS = {
     'SESSIONS': 1,
     'CACHE': 2,
     'COMMANDER': 3,
+    'CELERY': 4,
+    'CELERY_RESULTS': 5,
 }
 
 REDIS_HOST = 'localhost'
@@ -300,6 +304,31 @@ LOGGING = {
 #------------------------------------------------------------------------------
 # Third party app settings
 #------------------------------------------------------------------------------
+
+# Celery ----------------------------------------------------------------------
+djcelery.setup_loader()
+CELERY_STORE_ERRORS_EVEN_IF_IGNORED = True
+CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 24  # Store results for 24 hours
+CELERY_DISABLE_RATE_LIMITS = True
+CELERY_TRACK_STARTED = True
+CELERY_IMPORTS = ()
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+BROKER_URL = '{protocol}://{host}:{port}/{db}'.format(
+    protocol='redis',
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    db=REDIS_DBS['CELERY'],
+)
+CELERY_RESULT_BACKEND = '{protocol}://{host}:{port}/{db}'.format(
+    protocol='redis',
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    db=REDIS_DBS['CELERY_RESULTS'],
+)
+CELERYD_CONCURRENCY = 2
+CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
+CELERYBEAT_MAX_LOOP_INTERVAL = 60
 
 # Jinja2 ----------------------------------------------------------------------
 JINJA2_EXTENSIONS = (

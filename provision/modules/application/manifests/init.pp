@@ -140,6 +140,15 @@ class application (
         group      => $group,
     } ->
 
+    # Celery ------------------------------------------------------------------
+    class { "celery":
+        django_config  => $django_config,
+        dj_manage_path => $project_base,
+        virtualenv     => $virtualenv,
+        owner          => $user,
+        group          => $group,
+    } ->
+
     # Update user's .bashrc ---------------------------------------------------
     utils::file::line { "bashrc-workon-venv":
         file => "/home/${user}/.bashrc",
