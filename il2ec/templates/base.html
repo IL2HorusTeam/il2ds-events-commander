@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>{% block head_title %}{% endblock %}</title>
+  <title>{% block head_title %}{% endblock %} - {{ PROJECT_NAME }}</title>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="{{ STATIC_URL }}favicon.ico" type="image/x-icon" />
 
@@ -93,7 +93,7 @@
           </ul>
         </td>
         <td>
-          <div id="project-name" data-toggle="nav-tooltip" title="{% trans %}Go to homepage{% endtrans %}">
+          <div id="project-name" data-toggle="nav-tooltip" title="{% trans %}Go to home page{% endtrans %}">
             <a href="{% url website-index %}">{{ PROJECT_NAME }}</a>
           </div>
         </td>

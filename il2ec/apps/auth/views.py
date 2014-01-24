@@ -31,9 +31,9 @@ LOG = logging.getLogger(__name__)
 @never_cache
 @anonymous_required
 def sign_in(request, template_name='auth/pages/sign-in.html',
-          redirect_field_name=REDIRECT_FIELD_NAME,
-          authentication_form=AuthenticationForm,
-          current_app=None, extra_context=None):
+            redirect_field_name=REDIRECT_FIELD_NAME,
+            authentication_form=AuthenticationForm,
+            current_app=None, extra_context=None):
     """
     Displays the login form and handles the login action with AJAX support.
     """
