@@ -28,6 +28,16 @@ DATABASES = {
 }
 
 #------------------------------------------------------------------------------
+# Email settings
+#------------------------------------------------------------------------------
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'il2.horus.dev@gmail.com'
+EMAIL_HOST_PASSWORD = os.environ.get('HORUS_DEV_EMAIL_PASSWORD')
+EMAIL_PORT = 587
+
+#------------------------------------------------------------------------------
 # Third party app settings
 #------------------------------------------------------------------------------
 
