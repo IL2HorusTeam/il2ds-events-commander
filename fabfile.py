@@ -172,9 +172,9 @@ def reincarnate(force=False):
     celerybeat('stop')
     execute(purge_celery, force=True)
     execute(reset_db, "noinput")
-    execute(incarnate)
     celeryd('start')
     celerybeat('start')
+    execute(incarnate)
 
 
 @task

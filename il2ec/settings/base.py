@@ -101,6 +101,7 @@ INSTALLED_APPS = (
     'auth',
     'commander',
     'misc',
+    'pilots',
     'website',
 )
 
@@ -160,15 +161,16 @@ STATICFILES_FINDERS += (
 
 MIDDLEWARE_CLASSES += (
     # Disable caching for development
-    # 'django.middleware.cache.UpdateCacheMiddleware', # This middleware must be first on the list
+    # This middleware must be first on the list
+    # 'django.middleware.cache.UpdateCacheMiddleware',
 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
 )
 
@@ -207,12 +209,13 @@ if COOKIE_PREFIX:
     SESSION_COOKIE_NAME = '{0}-sessionid'.format(COOKIE_PREFIX)
     CSRF_COOKIE_NAME = 'csrftoken'
     LANGUAGE_SESSION_KEY = 'django_language'
-    LANGUAGE_COOKIE_NAME = '{0}-{1}'.format(COOKIE_PREFIX, LANGUAGE_SESSION_KEY)
+    LANGUAGE_COOKIE_NAME = '{0}-{1}'.format(COOKIE_PREFIX,
+                                            LANGUAGE_SESSION_KEY)
 
-SESSION_SAVE_EVERY_REQUEST = True
-SESSION_COOKIE_AGE = 30 * 60  # 30 min
 SESSION_COOKIE_HTTPONLY = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 1 * 60 * 60 # 1 hour
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_SAVE_EVERY_REQUEST = True
 
 # Storing session in Redis
 SESSION_ENGINE = 'redis_sessions.session'
@@ -229,10 +232,7 @@ CSRF_COOKIE_HTTPONLY = True
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '{host}:{port}'.format(
-                        host=REDIS_HOST,
-                        port=REDIS_PORT,
-                    ),
+        'LOCATION': '{host}:{port}'.format(host=REDIS_HOST, port=REDIS_PORT),
         'OPTIONS': {
             'DB': REDIS_DBS['CACHE'],
             'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
@@ -294,6 +294,13 @@ LOGGING = {
     },
     'loggers': {
         'auth': {
+            'handlers': ['il2ec'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+    'loggers': {
+        'pilots': {
             'handlers': ['il2ec'],
             'level': 'INFO',
             'propagate': True,
