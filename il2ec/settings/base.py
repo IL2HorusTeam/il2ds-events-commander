@@ -98,7 +98,7 @@ INSTALLED_APPS = (
     'transmeta',
 
     # Project applications
-    'auth',
+    'auth_custom',
     'commander',
     'misc',
     'pilots',
@@ -139,6 +139,7 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django.core.context_processors.i18n',
     'django.contrib.messages.context_processors.messages',
 
+    'website.context_processors.current_path',
     'website.context_processors.language',
     'website.context_processors.project_name',
     'website.context_processors.settings',
@@ -179,7 +180,7 @@ MIDDLEWARE_CLASSES += (
 #------------------------------------------------------------------------------
 
 AUTHENTICATION_BACKENDS = (
-    'auth.backends.CustomModelBackend',
+    'auth_custom.backends.CustomModelBackend',
 )
 
 #------------------------------------------------------------------------------
@@ -272,14 +273,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'misc': {
-            'handlers': ['il2ec'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-    },
-    'loggers': {
-        'website': {
+        'auth_custom': {
             'handlers': ['il2ec'],
             'level': 'INFO',
             'propagate': True,
@@ -293,7 +287,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'auth': {
+        'misc': {
             'handlers': ['il2ec'],
             'level': 'INFO',
             'propagate': True,
@@ -301,6 +295,13 @@ LOGGING = {
     },
     'loggers': {
         'pilots': {
+            'handlers': ['il2ec'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+    'loggers': {
+        'website': {
             'handlers': ['il2ec'],
             'level': 'INFO',
             'propagate': True,
@@ -357,9 +358,7 @@ JINJA2_TEMPLATE_LOADERS = TEMPLATE_LOADERS
 
 # Django compressor -----------------------------------------------------------
 COMPRESS_ENABLED = True
-COMPRESS_PRECOMPILERS = (
-    ('text/x-scss', 'sass --scss {infile} {outfile}'),
-)
+COMPRESS_PRECOMPILERS = ()
 COMPRESS_CSS_FILTERS = ()
 
 # Grappelli ------------------------------------------------------------------

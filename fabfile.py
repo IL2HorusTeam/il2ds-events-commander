@@ -261,6 +261,15 @@ def reload():
         "rm -rf {{}} \\;".format(**env))
     execute(collectstatic)
     execute(restart_uwsgi)
+
+
+@task
+@roles('web')
+def reload_all():
+    """
+    Reloads all project code, static, restarts application server and celery.
+    """
+    execute(reload)
     celeryd('restart')
     celerybeat('restart')
 

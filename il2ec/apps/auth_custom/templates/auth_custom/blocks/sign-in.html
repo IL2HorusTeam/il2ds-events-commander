@@ -4,15 +4,15 @@
       <!-- Sign in tab START -->
       <div class="tab-pane active" id="tab-signin">
         <h3 class="form-signin-heading">{% trans %}Sign in{% endtrans %}</h3>
-        <form class="form" role="form" id="form-signin" action="{% url auth-sign-in %}" method="post">
+        <form class="form" role="form" id="form-signin" action="{% url auth-custom-sign-in %}" method="post">
           {% csrf_token %}
           {% if signin_page %}
             {% set form_errors = form.non_field_errors() %}
             {% if form_errors %}
-            <div class="alert alert-danger alert-dismissable">
-              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-              {{ form_errors|safe }}
-            </div>
+              <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {{ form_errors|striptags }}
+              </div>
             {% endif %} <!-- form_errors -->
           {% else %}
             <div class="alert alert-success alerts-placeholder">
@@ -47,9 +47,9 @@
       <!-- Remind data tab START -->
       <div class="tab-pane fade" id="tab-forgot-something">
         <h3 class="form-signin-heading">{% trans %}Remind me{% endtrans %}</h3>
+        <p>{% trans %}Give us your email or login and get your login with instructions for resetting password{% endtrans %}.</p>
         <form class="form" role="form" method="post" id="form-forgot-something">
           {% csrf_token %}
-          <p>{% trans %}Give us your email or login and get your login with instructions for resetting password{% endtrans %}.</p>
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
@@ -64,7 +64,7 @@
     <!-- Remember password tab END -->
     <div class="or-box">
       <span class="or">OR</span>
-      <button type="button" class="btn btn-default btn-sm btn-block">{% trans %}Create an account{% endtrans %}</button>
+      <a href="{% url auth-custom-sign-up-request %}" role="button" class="btn btn-default btn-sm btn-block">{% trans %}Create an account{% endtrans %}</a>
     </div>
   </div>
 </div>

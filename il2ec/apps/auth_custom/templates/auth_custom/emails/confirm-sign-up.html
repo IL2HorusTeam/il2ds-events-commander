@@ -1,0 +1,13 @@
+<html>
+<body>
+{% trans %}Hello{% endtrans %},
+<br/>
+{% trans %}
+You've just sent sign up request on <a href="{{ host_address }}" target="blank">{{ host_name }}</a>, haven't you? If so, click here:
+{% endtrans %}
+<br/>
+<a href="{{ confirm_link }}" target="blank">{{ confirm_link }}</a>
+<br/>
+{% trans %}Thank you{% endtrans %}.
+</body>
+</html>

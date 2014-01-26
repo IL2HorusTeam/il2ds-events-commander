@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block head_title %}
+{% trans %}Sign up request{% endtrans %}
+{% endblock %}
+
+{% block head_extras %}
+<style type="text/css">
+  #block-sign-up-request {
+    width: 450px;
+    margin: 35px auto;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    <h3 class="form-signin-heading">{% trans %}Sign up request{% endtrans %}</h3>
+    <p>{% trans %}Before you join, we need to check your email. Give us your email and further instructions will be sent to you.{% endtrans %}</p>
+  </div>
+</div>
+<div class="row">
+  <div id="block-sign-up-request">
+
+    {% include "misc/blocks/messages.html" %}
+
+    <form class="form" role="form" id="form-signup-request" action="{% url auth-custom-sign-up-request %}" method="post">
+      {% csrf_token %}
+      {% set form_errors = form.non_field_errors() %}
+      {% if form_errors %}
+        <div class="alert alert-danger alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          {{ form_errors|striptags }}
+        </div>
+      {% endif %}
+
+      {% set email_errors = form.email.errors %}
+      <div class="form-group {{ email_errors|yesno('has-error,') }}">
+        {% if email_errors %}
+          <label class="control-label" for="signin-login-email">{{ email_errors|striptags }}</label>
+        {% endif %}
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
+          <input type="email" class="form-control" name="email" id="signin-login-email" placeholder="{% trans %}Email address{% endtrans %}" value="{{ form.email.value()|default('') }}" required>
+          <span class="input-group-btn">
+            <button id="submit-signup-request" type="submit" class="btn btn-primary ladda-button" data-style="zoom-out">{% trans %}Go!{% endtrans %}</button>
+          </span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block script_extras %}
+<script type="text/javascript">
+  $('#form-signup-request').submit(function(e) {
+    var button = $(this).find('#submit-signup-request').get(0)
+    Ladda.create(button).start()
+  })
+</script>
+{% endblock %}

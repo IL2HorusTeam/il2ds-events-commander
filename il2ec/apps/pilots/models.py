@@ -11,8 +11,11 @@ from django.db.models.signals import post_save, post_delete
 from django.utils.translation import ugettext_lazy as _
 
 
+User = get_user_model()
+
+
 class Pilot(models.Model):
-    user = models.OneToOneField(get_user_model())
+    user = models.OneToOneField(User)
     language = models.CharField(_("preferred language"),
         blank=False,
         max_length=2,
@@ -38,11 +41,11 @@ def delete_user(sender, instance=None, **kwargs):
     """
     try:
         instance.user
-    except get_user_model().DoesNotExist:
+    except User.DoesNotExist:
         pass
     else:
         instance.user.delete()
 
 
-post_save.connect(create_pilot, sender=get_user_model())
+post_save.connect(create_pilot, sender=User)
 post_delete.connect(delete_user, sender=Pilot)

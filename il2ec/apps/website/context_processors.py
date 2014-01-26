@@ -28,3 +28,10 @@ def project_name(request):
     """
     return {'PROJECT_NAME': app_settings.PROJECT_NAME.get(
                             request.LANGUAGE_CODE)}
+
+def current_path(request):
+    """
+    Get path to current page without leading language code.
+    """
+    full_path = request.get_full_path()
+    return {'CURRENT_PATH': full_path[full_path.index('/', 1):]}

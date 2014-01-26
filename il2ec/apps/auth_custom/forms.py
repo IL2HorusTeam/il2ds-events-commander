@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class AuthenticationForm(BaseAuthenticationForm):
     """
-    Add a 'remember me' checkbox to default form
+    Add a 'remember me' checkbox to default form.
     """
     error_messages = {
         'invalid_login': _("Wrong login or password."),
@@ -37,3 +37,16 @@ class AuthenticationForm(BaseAuthenticationForm):
                     code='inactive',
                 )
         return self.cleaned_data
+
+
+class SignUpRequestForm(forms.Form):
+    """
+    Form for getting data to create a request for sign up.
+    """
+    email = forms.EmailField(required=True)
+
+
+class SignUpForm(forms.Form):
+    """
+    Form for getting data to create a new user.
+    """

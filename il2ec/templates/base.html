@@ -111,7 +111,7 @@
               </ul>
               <form action="/i18n/setlang/" method="post" style="display: none" id="language_form">
                 {% csrf_token %}
-                <input name="next" type="hidden" value="{{ current_path }}" />
+                <input name="next" type="hidden" value="{{ CURRENT_PATH }}" />
                 <input type="hidden" value="" name="language" id="language_value" />
               </form>
             </li>
@@ -122,7 +122,7 @@
                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans %}Sign in{% endtrans %} <b class="caret"></b></a>
                <ul id="signin-menu" class="dropdown-menu">
                   <li>
-                  {% include "auth/blocks/sign-in.html" %}
+                  {% include "auth_custom/blocks/sign-in.html" %}
                   </li>
                </ul>
             </li>
