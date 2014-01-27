@@ -270,36 +270,26 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-    },
-    'loggers': {
         'auth_custom': {
             'handlers': ['il2ec'],
             'level': 'INFO',
             'propagate': True,
         },
-    },
-    'loggers': {
         'commander': {
             'handlers': ['il2ec'],
             'level': 'INFO',
             'propagate': True,
         },
-    },
-    'loggers': {
         'misc': {
             'handlers': ['il2ec'],
             'level': 'INFO',
             'propagate': True,
         },
-    },
-    'loggers': {
         'pilots': {
             'handlers': ['il2ec'],
             'level': 'INFO',
             'propagate': True,
         },
-    },
-    'loggers': {
         'website': {
             'handlers': ['il2ec'],
             'level': 'INFO',

@@ -15,7 +15,8 @@ class AuthenticationForm(BaseAuthenticationForm):
         'inactive': _("Account is inactive."),
     }
 
-    remember_me = forms.BooleanField(label=_('Remember Me'),
+    remember_me = forms.BooleanField(
+        label=_('Remember Me'),
         initial=False,
         required=False)
 
