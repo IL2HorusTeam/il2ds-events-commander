@@ -81,16 +81,24 @@ Firstly, start a development virtual machine:
 This will bring for you a clean virtual machine, install all of the necessary
 software and configure it.
 
+If database creation error will appear due to incompatible encoding, run:
+
+    vagrant ssh
+    sudo su - postgres
+    pg_dropcluster 9.1 main --stop
+    pg_createcluster --locale=en_US.UTF-8 --start 9.1 main
+    exit
+    exit
+    vagrant provision
+
 You will need to use an existsing development email for different purposes:
 sending email confirmation requests, password resetting requests, etc. To make
 this possible, you will need to set an environment variable with secret email
 password on the guest machine:
 
     vagrant ssh
-    echo "export HORUS_DEV_EMAIL_PASSWORD=\"XXXXXXXXXXXXXXXXXX\"" >> ~/.bashrc
-    sudo bash -c 'echo "Defaults env_keep += \"HORUS_DEV_EMAIL_PASSWORD\"" >> /etc/sudoers'
+    echo "export HORUS_DEV_EMAIL_PASSWORD=\"XXXXXXXXXXXXXXXXXX\"" >> ~/.bash_profile
     exit
-    vagrant reload
 
 Contact developers to get the real passsword and replace `XXXXXXXXXXXXXXXXXX`
 with it.
@@ -103,16 +111,6 @@ This will create database and run several services, so the web application will
 be accessible at
 
     http://localhost:8010
-
-If database creation error will appear due to incompatible encoding, run:
-
-    vagrant ssh
-    sudo su - postgres
-    pg_dropcluster 9.1 main --stop
-    pg_createcluster --locale=en_US.UTF-8 --start 9.1 main
-    exit
-    exit
-    vagrant provision
 
 ### Update 'hosts'
 

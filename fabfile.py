@@ -16,8 +16,14 @@ env.requirements_file = 'requirements.pip'
 env.restart_command = 'supervisorctl restart {project_name}'.format(**env)
 env.restart_sudo = True
 env.logs = {
-    'uwsgi': "/var/log/supervisor/uwsgi/uwsgi.err",
-    'nginx': "/var/log/nginx/error.log",
+    'uwsgi' : "/var/log/supervisor/uwsgi/uwsgi.err",
+    'nginx' : "/var/log/nginx/error.log",
+    'celeryd': "/var/log/celery/w1.log",
+    'celerybeat': "/var/log/celery/beat.log",
+
+    # Platform-dependent, must be redefined
+    'web': None,
+    'daemon': None,
 }
 
 
@@ -151,8 +157,11 @@ def update(action='check'):
 @task
 @roles('web', 'db')
 def incarnate():
+    puts('Initializing database...')
     execute(syncdb)
+    puts('Creating default superuser...')
     execute(dj, "create_superuser")
+    puts('Restarting services...')
     execute(restart)
 
 
@@ -166,14 +175,22 @@ def reincarnate(force=False):
     if not (force or confirm("WARNING. This command will destroy all data. "
                              "Continue?")):
         return
+    puts('Cleaning static and uploads...')
     run("rm -rf {virtualenv_dir}/var/static/*".format(**env))
     run("rm -rf {virtualenv_dir}/var/uploads/*".format(**env))
+
+    puts('Stopping Celery...')
     celeryd('stop')
     celerybeat('stop')
     execute(purge_celery, force=True)
+
+    puts('Destroying database...')
     execute(reset_db, "noinput")
+
+    puts('Starting Celery...')
     celeryd('start')
     celerybeat('start')
+
     execute(incarnate)
 
 
@@ -360,14 +377,14 @@ def celeryd(action):
     """
     Applies given action to Celery deamon.
     """
-    sudo("sudo /etc/init.d/celeryd {0}".format(action))
+    sudo("/etc/init.d/celeryd {0}".format(action))
 
 
 def celerybeat(action):
     """
     Applies given action to Celery beat deamon.
     """
-    sudo("sudo /etc/init.d/celerybeat {0}".format(action))
+    sudo("/etc/init.d/celerybeat {0}".format(action))
 
 
 def fix_permissions(path='.'):

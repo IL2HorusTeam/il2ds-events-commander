@@ -41,3 +41,6 @@ nosetests.xml
 .vagrant
 *.box
 provision/files/il2ds
+
+# misc
+celerybeat-schedule
