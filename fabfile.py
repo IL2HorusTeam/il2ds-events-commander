@@ -186,12 +186,11 @@ def reincarnate(force=False):
 
     puts('Destroying database...')
     execute(reset_db, "noinput")
+    execute(incarnate)
 
     puts('Starting Celery...')
     celeryd('start')
     celerybeat('start')
-
-    execute(incarnate)
 
 
 @task

@@ -18,6 +18,9 @@ LOG = logging.getLogger(__name__)
 @task(ignore_result=True)
 def send_mail(subject, template_name, context_dict, from_email=None,
               to_emails=None):
+    """
+    Send email with specified template and context.
+    """
     if not to_emails:
         LOG.warning("Email will not be sent: no recipients were specified")
         return

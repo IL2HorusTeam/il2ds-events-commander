@@ -15,4 +15,4 @@ framework.
 """
 from django.core.handlers.wsgi import WSGIHandler
 
-application = WSGIHandler()
+application = WSGIHandler() # pylint: disable=C0103

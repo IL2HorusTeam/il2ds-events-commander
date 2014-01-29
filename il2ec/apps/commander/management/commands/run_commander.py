@@ -17,16 +17,17 @@ class Command(BaseCommand):
     """
     A management command which runs IL-2 DS events commander.
     """
+
     help = "Run IL-2 DS events commander"
 
-    def handle(self, *args, **kwargs):
-        args = [
+    def handle(self, *args, **kwargs): # pylint: disable=W0613
+        argv = [
             '-y', os.path.join(os.path.dirname(application.__file__),
                                "application.py"),
         ]
         if settings.COMMANDER_PID_FILE is None:
-            args.append('--nodaemon')
+            argv.append('--nodaemon')
         else:
-            args.extend(['--pidfile', settings.COMMANDER_PID_FILE])
-        sys.argv[1:] = args
+            argv.extend(['--pidfile', settings.COMMANDER_PID_FILE])
+        sys.argv[1:] = argv
         run()

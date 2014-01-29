@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+Provides stuff for communicating with commander via network public API in
+blocking mode.
+"""
 import logging
 import socket
 
@@ -9,17 +13,18 @@ from commander.protocol.async import APIServerProtocol
 LOG = logging.getLogger(__name__)
 
 
-class api_socket(socket.socket):
+class api_socket(socket.socket): # pylint: disable=C0103,R0904
     """
     Raw socket for communication with commander. Enhances standart socket by
     providing ability to send lines to coomander and receive lines from it.
     """
+
     delimiter = APIServerProtocol.delimiter
     input_size = 4096
 
-    def __init__(self, family=socket.AF_INET, type=socket.SOCK_STREAM, proto=0,
-                 _sock=None):
-        super(api_socket, self).__init__(family, type, proto, _sock)
+    def __init__(self, family=socket.AF_INET, _type=socket.SOCK_STREAM,
+                 proto=0, _sock=None):
+        super(api_socket, self).__init__(family, _type, proto, _sock)
         self._line_reader = self._buffered_read_line()
 
     def _buffered_read_line(self):
@@ -90,17 +95,17 @@ def api_create_client_socket():
         return s
 
 
-def api_send_noreply_message(message, socket=None):
+def api_send_noreply_message(message, socket_instance=None):
     """
     Send a noreply message to commander in blocking mode. Message is a string
     with JSON inside.
     """
-    if socket:
-        if not isinstance(socket, api_socket):
+    if socket_instance:
+        if not isinstance(socket_instance, api_socket):
             raise ValueError(
                 "Invalid instance of socket. api_socket must be passed.")
-        socket.send_line(message)
+        socket_instance.send_line(message)
     else:
-        socket = api_create_client_socket()
-        socket.send_line(message)
-        socket.close()
+        socket_instance = api_create_client_socket()
+        socket_instance.send_line(message)
+        socket_instance.close()

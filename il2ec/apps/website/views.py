@@ -17,6 +17,7 @@ class BaseView(TemplateView):
     stores request at self.request.
     """
     def __init__(self, *args, **kwargs):
+        self.request = None
         self.extra_context = {}
         super(BaseView, self).__init__(*args, **kwargs)
 

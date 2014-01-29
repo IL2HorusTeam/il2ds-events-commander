@@ -2,7 +2,7 @@
 """
 Settings for staging server.
 """
-from il2ec.settings.base import *   # pylint: disable=W0614,W0401
+from il2ec.settings.base import * # pylint: disable=W0614,W0401
 
 
 VAR_ROOT = '/var/www/il2ec'

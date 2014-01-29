@@ -11,7 +11,10 @@ from commander.service import CommanderServiceMixin
 LOG = log.get_logger(__name__)
 
 
-class PilotService(PilotBaseService, CommanderServiceMixin):
+class PilotService(PilotBaseService, CommanderServiceMixin): # pylint: disable=R0904
+    """
+    Custom service for managing in-game pilots.
+    """
 
     def user_joined(self, info):
         self.cl_client.chat_user(

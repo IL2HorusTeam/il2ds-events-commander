@@ -14,9 +14,11 @@ LOG = logging.getLogger(__name__)
 
 @task
 def on_email_confirm_sign_up(successfully_sent, request_id):
+    """
+    Celery task which is called after sign up confirmation mailing task.
+    """
     if not successfully_sent:
         return
-
     try:
         r = SignUpRequest.objects.get(pk=request_id)
     except SignUpRequest.DoesNotExist:

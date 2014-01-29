@@ -17,11 +17,14 @@ from auth_custom.settings import EMAIL_CONFIRMATION_DAYS
 LOG = logging.getLogger(__name__)
 
 
-class SignUpRequestManager(models.Manager):
+class SignUpRequestManager(models.Manager): # pylint: disable=R0904
     """
     Sign-up requests manager.
     """
     def create_from_email(self, email):
+        """
+        Create and return sign up request for specified email address.
+        """
         created = timezone.now()
 
         salt = hashlib.sha1(unicode(random.random())).hexdigest()[:5]

@@ -17,17 +17,25 @@ LOG = log.get_logger(__name__)
 
 
 def is_server_running(storage=None):
+    """
+    Tell whether game server is running. Values is read from shared storage.
+    """
     storage = storage or get_storage()
     return storage.exists(KEY_SERVER_RUNNING)
 
 
 def is_commander_running(storage=None):
+    """
+    Tell whether commander is running. It is considered to be running if
+    information about game server is present in the shared storage or if
+    commander's API socket exists.
+    """
     storage = storage or get_storage()
     if is_server_running(storage):
         return True
     try:
         s = api_create_client_socket()
-    except socket.error as e:
+    except socket.error:
         return False
     else:
         s.close()
@@ -35,6 +43,9 @@ def is_commander_running(storage=None):
 
 
 def get_server_info(storage=None):
+    """
+    Get a dictionary storing key server parameters.
+    """
     storage = storage or get_storage()
     if not is_server_running(storage):
         return None

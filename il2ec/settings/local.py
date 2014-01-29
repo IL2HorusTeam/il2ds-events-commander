@@ -4,7 +4,7 @@ Settings for local development server.
 """
 import os
 
-from il2ec.settings.base import *   # pylint: disable=W0614,W0401
+from il2ec.settings.base import * # pylint: disable=W0614,W0401
 
 #------------------------------------------------------------------------------
 # Main project settings

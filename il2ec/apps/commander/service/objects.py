@@ -12,4 +12,6 @@ LOG = log.get_logger(__name__)
 
 
 class ObjectsService(ObjectsBaseService, CommanderServiceMixin):
-    pass
+    """
+    Custom service for map objects management.
+    """

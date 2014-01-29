@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-
+"""
+General-purpose context processors.
+"""
 import logging
 
 from django.conf import settings as app_settings
@@ -8,7 +10,7 @@ from django.conf import settings as app_settings
 LOG = logging.getLogger(__name__)
 
 
-def settings(request):
+def settings(request): # pylint: disable=W0613
     """
     Inject application settings to template context.
     """

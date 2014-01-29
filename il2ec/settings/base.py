@@ -3,7 +3,7 @@
 Base settings shared by all environments.
 """
 # Import global settings to make it easier to extend settings.
-from django.conf.global_settings import *   # pylint: disable=W0614,W0401
+from django.conf.global_settings import * # pylint: disable=W0614,W0401
 from django.utils.translation import ugettext_lazy as _
 
 #------------------------------------------------------------------------------

@@ -12,4 +12,6 @@ LOG = log.get_logger(__name__)
 
 
 class MissionService(DefaultMissionService, CommanderServiceMixin):
-    pass
+    """
+    Custom service for missions flow management.
+    """

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Views which handle authentication-related requests.
+"""
 import logging
 
 from coffin.shortcuts import render
@@ -12,7 +15,6 @@ from django.contrib.sites.models import get_current_site
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import resolve_url
-from django.template.defaultfilters import timeuntil
 
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.cache import never_cache
@@ -47,10 +49,12 @@ def __do_sign_in(request, form):
 @csrf_protect
 @never_cache
 @anonymous_required()
-def sign_in(request, template_name='auth_custom/pages/sign-in.html',
+def sign_in(request,                                    # pylint: disable=R0913
+            template_name='auth_custom/pages/sign-in.html',
             redirect_field_name=REDIRECT_FIELD_NAME,
             authentication_form=AuthenticationForm,
-            current_app=None, extra_context=None):
+            current_app=None,                           # pylint: disable=W0613
+            extra_context=None):
     """
     Displays the login form and handles the login action with AJAX support.
     """
@@ -123,7 +127,7 @@ class SignUpRequestView(FormView):
                                           "email already exists."))
                 return self.form_invalid(form)
 
-            UserModel = get_user_model()
+            UserModel = get_user_model() # pylint: disable=C0103
             if UserModel.objects.filter(email=email).exists():
                 messages.error(
                     request, _("Specified email is already in use."))

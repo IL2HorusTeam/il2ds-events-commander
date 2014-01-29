@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Forms for authentication-related views.
+"""
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import (AuthenticationForm as

@@ -3,10 +3,8 @@
 Admin dashboard configuration.
 """
 from django.utils.translation import ugettext_lazy as _
-from django.core.urlresolvers import reverse
 
 from grappelli.dashboard import modules, Dashboard
-from grappelli.dashboard.utils import get_admin_site_name
 
 
 class CustomIndexDashboard(Dashboard):
@@ -14,8 +12,6 @@ class CustomIndexDashboard(Dashboard):
     Custom index dashboard for admin.
     """
     def init_with_context(self, context):
-        site_name = get_admin_site_name(context)
-
         self.children.append(modules.AppList(
             _("Applications"),
             collapsible=True,

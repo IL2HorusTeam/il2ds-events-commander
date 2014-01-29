@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Description of Celery application.
+"""
 from __future__ import absolute_import
 
 from celery import Celery

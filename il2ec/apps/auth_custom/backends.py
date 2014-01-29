@@ -9,6 +9,7 @@ from django.contrib.auth.backends import ModelBackend
 
 
 LOG = logging.getLogger(__name__)
+UserModel = get_user_model() # pylint: disable=C0103
 
 
 class CustomModelBackend(ModelBackend):
@@ -20,7 +21,6 @@ class CustomModelBackend(ModelBackend):
         """
         Redefine mathod of the base class. Username can contain login or email.
         """
-        UserModel = get_user_model()
         if username is None:
             username = kwargs.get(UserModel.USERNAME_FIELD)
         kwargs = {

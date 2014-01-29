@@ -1,0 +1,3 @@
+"""
+Project's local applications.
+"""

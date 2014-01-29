@@ -8,6 +8,10 @@ from twisted.python.constants import ValueConstant, Values
 
 
 class APICommandValueConstant(ValueConstant):
+    """
+    Extends base class by providing support to create a command with payload
+    for commander's API.
+    """
 
     def to_request(self, payload=None):
         """
@@ -17,13 +21,11 @@ class APICommandValueConstant(ValueConstant):
         return json.dumps((self.value, payload, ))
 
 
-class API_OPCODE(Values):
+class APIOpcode(Values):
     """
     Constants representing operation codes for commander API.
     """
 
-    """
-    Stop commander and quit it.
-    """
+    # Stop commander and quit it.
     QUIT = APICommandValueConstant(1)
 

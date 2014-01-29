@@ -14,7 +14,7 @@ class Command(BaseCommand):
     """
     help = "Clear all Redis databases"
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **kwargs): # pylint: disable=W0613
         r = redis.StrictRedis(host=settings.REDIS_HOST,
                               port=settings.REDIS_PORT,
                               password=settings.REDIS_PASSWORD)

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Authentication-related decorators.
+"""
 from functools import wraps
 from django.http import HttpResponseRedirect
 from django.utils.decorators import available_attrs
@@ -6,12 +9,19 @@ from django.utils.decorators import available_attrs
 
 def anonymous_required(redirect_to=None):
     """
-    Decorator for views that checks that the current user is anonymous.
+    Parametrized decorator for views that checks that the current user is
+    anonymous. Encloses 'redirect_to' parameter into target function wrapper.
     """
     def decorator(view_func):
-
+        """
+        View function decorator.
+        """
         @wraps(view_func, assigned=available_attrs(view_func))
         def view_func_wrapper(request, *args, **kwargs):
+            """
+            Target view function wrapper. Checks whether current user is
+            anonymous. Redirects to specified or default page otherwise.
+            """
             if request.user is not None and request.user.is_authenticated():
                 if redirect_to is None:
                     from django.conf import settings

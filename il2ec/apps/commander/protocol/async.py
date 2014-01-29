@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Commander network asynchronous protocols and factories.
+"""
 import simplejson as json
 
 from il2ds_middleware.constants import REQUEST_TIMEOUT
@@ -6,14 +9,14 @@ from il2ds_middleware.parser import ConsolePassthroughParser
 from il2ds_middleware.protocol import ConsoleClient as DefaultConsoleClient
 
 from twisted.internet import defer
-from twisted.internet.error import ConnectionDone
 from twisted.internet.protocol import ReconnectingClientFactory
 from twisted.protocols.basic import LineOnlyReceiver
 
 from commander import log
-from commander.constants import API_OPCODE
+from commander.constants import APIOpcode
 from commander.protocol.requests import (REQ_KICK_CALLSIGN, REQ_KICK_NUMBER,
     REQ_USERS_ALL, )
+from commander import stop_everything_n_quit
 
 
 LOG = log.get_logger(__name__)
@@ -26,7 +29,7 @@ class APIServerProtocol(LineOnlyReceiver):
     """
     def __init__(self):
         self.handlers = {
-            API_OPCODE.QUIT: self.on_quit,
+            APIOpcode.QUIT: self._on_quit,
         }
 
     def lineReceived(self, line):
@@ -42,7 +45,7 @@ class APIServerProtocol(LineOnlyReceiver):
             self.transport.loseConnection()
             return
         try:
-            opcode = API_OPCODE.lookupByValue(code_value)
+            opcode = APIOpcode.lookupByValue(code_value)
         except ValueError as e:
             LOG.error("Failed to parse opcode '{code}' from {host}:{port} in "
                       "request \"{request}\"".format(code=code_value,
@@ -56,13 +59,19 @@ class APIServerProtocol(LineOnlyReceiver):
         else:
             handler(payload)
 
-    def on_quit(self, _):
-        self.factory.root_service.stop()
+    def _on_quit(self, dummy_payload):
+        """
+        Process 'quit' request.
+        """
+        stop_everything_n_quit()
 
 
-class ConsoleClient(DefaultConsoleClient):
+class ConsoleClient(DefaultConsoleClient): # pylint: disable=R0904
+    """
+    Custom client protocol of communicating with server console.
 
-    # FUTURE: merge into 'il2-ds-middleware' library.
+    FUTURE: merge into 'il2-ds-middleware' library.
+    """
 
     def kick_callsign(self, callsign):
         """
@@ -91,7 +100,7 @@ class ConsoleClient(DefaultConsoleClient):
         `max_count`  # maximal possible number of users on server. See
                      # 'NET/serverChannels' in 'confs.ini' for this value
         """
-        for i in range(max_count):
+        for i in range(max_count): # pylint: disable=W0612
             # Kick 1st user in cycle. It's important to kick all of the users.
             # Do not rely on 'user_count' method in this situation: number
             # of users may change between getting current user list and kicking
@@ -128,41 +137,30 @@ class ConsoleClientFactory(ReconnectingClientFactory):
     Factory for building server console's client protocols.
     """
 
-    """
-    Client's protocol class.
-    """
+    # Client's protocol class.
     protocol = ConsoleClient
 
-    """
-    Parser instance which will be passed to client's protocol. Instance of
-    'ConsolePassthroughParser' will be used if this value is not specified.
-    """
+    # Parser instance which will be passed to client's protocol. Instance of
+    # 'ConsolePassthroughParser' will be used if this value is not specified.
     parser = None
 
-    """
-    Float value for server requests timeout in seconds which will be passed to
-    client's protocol. 'REQUEST_TIMEOUT' will be used if this value is not
-    specified.
-    """
+    # Float value for server requests timeout in seconds which will be passed
+    # to client's protocol. 'REQUEST_TIMEOUT' will be used if this value is not
+    # specified.
     request_timeout = None
 
-    """
-    Client's protocol instance placeholder.
-    """
+    # Client's protocol instance placeholder.
     client = None
 
-    """
-    Deferred, which will be invoked after the connection with server is
-    established.
-    """
+    # Deferred, which will be invoked after the connection with server is
+    # established.
     on_connected = None
 
-    """
-    Deferred, which will be invoked after the connection with server is lost.
-    'on_connected' and 'on_disconnected' deferreds will be recreated before
-    invocation of this deferred, so you will need to update your callbacks for
-    connection and disconnection during processing this deferred's callback.
-    """
+    # Deferred, which will be invoked after the connection with server is lost.
+    # 'on_connected' and 'on_disconnected' deferreds will be recreated before
+    # invocation of this deferred, so you will need to update your callbacks
+    # for connection and disconnection during processing this deferred's
+    # callback.
     on_disconnected = None
 
     def __init__(self, parser=None, timeout_value=None):
@@ -186,14 +184,21 @@ class ConsoleClientFactory(ReconnectingClientFactory):
         return self.client
 
     def clientConnectionMade(self, client):
+        """
+        A callback which is called when connection is successfully established.
+        Invokes public callback and tells about this event to the outer world.
+        """
         self.resetDelay()
         LOG.debug("Connection successfully established")
-        # Invoke callback and tell that connection was successfully established
         if self.on_connected is not None:
             d, self.on_connected = self.on_connected, None
             d.callback(client)
 
     def clientConnectionFailed(self, connector, reason):
+        """
+        A callback which is called when connection could not be established.
+        Overrides base method and logs connection failure.
+        """
         if self.continueTrying:
             LOG.error("Failed to connect to server: {0}".format(
                       unicode(reason.value)))
@@ -218,5 +223,9 @@ class ConsoleClientFactory(ReconnectingClientFactory):
                 self, connector, reason)
 
     def _update_deferreds(self):
+        """
+        Recreate public deferreds, so listeners can update their callbacks for
+        connection and disconnection events.
+        """
         self.on_connected = defer.Deferred()
         self.on_disconnected = defer.Deferred()

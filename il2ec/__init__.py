@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Project's root module.
+"""
 from __future__ import absolute_import
 
 # This will make sure the app is always imported when Django starts so that

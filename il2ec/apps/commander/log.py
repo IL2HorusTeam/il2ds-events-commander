@@ -17,21 +17,39 @@ class Logger(object):
         self.name = name
 
     def critical(self, message):
+        """
+        Enlog message with CRITICAL level.
+        """
         self._enlog(message, logging.CRITICAL)
 
     def error(self, message):
+        """
+        Enlog message with ERROR level.
+        """
         self._enlog(message, logging.ERROR)
 
     def warning(self, message):
+        """
+        Enlog message with WARNING level.
+        """
         self._enlog(message, logging.WARNING)
 
     def info(self, message):
+        """
+        Enlog message with INFO level.
+        """
         self._enlog(message, logging.INFO)
 
     def debug(self, message):
+        """
+        Enlog message with DEBUG level.
+        """
         self._enlog(message, logging.DEBUG)
 
     def _enlog(self, message, level):
+        """
+        Helper method for enlogging message with specisied log level.
+        """
         tx_log.msg(message, level=level, system=self.name)
 
 
@@ -57,8 +75,8 @@ class Manager(object):
         return logger
 
 
-__manager = Manager()
-get_logger = __manager.get_logger
+__MANAGER = Manager()
+get_logger = __MANAGER.get_logger # pylint: disable=C0103
 
 
 class LevelFileLogObserver(tx_log.FileLogObserver):
@@ -93,8 +111,8 @@ class LevelFileLogObserver(tx_log.FileLogObserver):
             'system': eventDict['system'],
             'text': text.replace("\n", "\n\t")
         }
-        msg_str = tx_log._safeFormat("%(level)s:[%(system)s]:%(text)s\n",
-                                     fmt_dict)
+        msg_str = tx_log._safeFormat( # pylint: disable=W0212
+            "%(level)s:[%(system)s]:%(text)s\n", fmt_dict)
 
         tx_util.untilConcludes(self.write, time_str + " " + msg_str)
         tx_util.untilConcludes(self.flush)
