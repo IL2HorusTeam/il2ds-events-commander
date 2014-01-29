@@ -4,7 +4,7 @@ import posixpath
 import re
 
 from fabric.api import (task, env, run, local, roles, cd, execute, hide, puts,
-    sudo, )
+    settings, sudo, )
 from fabric.contrib.console import confirm
 
 
@@ -348,6 +348,18 @@ def commander(action):
       fab commander:run
     """
     dj("{0}_commander".format(action))
+
+
+@task
+@roles('web')
+def lint():
+    """
+    Lint Python modules.
+    """
+    with cd(env.project_dir):
+        with settings(hide('running', 'status'), warn_only=True):
+            run("{virtualenv_dir}/bin/pylint --rcfile=.pylintrc {project_name}/; echo".format(
+                **env))
 
 
 #------------------------------------------------------------------------------

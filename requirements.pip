@@ -26,6 +26,7 @@ il2ds-middleware>=0.9.1
 Jinja2==2.7.2
 logsna==1.2
 psycopg2==2.5.2
+pylint==1.1.0
 redis==2.9.0
 simplejson==3.3.0
 south==0.7.6
