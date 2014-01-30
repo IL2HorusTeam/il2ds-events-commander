@@ -14,6 +14,8 @@ import os
 import sys
 import warnings
 
+from datetime import timedelta
+
 import il2ec as project_module
 
 
@@ -327,6 +329,13 @@ CELERYD_CONCURRENCY = 2
 
 CELERYBEAT_MAX_LOOP_INTERVAL = 60
 CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
+
+CELERYBEAT_SCHEDULE = {
+    'delete-expired-sign-up-requests': {
+        'task': 'auth_custom.tasks.delete_expired_sign_up_requests',
+        'schedule': timedelta(hours=1),
+    },
+}
 
 # Jinja2 ----------------------------------------------------------------------
 JINJA2_EXTENSIONS = (

@@ -19,7 +19,6 @@ env.logs = {
     'uwsgi' : "/var/log/supervisor/uwsgi/uwsgi.err",
     'nginx' : "/var/log/nginx/error.log",
     'celeryd': "/var/log/celery/w1.log",
-    'celerybeat': "/var/log/celery/beat.log",
 
     # Platform-dependent, must be redefined
     'web': None,
@@ -181,7 +180,6 @@ def reincarnate(force=False):
 
     puts('Stopping Celery...')
     celeryd('stop')
-    celerybeat('stop')
     execute(purge_celery, force=True)
 
     puts('Destroying database...')
@@ -190,7 +188,6 @@ def reincarnate(force=False):
 
     puts('Starting Celery...')
     celeryd('start')
-    celerybeat('start')
 
 
 @task
@@ -287,7 +284,6 @@ def reload_all():
     """
     execute(reload)
     celeryd('restart')
-    celerybeat('restart')
 
 
 @task
@@ -389,13 +385,6 @@ def celeryd(action):
     Applies given action to Celery deamon.
     """
     sudo("/etc/init.d/celeryd {0}".format(action))
-
-
-def celerybeat(action):
-    """
-    Applies given action to Celery beat deamon.
-    """
-    sudo("/etc/init.d/celerybeat {0}".format(action))
 
 
 def fix_permissions(path='.'):

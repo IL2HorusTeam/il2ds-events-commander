@@ -13,9 +13,9 @@ LOG = logging.getLogger(__name__)
 
 
 @task
-def on_email_confirm_sign_up(successfully_sent, request_id):
+def on_sign_up_confirm_email_sent(successfully_sent, request_id):
     """
-    Celery task which is called after sign up confirmation mailing task.
+    Task which is called after sign up confirmation mailing task.
     """
     if not successfully_sent:
         return
@@ -26,3 +26,11 @@ def on_email_confirm_sign_up(successfully_sent, request_id):
     else:
         r.message_sent = True
         r.save()
+
+
+@task(ignore_result=True)
+def delete_expired_sign_up_requests():
+    """
+    Task which is called periodically and cleans up expired sign up requests.
+    """
+    SignUpRequest.objects.delete_expired()

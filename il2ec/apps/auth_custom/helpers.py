@@ -6,7 +6,7 @@ import logging
 
 from django.utils.translation import ugettext_lazy as _
 
-from auth_custom.tasks import on_email_confirm_sign_up
+from auth_custom.tasks import on_sign_up_confirm_email_sent
 from misc.tasks import send_mail
 
 
@@ -35,4 +35,4 @@ def email_confirm_sign_up(
     to_emails = [sign_up_request.email, ]
     send_mail.apply_async(
         (subject, template_name, context, from_email, to_emails),
-        link=on_email_confirm_sign_up.s(sign_up_request.id))
+        link=on_sign_up_confirm_email_sent.s(sign_up_request.id))

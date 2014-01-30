@@ -38,6 +38,12 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
             activation_key=activation_key,
             expiration_date=expiration_date)
 
+    def delete_expired(self):
+        """
+        Delete all expired sign up requests.
+        """
+        self.filter(expiration_date__lt=timezone.now()).delete()
+
 
 class SignUpRequest(models.Model):
     """
