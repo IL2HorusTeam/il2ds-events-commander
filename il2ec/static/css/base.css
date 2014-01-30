@@ -188,3 +188,9 @@ body {
 .alerts-placeholder {
   display: none;
 }
+
+/* Ladda buttons hover/focus fix ------------------------------------------- */
+.ladda-button[data-loading].btn-primary:hover,
+.ladda-button[data-loading].btn-primary:focus {
+  background-position: 0 0 !important;
+}

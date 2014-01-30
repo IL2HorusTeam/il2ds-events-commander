@@ -210,7 +210,10 @@
     var frm = $(this)
     , url = frm.attr('action')
     , button = frm.find('#submit-signin').get(0)
-    , l = Ladda.create(button)
+
+    if (typeof button.ladda === "undefined") {
+      button.ladda = Ladda.create(button)
+    }
 
     function show_error(message) {
       frm.find('.alert-danger .form-message').text(message)
@@ -218,7 +221,7 @@
     }
 
     frm.find('.alert-danger').hide()
-    l.start()
+    button.ladda.start()
     $.post(url
       , frm.serialize()
       , function(response) {
@@ -236,7 +239,7 @@
     ).fail(function(request, status, error) {
       show_error("{% trans %}Request error{% endtrans %}")
     }).always(function() {
-      l.stop()
+      button.ladda.stop()
     })
 
     return false
