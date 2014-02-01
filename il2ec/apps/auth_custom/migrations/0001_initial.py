@@ -14,6 +14,7 @@ class Migration(SchemaMigration):
             ('email', self.gf('django.db.models.fields.EmailField')(unique=True, max_length=75)),
             ('message_sent', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('activation_key', self.gf('django.db.models.fields.CharField')(max_length=40)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')()),
             ('expiration_date', self.gf('django.db.models.fields.DateTimeField')()),
         ))
         db.send_create_signal(u'auth_custom', ['SignUpRequest'])
@@ -28,6 +29,7 @@ class Migration(SchemaMigration):
         u'auth_custom.signuprequest': {
             'Meta': {'object_name': 'SignUpRequest'},
             'activation_key': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {}),
             'email': ('django.db.models.fields.EmailField', [], {'unique': 'True', 'max_length': '75'}),
             'expiration_date': ('django.db.models.fields.DateTimeField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

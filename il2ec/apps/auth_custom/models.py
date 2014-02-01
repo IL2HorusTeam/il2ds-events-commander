@@ -26,16 +26,17 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
         Create and return sign up request for specified email address.
         """
         created = timezone.now()
+        expiration_date = created + datetime.timedelta(
+            days=EMAIL_CONFIRMATION_DAYS)
 
         salt = hashlib.sha1(unicode(random.random())).hexdigest()[:5]
         activation_key = hashlib.sha1(
             ''.join([salt, email, unicode(created)])).hexdigest()
-        expiration_date = created + datetime.timedelta(
-            days=EMAIL_CONFIRMATION_DAYS)
 
         return self.create(
             email=email,
             activation_key=activation_key,
+            created=created,
             expiration_date=expiration_date)
 
     def delete_expired(self):
@@ -54,6 +55,10 @@ class SignUpRequest(models.Model):
         default=False)
     activation_key = models.CharField(_("activation key"),
         max_length=40)
+    created = models.DateTimeField(_("created"))
     expiration_date = models.DateTimeField(_("expiration date"))
 
     objects = SignUpRequestManager()
+
+    def __unicode__(self):
+        return _("Sign up request for {email}").format(email=self.email)

@@ -134,14 +134,10 @@ class SignUpRequestView(FormView):
                 return self.form_invalid(form)
 
             signup_request = SignUpRequest.objects.create_from_email(email)
-            LOG.info("YAY")
-            LOG.info(signup_request.email)
-            LOG.info("HAY")
-            email_confirm_sign_up(signup_request)
-
+            email_confirm_sign_up(signup_request,
+                                  language_code=request.LANGUAGE_CODE)
             context = {
-                'email': email,
-                'expiration_date': signup_request.expiration_date,
+                'signup_request': signup_request,
             }
             return render(request, self.template_success_name, context)
         else:
@@ -160,14 +156,3 @@ class SignUpView(FormView):
     @method_decorator(anonymous_required())
     def dispatch(self, *args, **kwargs):
         return super(SignUpView, self).dispatch(*args, **kwargs)
-
-    # def get(self, request, *args, **kwargs):
-    #     """
-    #     Handles GET requests.
-    #     """
-
-    # def post(self, request, *args, **kwargs):
-    #     """
-    #     Handles POST requests, instantiating a form instance with the passed
-    #     POST variables and then checked for validity.
-    #     """

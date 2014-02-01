@@ -1,13 +1,19 @@
 <html>
 <body>
-{% trans %}Hello{% endtrans %},
-<br/>
+{% trans %}Hello{% endtrans %}!
+<br/><br/>
 {% trans %}
-You've just sent sign up request on <a href="{{ host_address }}" target="blank">{{ host_name }}</a>, haven't you? If so, click here:
+You've just sent sign up request on <a href="{{ host_address }}" target="blank">{{ host_name }}</a>, haven't you? If so, follow this link to confirm your email:
 {% endtrans %}
 <br/>
 <a href="{{ confirm_link }}" target="blank">{{ confirm_link }}</a>
-<br/>
-{% trans %}Thank you{% endtrans %}.
+<br/><br/>
+{% trans time_left=expiration_date|timeuntil(creation_date) %}
+Your request will expire in {{ time_left }}.
+{% endtrans %}
+<br/><br/>
+{% trans %}If you do not know, why you have got this email, ignore it please{% endtrans %}.
+<br/><br/>
+{% trans %}Thank you{% endtrans %}!
 </body>
 </html>

@@ -9,12 +9,12 @@
   <div class="col-md-8 col-md-offset-2">
     <h3 class="form-signin-heading">{% trans %}Successful sign up request{% endtrans %}</h3>
     <div class="alert alert-success">
-      {% trans %}
-      Instructions for email confirmation were sent to  <b>{{ email }}</b>. Check out your inbox!
+      {% trans email=signup_request.email %}
+        Instructions for email confirmation were sent to <b>{{ email }}</b>. Check out your inbox!
       {% endtrans %}
       <br/>
-      {% trans time_left=expiration_date|timeuntil %}
-      Your request will expire in {{ time_left }}.
+      {% trans time_left=signup_request.expiration_date|timeuntil(signup_request.created) %}
+        Your request will expire in {{ time_left }}.
       {% endtrans %}
     </div>
   </div>
