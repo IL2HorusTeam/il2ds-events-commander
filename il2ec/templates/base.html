@@ -215,7 +215,7 @@
       button.ladda = Ladda.create(button)
     }
 
-    function show_error(message) {
+    function _show_error(message) {
       frm.find('.alert-danger .form-message').text(message)
       frm.find('.alert-danger').show()
     }
@@ -232,12 +232,12 @@
            */
           window.location = "{{ current_path }}"
         } else {
-          show_error(response.error.message)
+          _show_error(response.error.message)
         }
       }
       , "json"
     ).fail(function(request, status, error) {
-      show_error("{% trans %}Request error{% endtrans %}")
+      _show_error("{% trans %}Request execution error{% endtrans %}")
     }).always(function() {
       button.ladda.stop()
     })

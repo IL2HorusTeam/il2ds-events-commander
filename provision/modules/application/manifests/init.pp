@@ -159,18 +159,6 @@ class application (
         line => "cd ${project_base}",
     }
 
-    # Update .bash_profile ----------------------------------------------------
-    file { "/home/${user}/.bash_profile":
-        ensure => file,
-        mode   => 644,
-        owner  => $user,
-        group  => $group,
-    } ->
-    utils::file::line { "bash-profile-source-bashrc":
-        file => "/home/${user}/.bash_profile",
-        line => "source /home/${user}/.bashrc",
-    }
-
     # Update message of the day -----------------------------------------------
     if motd {
         file { "/etc/motd":

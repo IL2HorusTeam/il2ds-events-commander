@@ -44,3 +44,6 @@ provision/files/il2ds
 
 # misc
 celerybeat-schedule
+
+# Settings
+il2ec/settings/local/security.py

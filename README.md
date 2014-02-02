@@ -32,14 +32,15 @@ To start development on this project, you will need:
 
 1. Install needed software.
 2. Clone git repository.
-3. Get IL-2 DS somewhere and place it to project's directory. In case
+3. Setup security settings.
+4. Get IL-2 DS somewhere and place it to project's directory. In case
 you've got no one, maybe this [full and clean 4.12.2](https://drive.google.com/file/d/0B4hbTGD5PQqQOUtBVTJqWEFhaU0/edit?usp=sharing) will help you (Its size is ~2 GB, so take some patience).
 Or you can leave this task up to automatic provisioning stage.
-4. Start VM and automatically provision all needed stuff. This will start
+5. Start VM and automatically provision all needed stuff. This will start
 the web application.
-5. Update 'hosts' file.
-6. Start IL-2 DS.
-7. Run commander.
+6. Update 'hosts' file.
+7. Start IL-2 DS.
+8. Run commander.
 
 ### Install tools
 
@@ -58,6 +59,14 @@ vagrant boxes to `provision/boxes` (see Vagrantfile for names).
 Clone the whole project:
 
     git clone --recursive git@github.com:IL2HorusTeam/il2ds-events-commander.git
+
+### Setup security settings
+
+You will need to use an existsing development email for different purposes:
+sending email confirmation requests, password resetting requests, etc. To make
+this possible, you need to copy `il2ec/settings/local/security.py.example`
+into `il2ec/settings/local/security.py` and set valid value for
+`EMAIL_HOST_PASSWORD`. Contact developers to get the real passsword value.
 
 ### Get IL-2 DS
 
@@ -90,18 +99,6 @@ If database creation error will appear due to incompatible encoding, run:
     exit
     exit
     vagrant provision
-
-You will need to use an existsing development email for different purposes:
-sending email confirmation requests, password resetting requests, etc. To make
-this possible, you will need to set an environment variable with secret email
-password on the guest machine:
-
-    vagrant ssh
-    echo "export HORUS_DEV_EMAIL_PASSWORD=\"XXXXXXXXXXXXXXXXXX\"" >> ~/.bash_profile
-    exit
-
-Contact developers to get the real passsword and replace `XXXXXXXXXXXXXXXXXX`
-with it.
 
 Now you can prepare and run the web application:
 

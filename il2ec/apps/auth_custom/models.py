@@ -33,7 +33,7 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
         activation_key = hashlib.sha1(
             ''.join([salt, email, unicode(created)])).hexdigest()
 
-        return self.create(
+        return SignUpRequest(
             email=email,
             activation_key=activation_key,
             created=created,
@@ -51,8 +51,6 @@ class SignUpRequest(models.Model):
     Model for storing sign-up requests.
     """
     email = models.EmailField(_("email address"), unique=True)
-    message_sent = models.BooleanField(_("message sent"),
-        default=False)
     activation_key = models.CharField(_("activation key"),
         max_length=40)
     created = models.DateTimeField(_("created"))

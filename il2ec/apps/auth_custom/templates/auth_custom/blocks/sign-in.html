@@ -6,15 +6,18 @@
         <h3 class="form-signin-heading">{% trans %}Sign in{% endtrans %}</h3>
         <form class="form" role="form" id="form-signin" action="{% url auth-custom-sign-in %}" method="post">
           {% csrf_token %}
+          <!-- Form errors START -->
           {% if signin_page %}
+            <!-- If we are on sign in page and using plain POST request -->
             {% set form_errors = form.non_field_errors() %}
             {% if form_errors %}
               <div class="alert alert-danger alert-dismissable">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                 {{ form_errors|striptags }}
               </div>
-            {% endif %} <!-- form_errors -->
+            {% endif %}
           {% else %}
+            <!-- If we are not on sign in page and using AJAX POST request -->
             <div class="alert alert-success alerts-placeholder">
               <span class='form-message'>{% trans %}Success{% endtrans %}!</span>
             </div>
@@ -22,7 +25,8 @@
               <button type="button" class="close" aria-hidden="true">&times;</button>
               <span class='form-message'></span>
             </div>
-          {% endif %} <!-- signin_page -->
+          {% endif %}
+          <!-- Form errors END -->
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>

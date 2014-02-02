@@ -26,24 +26,23 @@ class celery (
         mode    => 0755,
     }
 
-    file { "/etc/init.d/celerybeat":
-        ensure  => "present",
-        content => template("celery/celerybeat"),
-        mode    => 0755,
-    }
+    # file { "/etc/init.d/celerybeat":
+    #     ensure  => "present",
+    #     content => template("celery/celerybeat"),
+    #     mode    => 0755,
+    # }
 
     python::pip { "celery":
         virtualenv => $virtualenv,
         owner      => $owner,
         ensure     => present,
     } ->
-    service { ["celeryd",
-               "celerybeat"]:
+    service { "celeryd":
         ensure => running,
         require => [
             File["/etc/default/celeryd"],
             File["/etc/init.d/celeryd"],
-            File["/etc/init.d/celerybeat"],
+            # File["/etc/init.d/celerybeat"],
             File["/var/log/celery"],
             File["/var/run/celery"],
         ],

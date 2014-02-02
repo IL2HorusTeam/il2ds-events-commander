@@ -2,13 +2,13 @@
 """
 Views which handle authentication-related requests.
 """
+import itertools
 import logging
 
-from coffin.shortcuts import render
+from coffin.shortcuts import render, render_to_string
 from coffin.views.generic import FormView
 
 from django.conf import settings as dj_settings
-from django.contrib import messages
 from django.contrib.auth import (REDIRECT_FIELD_NAME, login as auth_login,
     get_user_model, )
 from django.contrib.sites.models import get_current_site
@@ -16,13 +16,16 @@ from django.contrib.sites.models import get_current_site
 from django.http import HttpResponseRedirect
 from django.shortcuts import resolve_url
 
+from django.template import RequestContext
+
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
-from django.utils.translation import ugettext as _
+from django.utils.timesince import timeuntil
+from django.utils.translation import activate, deactivate, ugettext as _
 
 from auth_custom import settings
 from auth_custom.decorators import anonymous_required
@@ -69,10 +72,7 @@ def sign_in(request,                                    # pylint: disable=R0913
                 __do_sign_in(request, form)
                 return JSONResponse.success()
             else:
-                msg = ' '.join([
-                    # Convert lists of lists into a flat list
-                    e for errs in form.errors.values() for e in errs
-                ])
+                msg = ' '.join(itertools.chain(*form.errors.values()))
                 return JSONResponse.error(message=unicode(msg))
 
         # Process non-AJAX request --------------------------------------------
@@ -104,7 +104,6 @@ class SignUpRequestView(FormView):
     """
     form_class = SignUpRequestForm
     template_name = 'auth_custom/pages/sign-up-request.html'
-    template_success_name = 'auth_custom/pages/sign-up-request-done.html'
 
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
@@ -117,31 +116,45 @@ class SignUpRequestView(FormView):
         Handles POST requests, instantiating a form instance with the passed
         POST variables and then checked for validity.
         """
+        if not request.is_ajax():
+            return self.get(request, *args, **kwargs)
         form_class = self.get_form_class()
-        form = self.get_form(form_class)
+        form = form_class(data=request.POST)
+
         if form.is_valid():
             email = form.cleaned_data['email']
 
             if SignUpRequest.objects.filter(email=email).exists():
-                messages.error(request, _("Sign up request for specified "
-                                          "email already exists."))
-                return self.form_invalid(form)
+                return JSONResponse.error(
+                    message=_("Sign up request for specified email already "
+                              "exists."))
 
             UserModel = get_user_model() # pylint: disable=C0103
             if UserModel.objects.filter(email=email).exists():
-                messages.error(
-                    request, _("Specified email is already in use."))
-                return self.form_invalid(form)
+                return JSONResponse.error(
+                    message=_("Specified email is already in use."))
 
             signup_request = SignUpRequest.objects.create_from_email(email)
-            email_confirm_sign_up(signup_request,
-                                  language_code=request.LANGUAGE_CODE)
-            context = {
-                'signup_request': signup_request,
-            }
-            return render(request, self.template_success_name, context)
+
+            sent = email_confirm_sign_up(signup_request, request.LANGUAGE_CODE)
+            if not sent:
+                return JSONResponse.error(
+                    message=_("Sorry, we are failed to send an email to you. "
+                              "Please, try again a bit later."))
+
+            activate(request.LANGUAGE_CODE)
+            time_left = timeuntil(signup_request.expiration_date,
+                                  signup_request.created)
+            deactivate()
+
+            signup_request.save()
+            return JSONResponse.success(payload={
+                'email': email,
+                'time_left': time_left,
+            })
         else:
-            return self.form_invalid(form)
+            msg = ' '.join(itertools.chain(*form.errors.values()))
+            return JSONResponse.error(message=msg)
 
 
 class SignUpView(FormView):

@@ -5,6 +5,7 @@ Settings for local development server.
 import os
 
 from il2ec.settings.base import * # pylint: disable=W0614,W0401
+from il2ec.settings.local.security import *
 
 #------------------------------------------------------------------------------
 # Main project settings
@@ -34,7 +35,6 @@ DATABASES = {
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'il2.horus.dev@gmail.com'
-EMAIL_HOST_PASSWORD = os.environ.get('HORUS_DEV_EMAIL_PASSWORD')
 EMAIL_PORT = 587
 
 #------------------------------------------------------------------------------

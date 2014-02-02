@@ -1,0 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Example security settings for local development
+
+Use this file as a base for your local development security settings and copy
+it to il2ec/settings/local/security.py. It should not be checked into the code
+repository.
+"""
+EMAIL_HOST_PASSWORD=r"secret_email_password"
