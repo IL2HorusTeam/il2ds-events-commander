@@ -135,17 +135,26 @@ class SignUpRequestView(FormView):
                     message=_("Specified email is already in use."))
 
             signup_request = SignUpRequest.objects.create_from_email(email)
+            lang_code = request.LANGUAGE_CODE
 
-            sent = email_confirm_sign_up(signup_request, request.LANGUAGE_CODE)
+            activate(lang_code)
+            home_url = request.build_absolute_uri(resolve_url('website-index'))
+            time_left = timeuntil(signup_request.expiration_date,
+                                  signup_request.created)
+            deactivate()
+
+            context = {
+                'host_address': home_url,
+                'host_name': dj_settings.PROJECT_NAME.get(lang_code),
+                'confirm_link': 'baz',
+                'creation_date': signup_request.created,
+                'expiration_date': signup_request.expiration_date,
+            }
+            sent = email_confirm_sign_up(email, context, lang_code)
             if not sent:
                 return JSONResponse.error(
                     message=_("Sorry, we are failed to send an email to you. "
                               "Please, try again a bit later."))
-
-            activate(request.LANGUAGE_CODE)
-            time_left = timeuntil(signup_request.expiration_date,
-                                  signup_request.created)
-            deactivate()
 
             signup_request.save()
             return JSONResponse.success(payload={
