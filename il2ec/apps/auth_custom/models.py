@@ -72,6 +72,8 @@ class SignUpRequest(models.Model):
     objects = SignUpRequestManager()
 
     class Meta:
+        verbose_name = _("sign up request")
+        verbose_name_plural = _("sign up requests")
         ordering = ['-expiration_date', 'email']
 
     def __unicode__(self):

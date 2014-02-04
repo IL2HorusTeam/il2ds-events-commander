@@ -24,7 +24,11 @@ class CustomIndexDashboard(Dashboard):
             _("Users"),
             column=1,
             collapsible=False,
-            models=('django.contrib.auth.*',),
+            models=(
+                'django.contrib.auth.models.Group',
+                'django.contrib.auth.models.User',
+                'auth_custom.models.SignUpRequest',
+            ),
         ))
 
         # append a recent actions module
