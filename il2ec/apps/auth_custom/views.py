@@ -32,6 +32,8 @@ from auth_custom.decorators import anonymous_required
 from auth_custom.forms import AuthenticationForm, SignUpForm, SignUpRequestForm
 from auth_custom.helpers import email_confirm_sign_up
 from auth_custom.models import SignUpRequest
+
+from website.helpers import get_project_name
 from website.responses import JSONResponse
 
 
@@ -145,7 +147,7 @@ class SignUpRequestView(FormView):
 
             context = {
                 'host_address': home_url,
-                'host_name': dj_settings.PROJECT_NAME.get(lang_code),
+                'host_name': get_project_name(lang_code),
                 'confirm_link': 'baz',
                 'creation_date': signup_request.created,
                 'expiration_date': signup_request.expiration_date,
