@@ -126,29 +126,33 @@ class SignUpRequestView(FormView):
         if form.is_valid():
             email = form.cleaned_data['email']
 
-            if SignUpRequest.objects.filter(email=email).exists():
-                return JSONResponse.error(
-                    message=_("Sign up request for specified email already "
-                              "exists."))
-
             UserModel = get_user_model() # pylint: disable=C0103
             if UserModel.objects.filter(email=email).exists():
                 return JSONResponse.error(
                     message=_("Specified email is already in use."))
 
-            signup_request = SignUpRequest.objects.create_from_email(email)
+            try:
+                signup_request = SignUpRequest.objects.create_from_email(email)
+            except SignUpRequest.AlreadyExists as e:
+                return JSONResponse.error(message=unicode(e))
+
             lang_code = request.LANGUAGE_CODE
 
+            # Get language-dependent data -------------------------------------
             activate(lang_code)
-            home_url = request.build_absolute_uri(resolve_url('website-index'))
+            home_url = request.build_absolute_uri(resolve_url(
+                'website-index'))
+            activation_url = request.build_absolute_uri(resolve_url(
+                'auth-custom-sign-up', email, signup_request.activation_key))
             time_left = timeuntil(signup_request.expiration_date,
                                   signup_request.created)
             deactivate()
 
+            # Send email-address confirmation email ---------------------------
             context = {
                 'host_address': home_url,
                 'host_name': get_project_name(lang_code),
-                'confirm_link': 'baz',
+                'activation_url': activation_url,
                 'creation_date': signup_request.created,
                 'expiration_date': signup_request.expiration_date,
             }

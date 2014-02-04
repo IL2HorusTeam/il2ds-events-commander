@@ -6,7 +6,7 @@
 You've just sent sign up request on <a href="{{ host_address }}" target="blank">{{ host_name }}</a>, haven't you? If so, follow this link to confirm your email:
 {% endtrans %}
 <br/>
-<a href="{{ confirm_link }}" target="blank">{{ confirm_link }}</a>
+<a href="{{ activation_url }}" target="blank">{{ activation_url }}</a>
 <br/><br/>
 {% trans time_left=expiration_date|timeuntil(creation_date) %}
 Your request will expire in {{ time_left }}.

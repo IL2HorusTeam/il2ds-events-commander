@@ -11,7 +11,7 @@ class Migration(SchemaMigration):
         # Adding model 'SignUpRequest'
         db.create_table(u'auth_custom_signuprequest', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('email', self.gf('django.db.models.fields.EmailField')(unique=True, max_length=75)),
+            ('email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
             ('activation_key', self.gf('django.db.models.fields.CharField')(max_length=40)),
             ('created', self.gf('django.db.models.fields.DateTimeField')()),
             ('expiration_date', self.gf('django.db.models.fields.DateTimeField')()),
@@ -26,10 +26,10 @@ class Migration(SchemaMigration):
 
     models = {
         u'auth_custom.signuprequest': {
-            'Meta': {'object_name': 'SignUpRequest'},
+            'Meta': {'ordering': "['-expiration_date', 'email']", 'object_name': 'SignUpRequest'},
             'activation_key': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
             'created': ('django.db.models.fields.DateTimeField', [], {}),
-            'email': ('django.db.models.fields.EmailField', [], {'unique': 'True', 'max_length': '75'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
             'expiration_date': ('django.db.models.fields.DateTimeField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         }
