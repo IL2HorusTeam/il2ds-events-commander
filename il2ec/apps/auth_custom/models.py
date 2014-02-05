@@ -3,15 +3,14 @@
 Authentication models.
 """
 import datetime
-import hashlib
 import logging
-import random
 
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from auth_custom.settings import EMAIL_CONFIRMATION_DAYS
+from auth_custom.helpers import email_confirmation
 from misc.exceptions import ObjectAlreadyExistsError
 
 
@@ -38,16 +37,12 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
 
         expiration_date = now + datetime.timedelta(
             days=EMAIL_CONFIRMATION_DAYS)
+        confirmation_key = email_confirmation.generate_key(email, unicode(now))
 
-        salt = hashlib.sha1(unicode(random.random())).hexdigest()[:5]
-        activation_key = hashlib.sha1(
-            ''.join([salt, email, unicode(now)])).hexdigest()
-
-        return SignUpRequest(
-            email=email,
-            activation_key=activation_key,
-            created=now,
-            expiration_date=expiration_date)
+        return SignUpRequest(email=email,
+                             confirmation_key=confirmation_key,
+                             created=now,
+                             expiration_date=expiration_date)
 
     def delete_expired(self):
         """
@@ -63,8 +58,9 @@ class SignUpRequest(models.Model):
     """
     AlreadyExists = ObjectAlreadyExistsError
 
-    email = models.EmailField(_("email address"), unique=False)
-    activation_key = models.CharField(_("activation key"),
+    email = models.EmailField(_("email address"),
+        unique=False)
+    confirmation_key = models.CharField(_("confirmation key"),
         max_length=40)
     created = models.DateTimeField(_("created"))
     expiration_date = models.DateTimeField(_("expiration date"))

@@ -5,7 +5,7 @@ Views which handle authentication-related requests.
 import itertools
 import logging
 
-from coffin.shortcuts import render, render_to_string
+from coffin.shortcuts import render, render_to_string, resolve_url
 from coffin.views.generic import FormView
 
 from django.conf import settings as dj_settings
@@ -14,7 +14,6 @@ from django.contrib.auth import (REDIRECT_FIELD_NAME, login as auth_login,
 from django.contrib.sites.models import get_current_site
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import resolve_url
 
 from django.template import RequestContext
 
@@ -30,10 +29,9 @@ from django.utils.translation import activate, deactivate, ugettext as _
 from auth_custom import settings
 from auth_custom.decorators import anonymous_required
 from auth_custom.forms import AuthenticationForm, SignUpForm, SignUpRequestForm
-from auth_custom.helpers import email_confirm_sign_up
+from auth_custom.helpers import email_confirmation
 from auth_custom.models import SignUpRequest
 
-from website.helpers import get_project_name
 from website.responses import JSONResponse
 
 
@@ -136,33 +134,18 @@ class SignUpRequestView(FormView):
             except SignUpRequest.AlreadyExists as e:
                 return JSONResponse.error(message=unicode(e))
 
-            lang_code = request.LANGUAGE_CODE
-
-            # Get language-dependent data -------------------------------------
-            activate(lang_code)
-            home_url = request.build_absolute_uri(resolve_url(
-                'website-index'))
-            activation_url = request.build_absolute_uri(resolve_url(
-                'auth-custom-sign-up', email, signup_request.activation_key))
-            time_left = timeuntil(signup_request.expiration_date,
-                                  signup_request.created)
-            deactivate()
-
-            # Send email-address confirmation email ---------------------------
-            context = {
-                'host_address': home_url,
-                'host_name': get_project_name(lang_code),
-                'activation_url': activation_url,
-                'creation_date': signup_request.created,
-                'expiration_date': signup_request.expiration_date,
-            }
-            sent = email_confirm_sign_up(email, context, lang_code)
-            if not sent:
+            if email_confirmation.send_email(request, signup_request):
+                signup_request.save()
+            else:
                 return JSONResponse.error(
                     message=_("Sorry, we are failed to send an email to you. "
                               "Please, try again a bit later."))
 
-            signup_request.save()
+            activate(request.LANGUAGE_CODE)
+            time_left = timeuntil(signup_request.expiration_date,
+                                  signup_request.created)
+            deactivate()
+
             return JSONResponse.success(payload={
                 'email': email,
                 'time_left': time_left,
@@ -184,3 +167,17 @@ class SignUpView(FormView):
     @method_decorator(anonymous_required())
     def dispatch(self, *args, **kwargs):
         return super(SignUpView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests.
+        """
+        LOG.info(kwargs.get('email'))
+        LOG.info(kwargs.get('key'))
+        context = {}
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests.
+        """

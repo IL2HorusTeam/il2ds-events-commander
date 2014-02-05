@@ -16,10 +16,10 @@ class SignUpRequestAdmin(admin.ModelAdmin):
     """
     Pass
     """
-    search_fields = ('email', 'activation_key', )
+    search_fields = ('email', 'confirmation_key', )
     list_display = ('email', 'expiration_date', )
-    fields = ('email', 'activation_key', 'created', 'expiration_date', )
-    readonly_fields = ('email', 'activation_key', 'created', )
+    fields = ('email', 'confirmation_key', 'created', 'expiration_date', )
+    readonly_fields = ('email', 'confirmation_key', 'created', )
 
 
 admin.site.register(SignUpRequest, SignUpRequestAdmin)
