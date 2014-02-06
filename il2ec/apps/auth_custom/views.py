@@ -12,8 +12,10 @@ from django.conf import settings as dj_settings
 from django.contrib.auth import (REDIRECT_FIELD_NAME, login as auth_login,
     get_user_model, )
 from django.contrib.sites.models import get_current_site
+from django.core.exceptions import ValidationError
+from django.core.validators import  validate_email
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseBadRequest, HttpResponseRedirect
 
 from django.template import RequestContext
 
@@ -26,10 +28,9 @@ from django.utils.http import is_safe_url
 from django.utils.timesince import timeuntil
 from django.utils.translation import activate, deactivate, ugettext as _
 
-from auth_custom import settings
+from auth_custom import signup_confirmation, settings
 from auth_custom.decorators import anonymous_required
 from auth_custom.forms import AuthenticationForm, SignUpForm, SignUpRequestForm
-from auth_custom.helpers import email_confirmation
 from auth_custom.models import SignUpRequest
 
 from website.responses import JSONResponse
@@ -38,7 +39,7 @@ from website.responses import JSONResponse
 LOG = logging.getLogger(__name__)
 
 
-def __do_sign_in(request, form):
+def _do_sign_in(request, form):
     """
     Helper sign in function: authenticate user and update session expiry date
     if 'remember-me' field was checked.
@@ -59,7 +60,7 @@ def sign_in(request,                                    # pylint: disable=R0913
             current_app=None,                           # pylint: disable=W0613
             extra_context=None):
     """
-    Displays the login form and handles the login action with AJAX support.
+    Displays the sign in form and handles the login action with AJAX support.
     """
     redirect_to = request.REQUEST.get(redirect_field_name, '')
 
@@ -67,9 +68,9 @@ def sign_in(request,                                    # pylint: disable=R0913
         form = authentication_form(request, data=request.POST)
 
         if request.is_ajax():
-            # Process AJAX request --------------------------------------------
+        # Process AJAX request ------------------------------------------------
             if form.is_valid():
-                __do_sign_in(request, form)
+                _do_sign_in(request, form)
                 return JSONResponse.success()
             else:
                 msg = ' '.join(itertools.chain(*form.errors.values()))
@@ -79,7 +80,7 @@ def sign_in(request,                                    # pylint: disable=R0913
         if form.is_valid():
             if not is_safe_url(url=redirect_to, host=request.get_host()):
                 redirect_to = resolve_url(dj_settings.LOGIN_REDIRECT_URL)
-            __do_sign_in(request, form)
+            _do_sign_in(request, form)
             return HttpResponseRedirect(redirect_to)
     else:
         # Process GET request -------------------------------------------------
@@ -117,7 +118,8 @@ class SignUpRequestView(FormView):
         POST variables and then checked for validity.
         """
         if not request.is_ajax():
-            return self.get(request, *args, **kwargs)
+            return HttpResponseBadRequest()
+
         form_class = self.get_form_class()
         form = form_class(data=request.POST)
 
@@ -134,7 +136,7 @@ class SignUpRequestView(FormView):
             except SignUpRequest.AlreadyExists as e:
                 return JSONResponse.error(message=unicode(e))
 
-            if email_confirmation.send_email(request, signup_request):
+            if signup_confirmation.send_email(request, signup_request):
                 signup_request.save()
             else:
                 return JSONResponse.error(
@@ -155,29 +157,57 @@ class SignUpRequestView(FormView):
             return JSONResponse.error(message=msg)
 
 
-class SignUpView(FormView):
+@anonymous_required()
+def sign_up(request, email, confirmation_key,
+            form_class=SignUpForm,
+            template_name='auth_custom/pages/sign-up.html'):
     """
-    View for sign up.
+    Handles sign up GET requests with 'email' and 'key' parameters.
     """
-    form_class = SignUpForm
-    template_name = 'auth_custom/pages/sign-up.html'
+    if not request.method == "GET":
+        return HttpResponseBadRequest()
 
-    @method_decorator(csrf_protect)
-    @method_decorator(never_cache)
-    @method_decorator(anonymous_required())
-    def dispatch(self, *args, **kwargs):
-        return super(SignUpView, self).dispatch(*args, **kwargs)
+    context = {
+        'errors': [],
+        'email': email,
+        'confirmation_key': confirmation_key,
+    }
 
-    def get(self, request, *args, **kwargs):
-        """
-        Handles GET requests.
-        """
-        LOG.info(kwargs.get('email'))
-        LOG.info(kwargs.get('key'))
-        context = {}
-        return render(request, self.template_name, context)
+    def _render():
+        return render(request, template_name, context)
 
-    def post(self, request, *args, **kwargs):
-        """
-        Handles POST requests.
-        """
+    try:
+        validate_email(email)
+    except ValidationError as e:
+        context['errors'].append(unicode(e.message))
+    try:
+        signup_confirmation.validate_key(confirmation_key)
+    except ValidationError as e:
+        context['errors'].append(unicode(e.message))
+
+    if context['errors']:
+        return _render()
+
+    signup_request = SignUpRequest.objects.get_unexpired(email,
+                                                         confirmation_key)
+
+    if signup_request is None:
+        context['errors'].append(_("Sign up request does not exist."))
+        return _render()
+
+    # TODO: session? add/remove
+
+    return _render()
+
+
+@csrf_protect
+@anonymous_required()
+def sign_up_invoke(request, form_class=SignUpForm):
+    """
+    Handles sign up AJAX POST requests.
+    """
+    if not (request.method == "POST" and request.is_ajax()):
+        return HttpResponseBadRequest()
+
+    form = form_class(request, data=request.POST)
+    # TODO:

@@ -9,8 +9,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
+from auth_custom import signup_confirmation
 from auth_custom.settings import EMAIL_CONFIRMATION_DAYS
-from auth_custom.helpers import email_confirmation
 from misc.exceptions import ObjectAlreadyExistsError
 
 
@@ -37,12 +37,29 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
 
         expiration_date = now + datetime.timedelta(
             days=EMAIL_CONFIRMATION_DAYS)
-        confirmation_key = email_confirmation.generate_key(email, unicode(now))
+        confirmation_key = signup_confirmation.generate_key(email,
+                                                            unicode(now))
 
         return SignUpRequest(email=email,
                              confirmation_key=confirmation_key,
                              created=now,
                              expiration_date=expiration_date)
+
+
+    def get_unexpired(self, email, confirmation_key):
+        """
+        Get unexpired sign up request for specified email and confirmation key
+        or 'None'
+        """
+        now = timezone.now()
+        try:
+            return SignUpRequest.objects.filter(
+                email=email,
+                confirmation_key=confirmation_key,
+                expiration_date__gt=now)[:1].get()
+        except SignUpRequest.DoesNotExist:
+            return None
+
 
     def delete_expired(self):
         """

@@ -5,5 +5,83 @@
 {% endblock %}
 
 {% block content %}
-Join us right now! Fill up the form below.
+{% if errors %}
+<div class="alert alert-danger col-md-4 col-md-offset-4">
+  <ul>
+    {% for error in errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% else %}
+<div class="row offset-bottom">
+  <div class="col-md-4 col-md-offset-4">
+    <form class="form-horizontal" role="form" id="form-signup" action="{% url auth-custom-sign-up-invoke %}" method="post">
+      <legend>Finish sign up</legend>
+      <span class="help-block">{% trans %}Just one step to create your account{% endtrans %}</span>
+
+      {% csrf_token %}
+      <input type="hidden" name="email" value="{{ email }}">
+      <input type="hidden" name="confirmation_key" value="{{ confirmation_key }}">
+
+      <div class="offset-bottom">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
+          <input type="text" class="form-control" name="first_name" data-toggle="tooltip" title="{% trans %}Your first name{% endtrans %}" placeholder="{% trans %}First name{% endtrans %}" required>
+        </div>
+      </div>
+      <div class="offset-bottom">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
+          <input type="text" class="form-control" name="last_name" data-toggle="tooltip" title="{% trans %}Your last name (optional){% endtrans %}" placeholder="{% trans %}Last name{% endtrans %}">
+        </div>
+      </div>
+      <div class="offset-bottom">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+          <input type="text" class="form-control" name="username" data-toggle="tooltip" title="{% trans %}Your in-game name{% endtrans %}" placeholder="{% trans %}Username{% endtrans %}" required>
+        </div>
+      </div>
+      <div class="offset-bottom">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+          <input type="password" class="form-control" name="password" data-toggle="tooltip" title="{% trans %}Password for this site{% endtrans %}" placeholder="{% trans %}Password{% endtrans %}" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-4 control-label">{% trans %}Email{% endtrans %}</label>
+        <div class="col-sm-8">
+          <p class="form-control-static">{{ email }}</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="select_language" class="col-sm-4 control-label">{% trans %}Language{% endtrans %}</label>
+        <div class="col-sm-6">
+          <select class="form-control" id="signup_language" name="language" data-toggle="tooltip" title="{% trans %}Language to use on this site and in game chat{% endtrans %}">
+          {% for code, name, native in settings.LANGUAGES_INFO %}
+            <option title="{{ name }}" value="{{ code }}" title="{{ name }}"{% if code == LANGUAGE_CODE %} selected='selected'{% endif %}>{{ native }}</option>
+          {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-8 col-sm-offset-4">
+          <label class="checkbox">
+            <input type="checkbox" name="remember_me">
+            {% trans %}Remember me{% endtrans %}
+          </label>
+        </div>
+      </div>
+      <button id="submit-signup" type="submit" class="btn btn-success btn-lg btn-block">{% trans %}Join right now{% endtrans %}!</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+
+{% block script_extras %}
+<script type="text/javascript">
+  // TODO:
+</script>
 {% endblock %}

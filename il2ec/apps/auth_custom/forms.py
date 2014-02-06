@@ -14,7 +14,7 @@ class AuthenticationForm(BaseAuthenticationForm):
     Add a 'remember me' checkbox to default form.
     """
     error_messages = {
-        'invalid_login': _("Wrong login or password."),
+        'invalid_username': _("Wrong username or password."),
         'inactive': _("Account is inactive."),
     }
 
@@ -32,8 +32,8 @@ class AuthenticationForm(BaseAuthenticationForm):
                                            password=password)
             if self.user_cache is None:
                 raise forms.ValidationError(
-                    self.error_messages['invalid_login'],
-                    code='invalid_login',
+                    self.error_messages['invalid_username'],
+                    code='invalid_username',
                 )
             elif not self.user_cache.is_active:
                 raise forms.ValidationError(

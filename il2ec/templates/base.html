@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
   <title>{% block head_title %}{% endblock %} - {{ PROJECT_NAME }}</title>
   <meta charset="utf-8">
@@ -93,7 +93,7 @@
           </ul>
         </td>
         <td>
-          <div id="project-name" data-toggle="nav-tooltip" title="{% trans %}Go to home page{% endtrans %}">
+          <div id="project-name" data-toggle="tooltip-nav" title="{% trans %}Go to home page{% endtrans %}">
             <a href="{% url website-index %}">{{ PROJECT_NAME }}</a>
           </div>
         </td>
@@ -106,7 +106,7 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans %}Language{% endtrans %}: {{ LANGUAGE }} <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 {% for code, name, native in settings.LANGUAGES_INFO %}
-                  <li><a href="#" lang_code="{{ code }}" class="change_language" data-toggle="nav-tooltip" title="{{ name }}">{{ native }}</a></li>
+                  <li><a href="#" lang_code="{{ code }}" class="change_language" data-toggle="tooltip-nav" title="{{ name }}">{{ native }}</a></li>
                 {% endfor %}
               </ul>
               <form action="/i18n/setlang/" method="post" style="display: none" id="language_form">
@@ -153,9 +153,9 @@
 
 <!-- Place Javascript at the end of the document so the pages load faster -->
 {% compress js %}
-<!-- Latest compiled and minified jQuery -->
+<!-- Compiled and minified jQuery -->
 <script src="{{ STATIC_URL }}lib/jquery/jquery-1.10.2.min.js" type="text/javascript" charset="utf-8"></script>
-<!-- Latest compiled and minified JavaScript -->
+<!-- Compiled and minified js for Bootstrap -->
 <script src="{{ STATIC_URL }}lib/bootstrap/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
 <!-- Ladda button spinner -->
 <script src="{{ STATIC_URL }}lib/ladda/spin.min.js"></script>
@@ -163,9 +163,15 @@
 
 <script type="text/javascript">
   /* Enable tooltips */
-  $('[data-toggle="nav-tooltip"]').tooltip({
+  var tooltip_delay = { show: 500, hide: 100 }
+
+  $('[data-toggle="tooltip-nav"]').tooltip({
     placement: 'bottom',
-    delay: { show: 500, hide: 100 }
+    delay: tooltip_delay,
+  })
+  $('[data-toggle="tooltip"]').tooltip({
+    placement: 'top',
+    delay: tooltip_delay,
   })
 </script>
 
@@ -175,7 +181,7 @@
   /* Setup AJAX CSRF token */
   function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method))
   }
   $.ajaxSetup({
     crossDomain: false, // obviates need for sameOrigin test
@@ -185,12 +191,14 @@
       }
     }
   });
+
   /* Process language selecting */
   $('.change_language').click(function(e) {
     e.preventDefault()
     $('#language_value').val($(this).attr('lang_code'))
     $('#language_form').submit()
   })
+
   /* Fix 'focus lost' for sign in dropdown menu due to usage of tabs */
   $('#dropdown-signin').on('hide.bs.dropdown', function() {
     $(this).removeClass('active')

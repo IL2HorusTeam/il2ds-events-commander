@@ -16,8 +16,8 @@
 {% block content %}
 <div class="row">
   <div class="col-md-8 col-md-offset-2">
-    <h3 class="signup-heading">{% trans %}Sign up request{% endtrans %}</h3>
-    <p class="help-text">{% trans %}Before you join, we need to check your email. Give us your email and further instructions will be sent to you.{% endtrans %}</p>
+    <legend>{% trans %}Sign up request{% endtrans %}</legend>
+    <span class="help-block">{% trans %}Before you join, we need to check your email. Give us your email and further instructions will be sent to you.{% endtrans %}</span>
 
     <div id="success_block" class="alert alert-success alerts-placeholder">
       {% trans email="<b id='request_email'></b>"|safe %}
@@ -41,7 +41,7 @@
       <div class="form-group">
         <div class="input-group">
           <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
-          <input type="email" class="form-control" name="email" id="signin-login-email" placeholder="{% trans %}Email address{% endtrans %}" required>
+          <input type="email" class="form-control" name="email" id="signin-username-email" data-toggle="tooltip" title="{% trans %}Email to send your sign up instructions to{% endtrans %}" placeholder="{% trans %}Email address{% endtrans %}" required>
           <span class="input-group-btn">
             <button id="submit-signup-request" type="submit" class="btn btn-primary ladda-button" data-style="zoom-out">{% trans %}Go!{% endtrans %}</button>
           </span>
