@@ -3,6 +3,7 @@
 Forms for authentication-related views.
 """
 from django import forms
+from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import (AuthenticationForm as
     BaseAuthenticationForm)
@@ -47,10 +48,55 @@ class SignUpRequestForm(forms.Form):
     """
     Form for getting data to create a request for sign up.
     """
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(
+        label=_("Email"),
+        help_text=_("Email to send your sign up instructions to"),
+        required=True)
 
 
 class SignUpForm(forms.Form):
     """
-    Form for getting data to create a new user.
+    A form that creates a user with no privileges from the given first name,
+    last name, username, password, language. Sign up request data (email and
+    confirmation_key) must be provided.
     """
+    email = forms.CharField(
+        required=True,
+        widget=forms.HiddenInput)
+    confirmation_key = forms.CharField(
+        required=True,
+        widget=forms.HiddenInput)
+
+    first_name = forms.CharField(
+        label=_("First name"),
+        help_text=_("Your first name"),
+        required=True)
+    last_name = forms.CharField(
+        label=_("Last name"),
+        help_text=_("Your last name (optional)"))
+    username = forms.RegexField(
+        label=_("Username"),
+        help_text=_("Your in-game name"),
+        max_length=30,
+        regex=r'^[\w.@+-=()\[\]{}]+$',
+        required=True,
+        error_messages={
+            'invalid': _("This value may contain only letters, numbers and "
+                         "@/./+/-/=/_/(/)/[/]/{/} characters.")
+        })
+    password = forms.CharField(
+        label=_("Password"),
+        help_text=_("Password for website"),
+        max_length=128,
+        required=True,
+        widget=forms.PasswordInput)
+    language = forms.ChoiceField(
+        label=_("Language"),
+        help_text=_("Language to use on website and in game chat"),
+        choices=settings.LANGUAGES_INFO,
+        required=True,
+        widget=forms.Select)
+    remember_me = forms.BooleanField(
+        label=_("Remember me"),
+        required=False,
+        help_text=_("Stay signed in on website"))

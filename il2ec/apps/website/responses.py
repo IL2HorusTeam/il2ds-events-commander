@@ -31,7 +31,7 @@ class JSONResponse(HttpResponse):
         return cls(data)
 
     @classmethod
-    def error(cls, code=None, message=None):
+    def error(cls, code=None, message=None, payload=None):
         """
         Create a response for failed operation.
         """
@@ -42,4 +42,6 @@ class JSONResponse(HttpResponse):
                 'message': message or _("Failure"),
             }
         }
+        if isinstance(payload, dict):
+            data.update(payload)
         return cls(data)

@@ -61,11 +61,11 @@ USE_I18N = True
 USE_L10N = True
 
 LANGUAGES_INFO = (
-# -- code ----- name ---- native name
-    ('en', _(u'English'), u'English'),
-    ('ru', _(u'Russian'), u'Русский'),
+# -- code ------ name ---- native name
+    ('en', (_(u'English'), u'English')),
+    ('ru', (_(u'Russian'), u'Русский')),
 )
-LANGUAGES = tuple([(code, name) for (code, name, native) in LANGUAGES_INFO])
+LANGUAGES = tuple([(code, name) for (code, (name, native)) in LANGUAGES_INFO])
 LANGUAGE_CODE = 'en' # Main language code
 LANGUAGE_CODES = tuple([code for (code, name) in LANGUAGES])
 

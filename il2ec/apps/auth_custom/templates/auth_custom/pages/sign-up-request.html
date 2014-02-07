@@ -41,7 +41,7 @@
       <div class="form-group">
         <div class="input-group">
           <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
-          <input type="email" class="form-control" name="email" id="signin-username-email" data-toggle="tooltip" title="{% trans %}Email to send your sign up instructions to{% endtrans %}" placeholder="{% trans %}Email address{% endtrans %}" required>
+          <input type="email" class="form-control" name="email" id="signin-username-email" data-toggle="tooltip" title="{{ form.email.help_text }}" placeholder="{{ form.email.label }}" required>
           <span class="input-group-btn">
             <button id="submit-signup-request" type="submit" class="btn btn-primary ladda-button" data-style="zoom-out">{% trans %}Go!{% endtrans %}</button>
           </span>
@@ -58,7 +58,7 @@
   $('#form-signup-request .alert .close').click(function() {
     $(this).parent().hide()
   })
-  /* Submit sign up request request */
+  /* Submit sign up request */
   $('#form-signup-request').submit(function(e) {
     e.preventDefault()
     var frm = $(this)

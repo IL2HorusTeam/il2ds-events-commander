@@ -31,25 +31,25 @@
       <div class="offset-bottom">
         <div class="input-group">
           <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
-          <input type="text" class="form-control" name="first_name" data-toggle="tooltip" title="{% trans %}Your first name{% endtrans %}" placeholder="{% trans %}First name{% endtrans %}" required>
+          <input type="text" class="form-control" name="first_name" data-toggle="tooltip" title="{{ form.first_name.help_text }}" placeholder="{{ form.first_name.label }}" required>
         </div>
       </div>
       <div class="offset-bottom">
         <div class="input-group">
           <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
-          <input type="text" class="form-control" name="last_name" data-toggle="tooltip" title="{% trans %}Your last name (optional){% endtrans %}" placeholder="{% trans %}Last name{% endtrans %}">
+          <input type="text" class="form-control" name="last_name" data-toggle="tooltip" title="{{ form.last_name.help_text }}" placeholder="{{ form.last_name.label }}">
         </div>
       </div>
       <div class="offset-bottom">
         <div class="input-group">
           <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-          <input type="text" class="form-control" name="username" data-toggle="tooltip" title="{% trans %}Your in-game name{% endtrans %}" placeholder="{% trans %}Username{% endtrans %}" required>
+          <input type="text" class="form-control" name="username" data-toggle="tooltip" title="{{ form.username.help_text }}" placeholder="{{ form.username.label }}" required>
         </div>
       </div>
       <div class="offset-bottom">
         <div class="input-group">
           <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-          <input type="password" class="form-control" name="password" data-toggle="tooltip" title="{% trans %}Password for this site{% endtrans %}" placeholder="{% trans %}Password{% endtrans %}" required>
+          <input type="password" class="form-control" name="password" data-toggle="tooltip" title="{{ form.password.help_text }}" placeholder="{{ form.password.label }}" required>
         </div>
       </div>
       <div class="form-group">
@@ -59,10 +59,10 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="select_language" class="col-sm-4 control-label">{% trans %}Language{% endtrans %}</label>
+        <label for="select_language" class="col-sm-4 control-label">{{ form.language.label }}</label>
         <div class="col-sm-6">
-          <select class="form-control" id="signup_language" name="language" data-toggle="tooltip" title="{% trans %}Language to use on this site and in game chat{% endtrans %}">
-          {% for code, name, native in settings.LANGUAGES_INFO %}
+          <select class="form-control" id="signup_language" name="language" data-toggle="tooltip" title="{{ form.language.help_text }}">
+          {% for code, (name, native) in form.language.field.choices %}
             <option title="{{ name }}" value="{{ code }}" title="{{ name }}"{% if code == LANGUAGE_CODE %} selected='selected'{% endif %}>{{ native }}</option>
           {% endfor %}
           </select>
@@ -72,11 +72,11 @@
         <div class="col-sm-8 col-sm-offset-4">
           <label class="checkbox">
             <input type="checkbox" name="remember_me">
-            {% trans %}Remember me{% endtrans %}
+            {{ form.remember_me.label }}
           </label>
         </div>
       </div>
-      <button id="submit-signup" type="submit" class="btn btn-success btn-lg btn-block">{% trans %}Join right now{% endtrans %}!</button>
+      <button id="submit-signup" type="submit" class="btn btn-success btn-lg btn-block ladda-button" data-style="zoom-out">{% trans %}Join right now{% endtrans %}!</button>
     </form>
   </div>
 </div>
@@ -86,6 +86,35 @@
 
 {% block script_extras %}
 <script type="text/javascript">
-  // TODO:
+  /* Submit sign up data */
+  $('#form-signup').submit(function(e) {
+    e.preventDefault()
+    var frm = $(this)
+    , url = frm.attr('action')
+    , button = frm.find('#submit-signup').get(0)
+
+    if (typeof button.ladda === "undefined") {
+      button.ladda = Ladda.create(button)
+    }
+
+    button.ladda.start()
+    $.post(url
+      , frm.serialize()
+      , function(response) {
+        if (response.status == 'success') {
+          // TODO:
+        } else {
+          // TODO:
+        }
+      }
+      , "json"
+    ).fail(function(request, status, error) {
+      // TODO:
+    }).always(function(data) {
+      button.ladda.stop()
+    })
+
+    return false
+  })
 </script>
 {% endblock %}
