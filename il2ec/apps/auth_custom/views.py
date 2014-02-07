@@ -189,7 +189,7 @@ def sign_up(request, email, confirmation_key,
     signup_request = SignUpRequest.objects.get_unexpired(email,
                                                          confirmation_key)
     if signup_request is None:
-        context['errors'].append(_("Sign up request does not exist."))
+        context['errors'].append(_("Sign up request with specified parameters does not exist."))
         return _render()
 
     # TODO: session? add/remove

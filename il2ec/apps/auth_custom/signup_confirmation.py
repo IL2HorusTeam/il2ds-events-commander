@@ -7,12 +7,12 @@ import logging
 import random
 
 from coffin.shortcuts import resolve_url
+
+from django.conf import settings
 from django.utils.translation import activate, deactivate, ugettext_lazy as _
 
 from misc.tasks import send_mail
 from misc.validators import SHA1Validator
-
-from website.helpers import get_project_name
 
 
 LOG = logging.getLogger(__name__)
@@ -40,9 +40,7 @@ def send_email(http_request, signup_request,
     """
     Send email confirmation email message.
     """
-    language_code = http_request.LANGUAGE_CODE
-
-    activate(language_code)
+    activate(http_request.LANGUAGE_CODE)
     home_url = http_request.build_absolute_uri(resolve_url(
         'website-index'))
     confirmation_url = http_request.build_absolute_uri(resolve_url(
@@ -52,7 +50,7 @@ def send_email(http_request, signup_request,
 
     context = {
         'host_address': home_url,
-        'host_name': get_project_name(language_code),
+        'host_name': settings.PROJECT_NAME,
         'confirmation_url': confirmation_url,
         'creation_date': signup_request.created,
         'expiration_date': signup_request.expiration_date,
@@ -62,4 +60,5 @@ def send_email(http_request, signup_request,
 
     # Execute Celery task directly as normal function
     return send_mail(subject, template_name, context,
-                     to_emails=to_emails, language_code=language_code)
+                     to_emails=to_emails,
+                     language_code=http_request.LANGUAGE_CODE)

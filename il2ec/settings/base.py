@@ -62,18 +62,15 @@ USE_L10N = True
 
 LANGUAGES_INFO = (
 # -- code ------ name ---- native name
-    ('en', (_(u'English'), u'English')),
-    ('ru', (_(u'Russian'), u'Русский')),
+    ('en', (_("English"), u"English")),
+    ('ru', (_("Russian"), u"Русский")),
 )
 LANGUAGES = tuple([(code, name) for (code, (name, native)) in LANGUAGES_INFO])
 LANGUAGE_CODE = 'en' # Main language code
 LANGUAGE_CODES = tuple([code for (code, name) in LANGUAGES])
 
 HOSTNAME = 'il2ec.dev'
-PROJECT_NAME = {
-    'en': u"Awesome IL-2 Project",
-    'ru': u"Потрясающий проект Ил-2",
-}
+PROJECT_NAME = _("Awesome IL-2 Project")
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -142,7 +139,6 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 
     'website.context_processors.current_path',
     'website.context_processors.language',
-    'website.context_processors.project_name',
     'website.context_processors.settings',
 )
 
