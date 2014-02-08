@@ -10,6 +10,9 @@ from django.contrib.auth.forms import (AuthenticationForm as
 from django.utils.translation import ugettext_lazy as _
 
 
+from auth_custom import signup_confirmation
+
+
 class AuthenticationForm(BaseAuthenticationForm):
     """
     Add a 'remember me' checkbox to default form.
@@ -60,11 +63,12 @@ class SignUpForm(forms.Form):
     last name, username, password, language. Sign up request data (email and
     confirmation_key) must be provided.
     """
-    email = forms.CharField(
+    email = forms.EmailField(
         required=True,
         widget=forms.HiddenInput)
     confirmation_key = forms.CharField(
         required=True,
+        validators=[signup_confirmation.validate_key, ],
         widget=forms.HiddenInput)
 
     first_name = forms.CharField(

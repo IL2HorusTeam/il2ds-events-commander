@@ -26,8 +26,9 @@
       <span class="help-block">{% trans %}Just one step to create your account{% endtrans %}</span>
 
       {% csrf_token %}
-      <input type="hidden" name="email" value="{{ email }}">
-      <input type="hidden" name="confirmation_key" value="{{ confirmation_key }}">
+      {% for hidden in form.hidden_fields() %}
+        {{ hidden|safe }}
+      {% endfor %}
 
       <div class="offset-bottom">
         <div class="input-group">

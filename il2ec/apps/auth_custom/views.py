@@ -195,13 +195,15 @@ def sign_up(request, email, confirmation_key,
 
     # TODO: session? add/remove
 
-    form = form_class()
-    context.update({
+    data = {
         'email': email,
         'confirmation_key': confirmation_key,
+    }
+    form = form_class(initial=data)
+    context.update({
+        'email': email,
         'form': form,
     })
-
     return _render()
 
 
@@ -218,5 +220,4 @@ def sign_up_invoke(request, form_class=SignUpForm):
     if form.is_valid():
         pass
     # TODO:
-    LOG.info(form.cleaned_data)
     return JSONResponse.success()
