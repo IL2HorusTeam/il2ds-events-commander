@@ -1,3 +1,4 @@
+{% load website_utils %}
 {% extends "base.html" %}
 
 {% block head_title %}
@@ -62,8 +63,8 @@
         <label for="select_language" class="col-sm-4 control-label">{{ form.language.label }}</label>
         <div class="col-sm-6">
           <select class="form-control" id="signup_language" name="language" data-toggle="tooltip" title="{{ form.language.help_text }}">
-          {% for code, (name, native) in form.language.field.choices %}
-            <option title="{{ name }}" value="{{ code }}" title="{{ name }}"{% if code == LANGUAGE_CODE %} selected='selected'{% endif %}>{{ native }}</option>
+          {% for (code, name) in form.language.field.choices %}
+            <option title="{{ name }}" value="{{ code }}" title="{{ name }}"{% if code == LANGUAGE_CODE %} selected='selected'{% endif %}>{{ code|native_lang }}</option>
           {% endfor %}
           </select>
         </div>

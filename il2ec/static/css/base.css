@@ -194,7 +194,7 @@ body {
 }
 
 /* Ladda buttons hover/focus fix ------------------------------------------- */
-.ladda-button[data-loading].btn-primary:hover,
-.ladda-button[data-loading].btn-primary:focus {
+.ladda-button[data-loading].btn:hover,
+.ladda-button[data-loading].btn:focus {
   background-position: 0 0 !important;
 }

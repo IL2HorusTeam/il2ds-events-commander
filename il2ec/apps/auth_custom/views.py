@@ -189,7 +189,8 @@ def sign_up(request, email, confirmation_key,
     signup_request = SignUpRequest.objects.get_unexpired(email,
                                                          confirmation_key)
     if signup_request is None:
-        context['errors'].append(_("Sign up request with specified parameters does not exist."))
+        context['errors'].append(_("Sign up request with specified parameters "
+                                   "does not exist."))
         return _render()
 
     # TODO: session? add/remove
@@ -213,10 +214,9 @@ def sign_up_invoke(request, form_class=SignUpForm):
     if not (request.method == "POST" and request.is_ajax()):
         return HttpResponseBadRequest()
 
-    LOG.info(request.POST)
-    # form = form_class(data=request.POST)
-    # if form.is_valid():
-    #     pass
-    # # TODO:
-    # LOG.debug(form.cleaned_data)
+    form = form_class(request.POST)
+    if form.is_valid():
+        pass
+    # TODO:
+    LOG.info(form.cleaned_data)
     return JSONResponse.success()

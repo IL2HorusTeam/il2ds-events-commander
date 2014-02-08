@@ -138,7 +138,7 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django.contrib.messages.context_processors.messages',
 
     'website.context_processors.current_path',
-    'website.context_processors.language',
+    'website.context_processors.language_name',
     'website.context_processors.settings',
 )
 

@@ -93,7 +93,7 @@ class SignUpForm(forms.Form):
     language = forms.ChoiceField(
         label=_("Language"),
         help_text=_("Language to use on website and in game chat"),
-        choices=settings.LANGUAGES_INFO,
+        choices=settings.LANGUAGES,
         required=True,
         widget=forms.Select)
     remember_me = forms.BooleanField(

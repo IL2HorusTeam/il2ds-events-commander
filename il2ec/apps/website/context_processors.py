@@ -17,12 +17,12 @@ def settings(request): # pylint: disable=W0613
     return {'settings': dj_settings}
 
 
-def language(request):
+def language_name(request):
     """
     Inject current language name.
     """
-    return {'LANGUAGE': dict(dj_settings.LANGUAGES).get(
-                        request.LANGUAGE_CODE, request.LANGUAGE_CODE)}
+    return {'LANGUAGE_NAME': dict(dj_settings.LANGUAGES).get(
+                             request.LANGUAGE_CODE, request.LANGUAGE_CODE)}
 
 
 def current_path(request):
