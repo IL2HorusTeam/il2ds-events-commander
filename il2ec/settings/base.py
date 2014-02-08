@@ -99,7 +99,7 @@ INSTALLED_APPS = (
     'auth_custom',
     'commander',
     'misc',
-    'pilots',
+    # 'pilots',
     'website',
 )
 
@@ -175,6 +175,8 @@ MIDDLEWARE_CLASSES += (
 #------------------------------------------------------------------------------
 # Auth / security
 #------------------------------------------------------------------------------
+
+AUTH_USER_MODEL = 'auth_custom.User'
 
 AUTHENTICATION_BACKENDS = (
     'auth_custom.backends.CustomModelBackend',

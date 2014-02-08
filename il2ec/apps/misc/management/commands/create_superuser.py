@@ -2,6 +2,7 @@
 """
 Implement 'create_superuser' Django management command.
 """
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
@@ -17,4 +18,5 @@ class Command(BaseCommand):
         UserModel.objects.create_superuser(
             username="admin",
             password="admin",
-            email="admin@foo.bar")
+            email="admin@foo.bar",
+            language=settings.LANGUAGE_CODE)

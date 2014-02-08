@@ -26,7 +26,7 @@ class CustomIndexDashboard(Dashboard):
             collapsible=False,
             models=(
                 'django.contrib.auth.models.Group',
-                'django.contrib.auth.models.User',
+                'auth_custom.models.User',
                 'auth_custom.models.SignUpRequest',
             ),
         ))

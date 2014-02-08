@@ -4,9 +4,17 @@ Authentication models.
 """
 import datetime
 import logging
+import re
+import warnings
 
+
+from django.conf import settings
+from django.core import validators
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
+    PermissionsMixin, )
 from django.db import models
 from django.utils import timezone
+from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
 from auth_custom import signup_confirmation
@@ -75,12 +83,17 @@ class SignUpRequest(models.Model):
     """
     AlreadyExists = ObjectAlreadyExistsError
 
-    email = models.EmailField(_("email address"),
+    email = models.EmailField(
+        verbose_name=_("email address"),
         unique=False)
-    confirmation_key = models.CharField(_("confirmation key"),
+    confirmation_key = models.CharField(
+        verbose_name=_("confirmation key"),
         max_length=40)
-    created = models.DateTimeField(_("created"))
-    expiration_date = models.DateTimeField(_("expiration date"))
+    created = models.DateTimeField(
+        verbose_name=_("created"),
+        default=timezone.now)
+    expiration_date = models.DateTimeField(
+        verbose_name=_("expiration date"))
 
     objects = SignUpRequestManager()
 
@@ -91,3 +104,156 @@ class SignUpRequest(models.Model):
 
     def __unicode__(self):
         return _("Sign up request for {email}").format(email=self.email)
+
+
+class UserManager(BaseUserManager):
+    """
+    Manager for custom users model.
+    """
+    def _create_user(self, email, password,
+                     is_staff, is_superuser, **extra_fields):
+        """
+        Helper for creating users.
+        """
+        now = timezone.now()
+        if not email:
+            raise ValueError("The given email must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email,
+                          is_staff=is_staff, is_active=True,
+                          is_superuser=is_superuser, last_login=now,
+                          date_joined=now, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        """
+        Creates and saves a regular user with the given email and password.
+        """
+        return self._create_user(email, password, False, False,
+                                 **extra_fields)
+
+    def create_superuser(self, email, password, **extra_fields):
+        """
+        Creates and saves a superuser with the given email and password.
+        """
+        return self._create_user(email, password, True, True,
+                                 **extra_fields)
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    """
+    Custom users model. Username, password and email are required.
+    Other fields are optional.
+    """
+    username = models.CharField(
+        verbose_name=_("username"),
+        max_length=30,
+        unique=True,
+        help_text=_("Required. 30 characters or fewer. Letters, numbers and "
+                    "@/./+/-/=/_/(/)/[/]/{/} characters"),
+        validators=[
+            validators.RegexValidator(
+                regex=re.compile('^[\w.@+-]+$'),
+                message=_("Enter a valid username."),
+                code="invalid"
+            ),
+        ])
+    first_name = models.CharField(
+        verbose_name=_("first name"),
+        max_length=30,
+        blank=True)
+    last_name = models.CharField(
+        verbose_name=_("last name"),
+        max_length=30,
+        blank=True)
+    email = models.EmailField(
+        verbose_name=_("email address"),
+        unique=True,
+        blank=False)
+    is_staff = models.BooleanField(
+        verbose_name=_("staff status"),
+        default=False,
+        help_text=_("Designates whether the user can sign into this admin "
+                    "site."))
+    is_active = models.BooleanField(
+        verbose_name=_("active"),
+        default=True,
+        help_text=_("Designates whether this user should be treated as "
+                    "active. Unselect this instead of deleting accounts."))
+    date_joined = models.DateTimeField(
+        verbose_name=_("date joined"),
+        default=timezone.now)
+    language = models.CharField(
+        verbose_name=_("preferred language"),
+        blank=True,
+        max_length=5,
+        choices=settings.LANGUAGES,
+        default=settings.LANGUAGE_CODE,
+        help_text=_("Language in which messages will be shown to user in game"
+                    "chat and at this website."))
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
+    class Meta:
+        verbose_name = _("user")
+        verbose_name_plural = _("users")
+
+    def get_absolute_url(self):
+        return "/users/%s/" % urlquote(self.username)
+
+    def get_full_name(self):
+        """
+        Returns the first_name plus the last_name (if present).
+        """
+        if self.last_name:
+            full_name = '%s %s' % (self.first_name, self.last_name)
+            return full_name.strip()
+        else:
+            return self.first_name.strip()
+
+    def get_short_name(self):
+        "Returns the short name for the user."
+        return self.first_name
+
+    def email_user(self, subject, message, from_email=None):
+        """
+        Sends an email to this User.
+        """
+        send_mail(subject, message, from_email, [self.email])
+
+    def get_profile(self):
+        """
+        Returns site-specific profile for this user. Raises
+        SiteProfileNotAvailable if this site does not allow profiles.
+        """
+        warnings.warn("The use of AUTH_PROFILE_MODULE to define user profiles "
+                      "has been deprecated.", DeprecationWarning, stacklevel=2)
+        if not hasattr(self, '_profile_cache'):
+            from django.conf import settings
+            if not getattr(settings, 'AUTH_PROFILE_MODULE', False):
+                raise SiteProfileNotAvailable(
+                    "You need to set AUTH_PROFILE_MODULE in your project "
+                    "settings")
+            try:
+                app_label, model_name = settings.AUTH_PROFILE_MODULE.split('.')
+            except ValueError:
+                raise SiteProfileNotAvailable(
+                    "app_label and model_name should be separated by a dot in "
+                    "the AUTH_PROFILE_MODULE setting")
+            try:
+                model = models.get_model(app_label, model_name)
+                if model is None:
+                    raise SiteProfileNotAvailable(
+                        "Unable to load the profile model, check"
+                        "AUTH_PROFILE_MODULE in your project settings")
+                self._profile_cache = model._default_manager.using(
+                                   self._state.db).get(user__id__exact=self.id)
+                self._profile_cache.user = self
+            except (ImportError, ImproperlyConfigured):
+                raise SiteProfileNotAvailable
+        return self._profile_cache
