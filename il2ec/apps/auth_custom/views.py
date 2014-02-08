@@ -218,6 +218,13 @@ def sign_up_invoke(request, form_class=SignUpForm):
 
     form = form_class(request.POST)
     if form.is_valid():
-        pass
-    # TODO:
-    return JSONResponse.success()
+        # TODO:
+        return JSONResponse.success()
+    else:
+        errors = {
+            field_name: [unicode(e) for e in error_list]
+                        for field_name, error_list in form.errors.items()
+        }
+        return JSONResponse.error(payload={
+            'errors': errors
+        })
