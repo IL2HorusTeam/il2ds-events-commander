@@ -8,6 +8,8 @@ from auth_custom.views import SignUpRequestView
 urlpatterns = patterns('',
     url(r'^sign-in/$', 'auth_custom.views.sign_in',
         name='auth-custom-sign-in'),
+    url(r'^sign-out/$', 'auth_custom.views.sign_out',
+        name='auth-custom-sign-out'),
 
     url(r'^sign-up/request/$', SignUpRequestView.as_view(),
         name='auth-custom-sign-up-request'),

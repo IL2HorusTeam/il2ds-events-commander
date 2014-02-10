@@ -5,12 +5,13 @@ Views which handle authentication-related requests.
 import itertools
 import logging
 
-from coffin.shortcuts import render, render_to_string, resolve_url
+from coffin.shortcuts import redirect, render, render_to_string, resolve_url
 from coffin.views.generic import FormView
 
 from django.conf import settings as dj_settings
-from django.contrib.auth import (REDIRECT_FIELD_NAME, login as auth_login,
-    get_user_model, )
+from django.contrib.auth import (authenticate, login, logout, get_user_model,
+    REDIRECT_FIELD_NAME, )
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import get_current_site
 from django.core.exceptions import ValidationError
 from django.core.validators import  validate_email
@@ -31,7 +32,7 @@ from django.utils.translation import activate, deactivate, ugettext as _
 from auth_custom import signup_confirmation, settings
 from auth_custom.decorators import anonymous_required
 from auth_custom.forms import AuthenticationForm, SignUpForm, SignUpRequestForm
-from auth_custom.models import SignUpRequest
+from auth_custom.models import SignUpRequest, User
 
 from website.responses import JSONResponse
 
@@ -39,14 +40,18 @@ from website.responses import JSONResponse
 LOG = logging.getLogger(__name__)
 
 
+def _remember_me(request, form):
+    if form.cleaned_data.get('remember_me'):
+        request.session.set_expiry(settings.REMEMBER_ME_AGE)
+
+
 def _do_sign_in(request, form):
     """
     Helper sign in function: authenticate user and update session expiry date
     if 'remember-me' field was checked.
     """
-    auth_login(request, form.get_user())
-    if form.cleaned_data.get('remember_me'):
-        request.session.set_expiry(settings.REMEMBER_ME_AGE)
+    login(request, form.get_user())
+    _remember_me(request, form)
 
 
 @sensitive_post_parameters()
@@ -97,6 +102,14 @@ def sign_in(request,                                    # pylint: disable=R0913
     if extra_context is not None:
         context.update(extra_context)
     return render(request, template_name, context)
+
+
+@never_cache
+@login_required
+def sign_out(request):
+    logout(request)
+    referer = request.GET.get('next') or '/'
+    return redirect(referer)
 
 
 class SignUpRequestView(FormView):
@@ -157,6 +170,7 @@ class SignUpRequestView(FormView):
             return JSONResponse.error(message=msg)
 
 
+@never_cache
 @anonymous_required()
 def sign_up(request, email, confirmation_key,
             form_class=SignUpForm,
@@ -164,6 +178,9 @@ def sign_up(request, email, confirmation_key,
     """
     Handles sign up GET requests with 'email' and 'key' parameters.
     """
+    if settings.SESSION_SIGN_UP_INFO_KEY in request.session:
+        del request.session[settings.SESSION_SIGN_UP_INFO_KEY]
+
     if not request.method == "GET":
         return HttpResponseBadRequest()
 
@@ -193,8 +210,6 @@ def sign_up(request, email, confirmation_key,
                                    "does not exist."))
         return _render()
 
-    # TODO: session? add/remove
-
     data = {
         'email': email,
         'confirmation_key': confirmation_key,
@@ -204,9 +219,17 @@ def sign_up(request, email, confirmation_key,
         'email': email,
         'form': form,
     })
+
+    info = {
+        'request_id': signup_request.id,
+    }
+    info.update(data)
+    request.session[settings.SESSION_SIGN_UP_INFO_KEY] = info
+
     return _render()
 
 
+@never_cache
 @csrf_protect
 @anonymous_required()
 def sign_up_invoke(request, form_class=SignUpForm):
@@ -216,13 +239,61 @@ def sign_up_invoke(request, form_class=SignUpForm):
     if not (request.method == "POST" and request.is_ajax()):
         return HttpResponseBadRequest()
 
+    def _security_error():
+        return JSONResponse.error(
+            code=form_class.FATAL_ERROR_CODE,
+            message=_("Sign up security error."))
+
+    # Ensure existance of sign up info from previous GET
+    if not settings.SESSION_SIGN_UP_INFO_KEY in request.session:
+        return _security_error()
+
     form = form_class(request.POST)
     if form.is_valid():
-        # TODO:
+        # Check that sign up data from POST equals data from previous GET -----
+        info = request.session[settings.SESSION_SIGN_UP_INFO_KEY]
+
+        email = form.cleaned_data['email']
+        confirmation_key = form.cleaned_data['confirmation_key']
+
+        if (email != info['email'] or
+            confirmation_key != info['confirmation_key']):
+            return _security_error()
+
+        # Ensure sign up request still exists and it's ID equals to known ID --
+        signup_request = SignUpRequest.objects.get_unexpired(email,
+                                                             confirmation_key)
+        if signup_request is None:
+            return JSONResponse.error(
+                code=form_class.FATAL_ERROR_CODE,
+                message=_("Sign up request with specified parameters does not "
+                          "exist."))
+        if signup_request.id != info['request_id']:
+            return _security_error()
+
+        # Fulfil registration -------------------------------------------------
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password']
+
+        user = User.objects.create_user(
+            email=email,
+            password=password,
+            username=username,
+            first_name=form.cleaned_data['first_name'],
+            last_name=form.cleaned_data['last_name'],
+            language=form.cleaned_data['language'])
+        signup_request.delete()
+        del request.session[settings.SESSION_SIGN_UP_INFO_KEY]
+
+        # Sign in user --------------------------------------------------------
+        user = authenticate(username=username, password=password)
+        login(request, user)
+        _remember_me(request, form)
+
         return JSONResponse.success()
     else:
         errors = {
-            field_name: [unicode(e) for e in error_list]
+            field_name: ' '.join([unicode(e) for e in error_list])
                         for field_name, error_list in form.errors.items()
         }
         return JSONResponse.error(payload={

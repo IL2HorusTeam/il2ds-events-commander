@@ -82,8 +82,7 @@ class UserCreationForm(BaseUserCreationForm):
         if User._default_manager.filter(username=username).exists():
             raise forms.ValidationError(
                 self.error_messages['duplicate_username'],
-                code='duplicate_username',
-            )
+                code='duplicate_username')
         return username
 
     def clean_email(self):
@@ -91,8 +90,7 @@ class UserCreationForm(BaseUserCreationForm):
         if User._default_manager.filter(email=email).exists():
             raise forms.ValidationError(
                 self.error_messages['duplicate_email'],
-                code='duplicate_email',
-            )
+                code='duplicate_email')
         return email
 
 
@@ -134,6 +132,13 @@ class SignUpForm(forms.Form):
     last name, username, password, language. Sign up request data (email and
     confirmation_key) must be provided.
     """
+    FATAL_ERROR_CODE = 1
+
+    error_messages = {
+        'duplicate_email': _("A user with that email already exists."),
+        'duplicate_username': _("A user with that username already exists."),
+    }
+
     email = forms.EmailField(
         required=True,
         widget=forms.HiddenInput)
@@ -178,3 +183,19 @@ class SignUpForm(forms.Form):
         label=_("Remember me"),
         required=False,
         help_text=_("Stay signed in on website"))
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User._default_manager.filter(username=username).exists():
+            raise forms.ValidationError(
+                self.error_messages['duplicate_username'],
+                code='duplicate_username')
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User._default_manager.filter(email=email).exists():
+            raise forms.ValidationError(
+                self.error_messages['duplicate_email'],
+                code='duplicate_email')
+        return email
