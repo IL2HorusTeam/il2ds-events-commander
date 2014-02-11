@@ -262,6 +262,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 @receiver(user_logged_in)
 def set_preferred_language(sender, **kwargs):
-    LOG.info("on login")
     lang_code = kwargs['user'].language
     kwargs['request'].session['django_language'] = lang_code
