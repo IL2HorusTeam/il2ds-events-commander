@@ -7,12 +7,13 @@ import logging
 import re
 import warnings
 
-
 from django.conf import settings
 from django.core import validators
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
     PermissionsMixin, )
+from django.contrib.auth.signals import user_logged_in
 from django.db import models
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
@@ -257,3 +258,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             except (ImportError, ImproperlyConfigured):
                 raise SiteProfileNotAvailable
         return self._profile_cache
+
+
+@receiver(user_logged_in)
+def set_preferred_language(sender, **kwargs):
+    LOG.info("on login")
+    lang_code = kwargs['user'].language
+    kwargs['request'].session['django_language'] = lang_code

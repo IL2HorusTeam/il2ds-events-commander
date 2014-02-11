@@ -239,7 +239,7 @@
           /* Do not call 'reload' - authorized user's language may differ from
            * current
            */
-          window.location = "{{ current_path }}"
+          window.location = "{{ CURRENT_PATH }}"
         } else {
           _show_error(response.error.message)
         }
