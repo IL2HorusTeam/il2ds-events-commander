@@ -83,29 +83,14 @@ directory.
 
 ### Start VM and let some magic happen
 
-Firstly, start a development virtual machine:
+Start a development virtual machine:
 
     vagrant up [ubuntu|freebsd|windows]
-
-This will bring for you a clean virtual machine, install all of the necessary
-software and configure it.
-
-If database creation error will appear due to incompatible encoding, run:
-
-    vagrant ssh
-    sudo su - postgres
-    pg_dropcluster 9.1 main --stop
-    pg_createcluster --locale=en_US.UTF-8 --start 9.1 main
-    exit
-    exit
-    vagrant provision
-
-Now you can prepare and run the web application:
-
     fab incarnate
 
-This will create database and run several services, so the web application will
-be accessible at
+This will bring for you a clean virtual machine, install all of the necessary
+software and configure it, create database and run several services, so the web
+application will be accessible at
 
     http://localhost:8010
 

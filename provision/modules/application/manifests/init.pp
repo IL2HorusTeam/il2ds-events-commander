@@ -14,7 +14,7 @@ class application (
     $nginx_config  = "${project_name}-local.conf"
     $nginx_certs   = "certificate-local"
 
-    # Ensure given user and group exist ---------------------------------------
+    # Ensure given users and groups exist -------------------------------------
     group { $group:
         ensure => present,
     } ->
@@ -23,6 +23,9 @@ class application (
         ensure     => present,
         groups     => $group,
         membership => minimum,
+    } ->
+    user { "postgres":
+        ensure     => present,
     } ->
 
     # Update system -----------------------------------------------------------
@@ -98,6 +101,11 @@ class application (
         encoding          => "UTF8",
         locale            => "en_US.UTF-8",
     } ->
+    exec { "recreate postgres cluster with utf-8 locale":
+        command => "pg_dropcluster 9.1 --stop main && pg_createcluster --locale=en_US.UTF-8 9.1 --port=5432 --start main",
+        user    => 'postgres',
+        timeout => 0,
+    } ->
     package { "postgresql-server-dev-9.1": } ->
     class { "postgis":
         version => "9.1",
@@ -113,6 +121,14 @@ class application (
         encoding => "UTF8",
         locale   => "en_US.UTF-8",
         template => "template_postgis",
+    } ->
+
+    # Update project's dependencies -------------------------------------------
+    python::requirements { "${src}/requirements.pip":
+        virtualenv  => $virtualenv,
+        forceupdate => true,
+        owner       => $user,
+        group       => $group,
     } ->
 
     # Prepare web server ------------------------------------------------------
@@ -131,13 +147,6 @@ class application (
         config_source => "puppet:///files/conf/nginx/${nginx_config}",
         credentials   => "puppet:///files/conf/nginx/${nginx_certs}",
         user          => $user,
-    } ->
-
-    # Update project's dependencies -------------------------------------------
-    python::requirements { "${src}/requirements.pip":
-        virtualenv => $virtualenv,
-        owner      => $user,
-        group      => $group,
     } ->
 
     # Celery ------------------------------------------------------------------

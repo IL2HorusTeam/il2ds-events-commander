@@ -13,21 +13,21 @@ class il2ds (
             Package[unzip],
             Package[wget],
         ],
-    }
+    } ->
 
     # Set configuration -------------------------------------------------------
     file { "${src_path}/confs.ini":
         ensure => file,
         source => "${cfg_path}/confs.ini",
-    }
+    } ->
     file { "${src_path}/gc.cmd":
         ensure => file,
         source => "${cfg_path}/gc.cmd",
-    }
+    } ->
     file { "${src_path}/server.cmd":
         ensure => file,
         source => "${cfg_path}/server.cmd",
-    }
+    } ->
     file { "${src_path}/user.cmd":
         ensure  => "present",
         replace => "no",

@@ -32,11 +32,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             id: "vagrant-root",
             :nfs => true
 
-        ubuntu.vm.provision :puppet, :options => ["--debug --trace --verbose"] do |puppet|
+        ubuntu.vm.provision :puppet do |puppet|
             puppet.manifests_path = "provision/manifests"
             puppet.module_path = "provision/modules"
             puppet.manifest_file = "init.pp"
-            puppet.options = "-l console --verbose --fileserverconfig=/vagrant/provision/fileserver.conf"
+            puppet.options = "-l console --verbose --trace --fileserverconfig=/vagrant/provision/fileserver.conf"
             puppet.nfs = false
         end
     end
@@ -68,11 +68,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #         id: "vagrant-root",
     #         :nfs => true
 
-    #     freebsd.vm.provision :puppet, :options => ["--debug --trace --verbose"] do |puppet|
+    #     freebsd.vm.provision :puppet do |puppet|
     #         puppet.manifests_path = "provision/manifests"
     #         puppet.module_path = "provision/modules"
     #         puppet.manifest_file = "init.pp"
-    #         puppet.options = "-l console --fileserverconfig=/vagrant/provision/fileserver.conf"
+    #         puppet.options = "-l console --verbose --trace --fileserverconfig=/vagrant/provision/fileserver.conf"
     #         puppet.nfs = true
     #     end
     # end
@@ -118,11 +118,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #         vb.gui = true
     #     end
 
-    #     windows.vm.provision :puppet, :options => ["--debug --trace --verbose"] do |puppet|
+    #     windows.vm.provision :puppet do |puppet|
     #         puppet.manifests_path = "provision/manifests"
     #         puppet.module_path = "provision/modules"
     #         puppet.manifest_file = "init.pp"
-    #         puppet.options = "-l console --fileserverconfig=/vagrant/provision/fileserver.conf"
+    #         puppet.options = "-l console --verbose --trace --fileserverconfig=/vagrant/provision/fileserver.conf"
     #         puppet.nfs = false
     #     end
     # end
