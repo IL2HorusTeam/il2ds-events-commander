@@ -1,22 +1,22 @@
 [submodule "provision/modules/stdlib"]
     path = provision/modules/stdlib
-    url = https://github.com/puppetlabs/puppetlabs-stdlib.git
+    url = https://github.com/IL2HorusTeam/puppetlabs-stdlib.git
     branch = master
 [submodule "provision/modules/redis"]
     path = provision/modules/redis
-    url = https://github.com/fsalum/puppet-redis.git
+    url = https://github.com/IL2HorusTeam/puppet-redis.git
 [submodule "provision/modules/postgis"]
     path = provision/modules/postgis
-    url = https://github.com/camptocamp/puppet-postgis.git
+    url = https://github.com/IL2HorusTeam/puppet-postgis.git
 [submodule "provision/modules/postgresql"]
 	path = provision/modules/postgresql
-	url = https://github.com/puppetlabs/puppetlabs-postgresql.git
+	url = https://github.com/IL2HorusTeam/puppetlabs-postgresql.git
 [submodule "provision/modules/concat"]
 	path = provision/modules/concat
-	url = https://github.com/puppetlabs/puppetlabs-concat.git
+	url = https://github.com/IL2HorusTeam/puppetlabs-concat.git
 [submodule "provision/modules/python"]
 	path = provision/modules/python
-	url = https://github.com/oblalex/puppet-python.git
+	url = https://github.com/IL2HorusTeam/puppet-python.git
 [submodule "provision/modules/supervisor"]
 	path = provision/modules/supervisor
-	url = https://github.com/plathrop/puppet-module-supervisor.git
+	url = https://github.com/IL2HorusTeam/puppet-module-supervisor.git
