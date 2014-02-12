@@ -138,7 +138,7 @@
       , frm.serialize()
       , function(response) {
         if (response.status == 'success') {
-          window.location = "{% url website-index %}"
+          window.location = response.redirect_url
         } else {
           if (response.error.code == {{ form.FATAL_ERROR_CODE }}) {
             _show_fatal_error(response.error.message)

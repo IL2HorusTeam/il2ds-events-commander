@@ -290,7 +290,13 @@ def sign_up_invoke(request, form_class=SignUpForm):
         login(request, user)
         _remember_me(request, form)
 
-        return JSONResponse.success()
+        activate(user.language)
+        redirect_url = resolve_url('website-index')
+        deactivate()
+
+        return JSONResponse.success(payload={
+            'redirect_url': redirect_url,
+        })
     else:
         errors = {
             field_name: ' '.join([unicode(e) for e in error_list])
