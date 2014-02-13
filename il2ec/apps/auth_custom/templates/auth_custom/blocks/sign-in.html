@@ -2,54 +2,42 @@
   <div class="col-md-12">
     <div class="tab-content">
       <!-- Sign in tab START -->
-      <div class="tab-pane active" id="tab-signin">
+      <div class="tab-pane active" id="id_tab_signin">
         <form class="form" role="form" id="id_form_signin" action="{% url auth-custom-sign-in %}" method="post">
           <legend>{% trans %}Sign in{% endtrans %}</legend>
           {% csrf_token %}
           <!-- Form errors START -->
-          {% if signin_page %}
-            <!-- If we are on sign in page and using plain POST request -->
-            {% set form_errors = form.non_field_errors() %}
-            {% if form_errors %}
-              <div class="alert alert-danger alert-dismissable">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                {{ form_errors|striptags }}
-              </div>
-            {% endif %}
-          {% else %}
-            <!-- If we are not on sign in page and using AJAX POST request -->
-            <div class="alert alert-success alerts-placeholder">
-              <span class='form-message'>{% trans %}Success{% endtrans %}!</span>
-            </div>
-            <div class="alert alert-danger alert-dismissable alerts-placeholder">
-              <button type="button" class="close" aria-hidden="true">&times;</button>
-              <span class='form-message'></span>
-            </div>
-          {% endif %}
+          <div class="alert alert-success alerts-placeholder">
+            <span class='form-message'>{% trans %}Success{% endtrans %}!</span>
+          </div>
+          <div class="alert alert-danger alert-dismissable alerts-placeholder">
+            <button type="button" class="close" aria-hidden="true">&times;</button>
+            <span class='form-message'></span>
+          </div>
           <!-- Form errors END -->
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-              <input type="text" class="form-control" name="username" id="signin-username-email" data-toggle="tooltip" title="{% trans %}Username or email{% endtrans %}" placeholder="{% trans %}Username or email{% endtrans %}" required>
+              <input type="text" class="form-control" name="email_username" id="id_email_username" data-toggle="tooltip" title="{% trans %}Username or email{% endtrans %}" placeholder="{% trans %}Username or email{% endtrans %}" required>
             </div>
           </div>
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-              <input type="password" class="form-control" name="password" id="signin-password" data-toggle="tooltip" title="{% trans %}Password{% endtrans %}" placeholder="{% trans %}Password{% endtrans %}" required>
+              <input type="password" class="form-control" name="password" id="id_password" data-toggle="tooltip" title="{% trans %}Password{% endtrans %}" placeholder="{% trans %}Password{% endtrans %}" required>
             </div>
           </div>
-          <a href="#tab-forgot-something" class="pull-right" data-toggle="tab">{% trans %}Forgot something?{% endtrans %}</a>
+          <a href="#id_tab_remind_me" class="pull-right" data-toggle="tab">{% trans %}Forgot something?{% endtrans %}</a>
           <label class="checkbox">
             <input type="checkbox" name="remember_me" />
             {% trans %}Remember me{% endtrans %}
           </label>
-          <button type="submit" id="submit-signin" class="btn btn-lg btn-block btn-primary ladda-button" data-style="zoom-out">{% trans %}Sign In{% endtrans %}</button>
+          <button type="submit" id="id_submit_signin" class="btn btn-lg btn-block btn-primary ladda-button" data-style="zoom-out">{% trans %}Sign In{% endtrans %}</button>
         </form>
       </div>
       <!-- Sign in tab END -->
       <!-- Remind data tab START -->
-      <div class="tab-pane fade" id="tab-forgot-something">
+      <div class="tab-pane fade" id="id_tab_remind_me">
         <form class="form" role="form" id="id_remind_me" action="{% url auth-custom-remind-me %}" method="post">
           <legend>{% trans %}Remind me{% endtrans %}</legend>
           <span class="help-block">{% trans %}Give us your email or username and get your username with instructions for resetting password{% endtrans %}.</span>
@@ -60,8 +48,8 @@
               <input type="text" class="form-control" name="email_username" id="id_email_username" data-toggle="tooltip" title="{% trans %}Username or email{% endtrans %}" placeholder="{% trans %}Username or email{% endtrans %}" required>
             </div>
           </div>
-          <button id="submit-remind-data" type="submit" class="btn btn-primary">{% trans %}Submit{% endtrans %}</button>
-          <a href="#tab-signin" data-toggle="tab" class="pull-right" style="margin-top: 7px;">{% trans %}Wait, I remember{% endtrans %}</a>
+          <button id="id_submit_remind_me" type="submit" class="btn btn-primary">{% trans %}Submit{% endtrans %}</button>
+          <a href="#id_tab_signin" data-toggle="tab" class="pull-right" style="margin-top: 7px;">{% trans %}Wait, I remember{% endtrans %}</a>
         </form>
       </div>
     </div>

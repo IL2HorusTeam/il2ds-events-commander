@@ -11,15 +11,3 @@
 
 </div>
 {% endblock %}
-
-{% block script_extras %}
-<script type="text/javascript">
-  $('#id_form_signin').submit(function(e) {
-    var button = $(this).find('#submit-signin').get(0)
-    if (typeof button.ladda === "undefined") {
-      button.ladda = Ladda.create(button)
-    }
-    button.ladda.start()
-  })
-</script>
-{% endblock %}

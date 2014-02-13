@@ -204,11 +204,7 @@
   $('#dropdown-signin').on('hide.bs.dropdown', function() {
     $(this).removeClass('active')
   })
-</script>
 
-<!-- Non-sign in page section START -->
-{% if not signin_page %}
-<script type="text/javascript">
   /* Hide sign in error message */
   $('#id_form_signin .alert .close').click(function() {
     $(this).parent().hide()
@@ -218,7 +214,7 @@
     e.preventDefault()
     var frm = $(this)
     , url = frm.attr('action')
-    , button = frm.find('#submit-signin').get(0)
+    , button = frm.find('#id_submit_signin').get(0)
 
     if (typeof button.ladda === "undefined") {
       button.ladda = Ladda.create(button)
@@ -237,9 +233,9 @@
         if (response.status == 'success') {
           frm.find('.alert-success').show()
           /* Do not call 'reload' - authorized user's language may differ from
-           * current
+           * language on current page.
            */
-          window.location = "{{ CURRENT_PATH }}"
+          window.location = "{{ signin_next or CURRENT_PATH }}"
         } else {
           _show_error(response.error.message)
         }
@@ -254,8 +250,6 @@
     return false
   })
 </script>
-{% endif %}
-<!-- Non-sign in page section END -->
 {% endif %}
 <!-- Anonymous section END -->
 {% endcompress %}

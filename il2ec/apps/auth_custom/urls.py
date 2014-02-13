@@ -2,11 +2,11 @@
 from django.conf import settings
 from django.conf.urls import patterns, url
 
-from auth_custom.views import SignUpRequestView
+from auth_custom.views import SignInView, SignUpRequestView
 
 
 urlpatterns = patterns('',
-    url(r'^sign-in/$', 'auth_custom.views.sign_in',
+    url(r'^sign-in/$', SignInView.as_view(),
         name='auth-custom-sign-in'),
     url(r'^sign-out/$', 'auth_custom.views.sign_out',
         name='auth-custom-sign-out'),

@@ -5,40 +5,54 @@ Forms for authentication-related views.
 from django import forms
 from django.conf import settings
 from django.contrib.auth import authenticate
-from django.contrib.auth.forms import (AuthenticationForm as
-    BaseAuthenticationForm, UserCreationForm as BaseUserCreationForm,
-    UserChangeForm as BaseUserChangeForm, )
+from django.contrib.auth.forms import (UserChangeForm as BaseUserChangeForm,
+    UserCreationForm as BaseUserCreationForm, )
 from django.utils.translation import ugettext_lazy as _
 
 from auth_custom import signup_confirmation
 from auth_custom.models import User
 
 
-class AuthenticationForm(BaseAuthenticationForm):
+class SignInForm(forms.Form):
     """
-    Add a 'remember me' checkbox to default form and change error messages.
+    Form class for authenticating users.
     """
-    error_messages = {
-        'invalid_username': _("Wrong username or password."),
-        'inactive': _("Account is inactive."),
-    }
-
+    email_username = forms.CharField(
+        label=_("Username or email"),
+        help_text=_("Data to identify account"),
+        max_length=254,
+        required=True)
+    password = forms.CharField(
+        label=_("Password"),
+        widget=forms.PasswordInput)
     remember_me = forms.BooleanField(
-        label=_('Remember Me'),
+        label=_('Remember me'),
         initial=False,
         required=False)
 
+    error_messages = {
+        'invalid_data': _("Wrong authentication data."),
+        'inactive': _("Account is inactive."),
+    }
+
+    def __init__(self, request=None, *args, **kwargs):
+        """
+        The form data comes in via the standard 'data' kwarg.
+        """
+        self.user_cache = None
+        super(SignInForm, self).__init__(*args, **kwargs)
+
     def clean(self):
-        username = self.cleaned_data.get('username')
+        email_username = self.cleaned_data.get('email_username')
         password = self.cleaned_data.get('password')
 
-        if username and password:
-            self.user_cache = authenticate(username=username,
+        if email_username and password:
+            self.user_cache = authenticate(username=email_username,
                                            password=password)
             if self.user_cache is None:
                 raise forms.ValidationError(
-                    self.error_messages['invalid_username'],
-                    code='invalid_username',
+                    self.error_messages['invalid_data'],
+                    code='invalid_data',
                 )
             elif not self.user_cache.is_active:
                 raise forms.ValidationError(
@@ -46,6 +60,14 @@ class AuthenticationForm(BaseAuthenticationForm):
                     code='inactive',
                 )
         return self.cleaned_data
+
+    def get_user_id(self):
+        if self.user_cache:
+            return self.user_cache.id
+        return None
+
+    def get_user(self):
+        return self.user_cache
 
 
 class UserCreationForm(BaseUserCreationForm):
@@ -209,4 +231,5 @@ class RemindMeForm(forms.Form):
     email_username = forms.CharField(
         label=_("Username or email"),
         help_text=_("Data to identify account"),
+        max_length=254,
         required=True)

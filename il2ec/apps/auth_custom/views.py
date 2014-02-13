@@ -12,7 +12,6 @@ from django.conf import settings as dj_settings
 from django.contrib.auth import (authenticate, login, logout, get_user_model,
     REDIRECT_FIELD_NAME, )
 from django.contrib.auth.decorators import login_required
-from django.contrib.sites.models import get_current_site
 from django.core.exceptions import ValidationError
 from django.core.validators import  validate_email
 
@@ -31,7 +30,7 @@ from django.utils.translation import activate, deactivate, ugettext as _
 
 from auth_custom import signup_confirmation, settings
 from auth_custom.decorators import anonymous_required
-from auth_custom.forms import (AuthenticationForm, SignUpForm,
+from auth_custom.forms import (SignInForm, SignUpForm,
     SignUpRequestForm, RemindMeForm, )
 from auth_custom.models import SignUpRequest, User
 
@@ -42,74 +41,77 @@ LOG = logging.getLogger(__name__)
 
 
 def _remember_me(request, form):
+    """
+    Prolong session expiration date if 'Remember me' was checked on form.
+    """
     if form.cleaned_data.get('remember_me'):
         request.session.set_expiry(settings.REMEMBER_ME_AGE)
 
 
-def _do_sign_in(request, form):
+class SignInView(FormView):
     """
-    Helper sign in function: authenticate user and update session expiry date
-    if 'remember-me' field was checked.
+    Displays the 'sign in' and 'remind me' forms, handles the login action
+    with AJAX support.
     """
-    login(request, form.get_user())
-    _remember_me(request, form)
+    form_class = SignInForm
+    remind_me_form_class = RemindMeForm
+    template_name = 'auth_custom/pages/sign-in.html'
+    redirect_field_name = REDIRECT_FIELD_NAME
 
+    @method_decorator(never_cache)
+    @method_decorator(anonymous_required())
+    def dispatch(self, *args, **kwargs):
+        return super(SignInView, self).dispatch(*args, **kwargs)
 
-@sensitive_post_parameters()
-@csrf_protect
-@never_cache
-@anonymous_required()
-def sign_in(request,                                    # pylint: disable=R0913
-            template_name='auth_custom/pages/sign-in.html',
-            redirect_field_name=REDIRECT_FIELD_NAME,
-            authentication_form=AuthenticationForm,
-            current_app=None,                           # pylint: disable=W0613
-            extra_context=None):
-    """
-    Displays the sign in form and handles the login action with AJAX support.
-    """
-    redirect_to = request.REQUEST.get(redirect_field_name, '')
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(csrf_protect)
+    def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests, instantiating a form instance with the passed
+        POST variables and then checking it for validity.
+        """
+        if not request.is_ajax():
+            return HttpResponseBadRequest()
 
-    if request.method == "POST":
-        form = authentication_form(request, data=request.POST)
-
-        if request.is_ajax():
-        # Process AJAX request ------------------------------------------------
-            if form.is_valid():
-                _do_sign_in(request, form)
-                return JSONResponse.success()
-            else:
-                msg = ' '.join(itertools.chain(*form.errors.values()))
-                return JSONResponse.error(message=unicode(msg))
-
-        # Process non-AJAX request --------------------------------------------
+        form_class = self.get_form_class()
+        form = form_class(data=request.POST)
         if form.is_valid():
-            if not is_safe_url(url=redirect_to, host=request.get_host()):
-                redirect_to = resolve_url(dj_settings.LOGIN_REDIRECT_URL)
-            _do_sign_in(request, form)
-            return HttpResponseRedirect(redirect_to)
-    else:
-        # Process GET request -------------------------------------------------
-        form = authentication_form(request)
+            login(request, form.get_user())
+            _remember_me(request, form)
+            return JSONResponse.success()
+        else:
+            msg = ' '.join(itertools.chain(*form.errors.values()))
+            return JSONResponse.error(message=unicode(msg))
 
-    current_site = get_current_site(request)
-    context = {
-        'form': form,
-        'site': current_site,
-        'site_name': current_site.name,
-        'signin_page': True,
-        redirect_field_name: redirect_to,
-    }
-    if extra_context is not None:
-        context.update(extra_context)
-    return render(request, template_name, context)
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests, passing 'sign in' and 'remind me' forms into
+        template.
+        """
+        form_class = self.get_form_class()
+        sign_in_form = form_class(request)
+        remind_me_form = self.remind_me_form_class(request)
+
+        redirect_to = request.REQUEST.get(self.redirect_field_name, '')
+        context = {
+            'sign_in_form': sign_in_form,
+            'remind_me_form': remind_me_form,
+            'signin_page': True,
+            'signin_next': redirect_to,
+        }
+
+        return render(request, self.template_name, context)
 
 
 @never_cache
 @login_required
-def sign_out(request):
+def sign_out(request, redirect_field_name=REDIRECT_FIELD_NAME):
+    """
+    Handle 'sign out' action and redirect to proper page if needed.
+    """
     logout(request)
-    referer = request.GET.get('next') or '/'
+    referer = request.GET.get(redirect_field_name) or \
+              resolve_url('website-index')
     return redirect(referer)
 
 
@@ -120,16 +122,16 @@ class SignUpRequestView(FormView):
     form_class = SignUpRequestForm
     template_name = 'auth_custom/pages/sign-up-request.html'
 
-    @method_decorator(csrf_protect)
     @method_decorator(never_cache)
     @method_decorator(anonymous_required())
     def dispatch(self, *args, **kwargs):
         return super(SignUpRequestView, self).dispatch(*args, **kwargs)
 
+    @method_decorator(csrf_protect)
     def post(self, request, *args, **kwargs):
         """
         Handles POST requests, instantiating a form instance with the passed
-        POST variables and then checked for validity.
+        POST variables and then checking it for validity.
         """
         if not request.is_ajax():
             return HttpResponseBadRequest()
