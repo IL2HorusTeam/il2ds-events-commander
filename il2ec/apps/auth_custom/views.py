@@ -54,7 +54,6 @@ class SignInView(FormView):
     with AJAX support.
     """
     form_class = SignInForm
-    remind_me_form_class = RemindMeForm
     template_name = 'auth_custom/pages/sign-in.html'
     redirect_field_name = REDIRECT_FIELD_NAME
 
@@ -85,21 +84,13 @@ class SignInView(FormView):
 
     def get(self, request, *args, **kwargs):
         """
-        Handles GET requests, passing 'sign in' and 'remind me' forms into
-        template.
+        Handles sign in GET request.
         """
-        form_class = self.get_form_class()
-        sign_in_form = form_class(request)
-        remind_me_form = self.remind_me_form_class(request)
-
         redirect_to = request.REQUEST.get(self.redirect_field_name, '')
         context = {
-            'sign_in_form': sign_in_form,
-            'remind_me_form': remind_me_form,
             'signin_page': True,
             'signin_next': redirect_to,
         }
-
         return render(request, self.template_name, context)
 
 
