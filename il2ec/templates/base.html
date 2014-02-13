@@ -210,11 +210,11 @@
 {% if not signin_page %}
 <script type="text/javascript">
   /* Hide sign in error message */
-  $('#form-signin .alert .close').click(function() {
+  $('#id_form_signin .alert .close').click(function() {
     $(this).parent().hide()
   })
   /* Submit sign in request */
-  $('#form-signin').submit(function(e) {
+  $('#id_form_signin').submit(function(e) {
     e.preventDefault()
     var frm = $(this)
     , url = frm.attr('action')

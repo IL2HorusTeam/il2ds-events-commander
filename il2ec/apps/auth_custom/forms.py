@@ -199,3 +199,14 @@ class SignUpForm(forms.Form):
                 self.error_messages['duplicate_email'],
                 code='duplicate_email')
         return email
+
+
+class RemindMeForm(forms.Form):
+    """
+    Form for getting data to create a request for reminding username and
+    resetting password.
+    """
+    email_username = forms.CharField(
+        label=_("Username or email"),
+        help_text=_("Data to identify account"),
+        required=True)

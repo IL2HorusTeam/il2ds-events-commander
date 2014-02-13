@@ -18,4 +18,7 @@ urlpatterns = patterns('',
         name='auth-custom-sign-up'),
     url(r'^sign-up/invoke/$', 'auth_custom.views.sign_up_invoke',
         name='auth-custom-sign-up-invoke'),
+
+    url(r'^remind-me/$', 'auth_custom.views.remind_me',
+        name='auth-custom-remind-me'),
 )

@@ -31,7 +31,8 @@ from django.utils.translation import activate, deactivate, ugettext as _
 
 from auth_custom import signup_confirmation, settings
 from auth_custom.decorators import anonymous_required
-from auth_custom.forms import AuthenticationForm, SignUpForm, SignUpRequestForm
+from auth_custom.forms import (AuthenticationForm, SignUpForm,
+    SignUpRequestForm, RemindMeForm, )
 from auth_custom.models import SignUpRequest, User
 
 from website.responses import JSONResponse
@@ -305,3 +306,15 @@ def sign_up_invoke(request, form_class=SignUpForm):
         return JSONResponse.error(payload={
             'errors': errors
         })
+
+
+@never_cache
+@csrf_protect
+@anonymous_required()
+def remind_me(request, form_class=RemindMeForm):
+    """
+    Handles AJAX POST requests for reminding username and resetting password.
+    """
+    if not (request.method == "POST" and request.is_ajax()):
+        return HttpResponseBadRequest()
+    # TODO:
