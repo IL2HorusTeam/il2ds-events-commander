@@ -205,45 +205,88 @@
     $(this).removeClass('active')
   })
 
-  /* Hide sign in error message -------------------------------------------- */
-  $('#id_form_signin .alert .close').click(function() {
-    $(this).parent().hide()
+  /* AJAX forms helpers ---------------------------------------------------- */
+  $('.form-ajax').each(function(){
+    var frm = this
+    , $frm = $(this)
+
+    frm.show_error = function(message) {
+      $frm.find('.alert-danger .form-message').text(message)
+      $frm.find('.alert-danger').show()
+    }
+    frm.hide_error = function() {
+      $frm.find('.alert-danger').hide()
+    }
+    $frm.find('.alert .close').click(function() {
+      $(this).parent().hide()
+    })
   })
 
-  /* Submit sign in request ------------------------------------------------ */
+  /* Submit 'sign in' request ---------------------------------------------- */
   $('#id_form_signin').submit(function(e) {
     e.preventDefault()
-    var frm = $(this)
-    , url = frm.attr('action')
-    , button = frm.find('#id_submit_signin').get(0)
+
+    var frm = this
+    , $frm = $(this)
+    , url = $frm.attr('action')
+    , button = $frm.find('#id_submit_signin').get(0)
 
     if (typeof button.ladda === "undefined") {
       button.ladda = Ladda.create(button)
     }
 
-    function _show_error(message) {
-      frm.find('.alert-danger .form-message').text(message)
-      frm.find('.alert-danger').show()
-    }
-
-    frm.find('.alert-danger').hide()
+    frm.hide_error()
     button.ladda.start()
     $.post(url
-      , frm.serialize()
+      , $frm.serialize()
       , function(response) {
         if (response.status == 'success') {
-          frm.find('.alert-success').show()
+          $frm.find('.alert-success').show()
           /* Do not call 'reload' - authorized user's language may differ from
            * language on current page.
            */
           window.location = "{{ signin_next or CURRENT_PATH }}"
         } else {
-          _show_error(response.error.message)
+          frm.show_error(response.error.message)
         }
       }
       , "json"
     ).fail(function(request, status, error) {
-      _show_error("{% trans %}Request execution error{% endtrans %}")
+      frm.show_error("{% trans %}Request execution error{% endtrans %}")
+    }).always(function() {
+      button.ladda.stop()
+    })
+
+    return false
+  })
+
+  /* Submit 'remind me' request -------------------------------------------- */
+  $('#id_form_remind_me').submit(function(e) {
+    e.preventDefault()
+
+    var frm = this
+    , $frm = $(this)
+    , url = $frm.attr('action')
+    , button = $frm.find('#id_submit_remind_me').get(0)
+
+    if (typeof button.ladda === "undefined") {
+      button.ladda = Ladda.create(button)
+    }
+
+    frm.hide_error()
+    button.ladda.start()
+    $.post(url
+      , $frm.serialize()
+      , function(response) {
+        if (response.status == 'success') {
+          // TODO:
+        } else {
+          frm.show_error(response.error.message)
+        }
+      }
+      , "json"
+    ).fail(function(request, status, error) {
+      frm.show_error("{% trans %}Request execution error{% endtrans %}")
     }).always(function() {
       button.ladda.stop()
     })

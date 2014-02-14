@@ -310,4 +310,11 @@ def remind_me(request, form_class=RemindMeForm):
     """
     if not (request.method == "POST" and request.is_ajax()):
         return HttpResponseBadRequest()
-    # TODO:
+
+    form = form_class(request.POST)
+    if form.is_valid():
+        # TODO:
+        return JSONResponse.success()
+    else:
+        return JSONResponse.error(
+            message=_("Invalid input data."))
