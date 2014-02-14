@@ -19,7 +19,9 @@ from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
 from auth_custom import signup_confirmation
+from auth_custom.regex import RE_USERNAME
 from auth_custom.settings import EMAIL_CONFIRMATION_DAYS
+
 from misc.exceptions import ObjectAlreadyExistsError
 
 
@@ -116,11 +118,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name=_("username"),
         max_length=30,
         unique=True,
-        help_text=_("Required. 30 characters or fewer. Letters, numbers and "
-                    "@/./+/-/=/_/(/)/[/]/{/} characters"),
+        help_text=_("Required. May contain only 2 to 30 letters, numbers "
+                    "and @/./+/-/=/_/(/)/[/]/{/} characters."),
         validators=[
             validators.RegexValidator(
-                regex=re.compile('^[\w.@+-]+$'),
+                regex=re.compile(RE_USERNAME),
                 message=_("Enter a valid username."),
                 code="invalid"
             ),

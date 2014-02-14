@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from auth_custom import signup_confirmation
 from auth_custom.models import User
+from auth_custom.regex import RE_USERNAME
 
 
 class SignInForm(forms.Form):
@@ -79,11 +80,11 @@ class UserCreationForm(BaseUserCreationForm):
         label=_("Username"),
         help_text=_("Name which is used in game"),
         max_length=30,
-        regex=r'^[\w.@+-=()\[\]{}]+$',
+        regex=RE_USERNAME,
         required=True,
         error_messages={
-            'invalid': _("This value may contain only letters, numbers and "
-                         "@/./+/-/=/_/(/)/[/]/{/} characters.")
+            'invalid': _("This value may contain only 2 to 30 letters, numbers"
+                         " and @/./+/-/=/_/(/)/[/]/{/} characters.")
         })
     email = forms.EmailField(
         label=_("Email"),
@@ -126,11 +127,11 @@ class UserChangeForm(BaseUserChangeForm):
         label=_("Username"),
         help_text=_("Name which is used in game"),
         max_length=30,
-        regex=r'^[\w.@+-=()\[\]{}]+$',
+        regex=RE_USERNAME,
         required=True,
         error_messages={
-            'invalid': _("This value may contain only letters, numbers and "
-                         "@/./+/-/=/_/(/)/[/]/{/} characters.")
+            'invalid': _("This value may contain only 2 to 30 letters, numbers"
+                         " and @/./+/-/=/_/(/)/[/]/{/} characters.")
         })
 
     class Meta:
@@ -183,11 +184,11 @@ class SignUpForm(forms.Form):
         label=_("Username"),
         help_text=_("Your in-game name"),
         max_length=30,
-        regex=r'^[\w.@+-=()\[\]{}]+$',
+        regex=RE_USERNAME,
         required=True,
         error_messages={
-            'invalid': _("This value may contain only letters, numbers and "
-                         "@/./+/-/=/_/(/)/[/]/{/} characters.")
+            'invalid': _("This value may contain only 2 to 30 letters, numbers"
+                         " and @/./+/-/=/_/(/)/[/]/{/} characters.")
         })
     password = forms.CharField(
         label=_("Password"),
