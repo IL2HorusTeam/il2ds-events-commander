@@ -179,7 +179,7 @@
 <!-- Anonymous section START -->
 {% if user.is_anonymous() %}
 <script type="text/javascript">
-  /* Setup AJAX CSRF token */
+  /* Setup AJAX CSRF token ------------------------------------------------- */
   function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method))
@@ -193,23 +193,24 @@
     }
   });
 
-  /* Process language selecting */
+  /* Process selecting of language ----------------------------------------- */
   $('.change_language').click(function(e) {
     e.preventDefault()
     $('#language_value').val($(this).attr('lang_code'))
     $('#language_form').submit()
   })
 
-  /* Fix 'focus lost' for sign in dropdown menu due to usage of tabs */
+  /* Fix 'focus lost' for sign in dropdown menu due to usage of tabs ------- */
   $('#dropdown-signin').on('hide.bs.dropdown', function() {
     $(this).removeClass('active')
   })
 
-  /* Hide sign in error message */
+  /* Hide sign in error message -------------------------------------------- */
   $('#id_form_signin .alert .close').click(function() {
     $(this).parent().hide()
   })
-  /* Submit sign in request */
+
+  /* Submit sign in request ------------------------------------------------ */
   $('#id_form_signin').submit(function(e) {
     e.preventDefault()
     var frm = $(this)
@@ -256,9 +257,6 @@
 
 {% block script_extras %}
 {% endblock %}
-
-<!-- Placeholder -->
-<script src="http://getbootstrap.com/docs-assets/js/holder.js" type="text/javascript" charset="utf-8"></script>
 
 </body>
 </html>
