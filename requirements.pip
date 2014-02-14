@@ -29,5 +29,6 @@ psycopg2==2.5.2
 pylint==1.1.0
 redis==2.9.0
 simplejson==3.3.0
+Sphinx==1.2.1
 south==0.7.6
 twisted==13.2.0
