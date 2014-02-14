@@ -9,7 +9,7 @@ import warnings
 
 from django.conf import settings
 from django.core import validators
-from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
+from django.contrib.auth.models import (AbstractBaseUser, UserManager,
     PermissionsMixin, )
 from django.contrib.auth.signals import user_logged_in
 from django.db import models
@@ -85,7 +85,7 @@ class SignUpRequest(models.Model):
     AlreadyExists = ObjectAlreadyExistsError
 
     email = models.EmailField(
-        verbose_name=_("email address"),
+        verbose_name=_("email"),
         unique=False)
     confirmation_key = models.CharField(
         verbose_name=_("confirmation key"),
@@ -105,42 +105,6 @@ class SignUpRequest(models.Model):
 
     def __unicode__(self):
         return _("Sign up request for {email}").format(email=self.email)
-
-
-class UserManager(BaseUserManager):
-    """
-    Manager for custom users model.
-    """
-    def _create_user(self, email, password,
-                     is_staff, is_superuser, **extra_fields):
-        """
-        Helper for creating users.
-        """
-        now = timezone.now()
-        if not email:
-            raise ValueError("The given email must be set")
-        email = self.normalize_email(email)
-        user = self.model(email=email,
-                          is_staff=is_staff, is_active=True,
-                          is_superuser=is_superuser, last_login=now,
-                          date_joined=now, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_user(self, email, password=None, **extra_fields):
-        """
-        Creates and saves a regular user with the given email and password.
-        """
-        return self._create_user(email, password, False, False,
-                                 **extra_fields)
-
-    def create_superuser(self, email, password, **extra_fields):
-        """
-        Creates and saves a superuser with the given email and password.
-        """
-        return self._create_user(email, password, True, True,
-                                 **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -218,7 +182,9 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.first_name.strip()
 
     def get_short_name(self):
-        "Returns the short name for the user."
+        """
+        Returns the short name for the user.
+        """
         return self.first_name
 
     def email_user(self, subject, message, from_email=None):
@@ -262,5 +228,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 @receiver(user_logged_in)
 def set_preferred_language(sender, **kwargs):
+    """
+    Called when a user signs in. Sets current language to preferred.
+    """
     lang_code = kwargs['user'].language
     kwargs['request'].session['django_language'] = lang_code
