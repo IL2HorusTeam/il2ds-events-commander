@@ -2,6 +2,8 @@
 """
 Forms for authentication-related views.
 """
+import logging
+
 from django import forms
 from django.conf import settings
 from django.contrib.auth import authenticate
@@ -12,6 +14,9 @@ from django.utils.translation import ugettext_lazy as _
 from auth_custom import signup_confirmation
 from auth_custom.models import User
 from auth_custom.validators import validate_username
+
+
+LOG = logging.getLogger(__name__)
 
 
 class SignInForm(forms.Form):
@@ -53,13 +58,11 @@ class SignInForm(forms.Form):
             if self.user_cache is None:
                 raise forms.ValidationError(
                     self.error_messages['invalid_data'],
-                    code='invalid_data',
-                )
+                    code='invalid_data')
             elif not self.user_cache.is_active:
                 raise forms.ValidationError(
                     self.error_messages['inactive'],
-                    code='inactive',
-                )
+                    code='inactive')
         return self.cleaned_data
 
     def get_user_id(self):
@@ -101,7 +104,7 @@ class UserCreationForm(BaseUserCreationForm):
 
     def clean_username(self):
         username = self.cleaned_data['username']
-        if User._default_manager.filter(username=username).exists():
+        if User.objects.filter(username=username).exists():
             raise forms.ValidationError(
                 self.error_messages['duplicate_username'],
                 code='duplicate_username')
@@ -109,7 +112,7 @@ class UserCreationForm(BaseUserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if User._default_manager.filter(email=email).exists():
+        if User.objects.filter(email=email).exists():
             raise forms.ValidationError(
                 self.error_messages['duplicate_email'],
                 code='duplicate_email')
@@ -206,7 +209,7 @@ class SignUpForm(forms.Form):
 
     def clean_username(self):
         username = self.cleaned_data['username']
-        if User._default_manager.filter(username=username).exists():
+        if User.objects.filter(username=username).exists():
             raise forms.ValidationError(
                 self.error_messages['duplicate_username'],
                 code='duplicate_username')
@@ -214,7 +217,7 @@ class SignUpForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if User._default_manager.filter(email=email).exists():
+        if User.objects.filter(email=email).exists():
             raise forms.ValidationError(
                 self.error_messages['duplicate_email'],
                 code='duplicate_email')
@@ -226,8 +229,43 @@ class RemindMeForm(forms.Form):
     Form for getting data to create a request for reminding username and
     resetting password.
     """
+    error_messages = {
+        'invalid_data': _("Invalid username or email."),
+        'not_found': _("User not found."),
+        'inactive': _("Account is inactive."),
+    }
+
     email_username = forms.CharField(
         label=_("Username or email"),
-        help_text=_("Data to identify account"),
+        help_text=_("Data for identifying your account"),
         max_length=254,
         required=True)
+
+    def __init__(self, request=None, *args, **kwargs):
+        """
+        Add 'user_cache' attribute for storing user, obtained from form data.
+        """
+        self.user_cache = None
+        super(RemindMeForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        value = self.cleaned_data.get('email_username')
+        if value:
+            try:
+                self.user_cache = User.objects.get_by_username_or_email(value)
+            except ValueError:
+                raise forms.ValidationError(
+                    self.error_messages['invalid_data'],
+                    code='invalid_data')
+            except User.DoesNotExist:
+                raise forms.ValidationError(
+                    self.error_messages['not_found'],
+                    code='not_found')
+            if not self.user_cache.is_active:
+                raise forms.ValidationError(
+                    self.error_messages['inactive'],
+                    code='inactive')
+        return self.cleaned_data
+
+    def get_user(self):
+        return self.user_cache
