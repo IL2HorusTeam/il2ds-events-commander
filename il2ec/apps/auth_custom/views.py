@@ -12,12 +12,14 @@ from django.conf import settings as dj_settings
 
 from django.contrib.auth import (authenticate, login, logout, get_user_model,
     REDIRECT_FIELD_NAME, )
+from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
 
 from django.core.exceptions import ValidationError
 from django.core.validators import  validate_email
 
-from django.http import HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponseBadRequest
 from django.template import RequestContext
 
 from django.views.decorators.debug import sensitive_post_parameters
@@ -25,7 +27,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 
 from django.utils.decorators import method_decorator
-from django.utils.http import is_safe_url
+from django.utils.http import is_safe_url, urlsafe_base64_decode
 from django.utils.timesince import timeuntil
 from django.utils.translation import activate, deactivate, ugettext as _
 
@@ -97,7 +99,6 @@ class SignInView(FormView):
 
 
 @never_cache
-@login_required
 def sign_out(request, redirect_field_name=REDIRECT_FIELD_NAME):
     """
     Handle 'sign out' action and redirect to proper page if needed.
@@ -334,19 +335,40 @@ def remind_me_request(request, form_class=RemindMeForm):
         return JSONResponse.error(message=unicode(msg))
 
 
-# Doesn't need csrf_protect since no-one can guess the URL
+@csrf_protect
 @never_cache
 @anonymous_required()
 def password_reset(request, uidb64, token,
-                   template_name='auth_custom/pages/password-reset.html'):
+                   form_class=SetPasswordForm,
+                   template_name='auth_custom/pages/password-reset.html',
+                   complete_template_name='auth_custom/pages/password-reset-complete.html',
+                   token_generator=default_token_generator):
     """
-    View that checks the hash in a password reset link and presents a
-    form for entering a new password.
+    View that checks the hash in a password reset link and presents a form for
+    entering a new password.
     """
-    LOG.info("Password reset request: '{uid}', '{token}'".format(
-             uid=uidb64, token=token))
+    assert uidb64 is not None and token is not None  # checked by URLconf
+    try:
+        uid = urlsafe_base64_decode(uidb64)
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
 
-    # TODO:
+    valid_link = user is not None and token_generator.check_token(user, token)
 
-    context = {}
+    if valid_link:
+        if request.method == 'POST':
+            form = form_class(user, request.POST)
+            if form.is_valid():
+                form.save()
+                return render(request, complete_template_name, {})
+        else:
+            form = form_class(None)
+    else:
+        form = None
+
+    context = {
+        'form': form,
+        'valid_link': valid_link,
+    }
     return render(request, template_name, context)
