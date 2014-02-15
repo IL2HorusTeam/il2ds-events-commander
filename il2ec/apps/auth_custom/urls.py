@@ -19,6 +19,9 @@ urlpatterns = patterns('',
     url(r'^sign-up/invoke/$', 'auth_custom.views.sign_up_invoke',
         name='auth-custom-sign-up-invoke'),
 
-    url(r'^remind-me/$', 'auth_custom.views.remind_me',
-        name='auth-custom-remind-me'),
+    url(r'^remind-me-request/$', 'auth_custom.views.remind_me_request',
+        name='auth-custom-remind-me-request'),
+    url(r'^password/reset/(?P<uidb64>[0-9A-Za-z]+)/(?P<token>.+)/$',
+        'auth_custom.views.password_reset',
+        name='auth-custom-password-reset'),
 )

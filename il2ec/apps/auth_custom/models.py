@@ -22,7 +22,7 @@ from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
-from auth_custom import signup_confirmation
+from auth_custom.helpers import sign_up_confirmation
 from auth_custom.settings import EMAIL_CONFIRMATION_DAYS
 from auth_custom.validators import validate_username
 
@@ -51,8 +51,8 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
 
         expiration_date = now + datetime.timedelta(
                                     days=EMAIL_CONFIRMATION_DAYS)
-        confirmation_key = signup_confirmation.generate_key(email,
-                                                            unicode(now))
+        confirmation_key = sign_up_confirmation.generate_key(email,
+                                                             unicode(now))
 
         return self.model(email=email, confirmation_key=confirmation_key,
                           created=now, expiration_date=expiration_date)
@@ -167,7 +167,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=timezone.now)
     language = models.CharField(
         verbose_name=_("preferred language"),
-        blank=True,
+        blank=False,
         max_length=5,
         choices=settings.LANGUAGES,
         default=settings.LANGUAGE_CODE,

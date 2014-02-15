@@ -11,7 +11,7 @@ from django.contrib.auth.forms import (UserChangeForm as BaseUserChangeForm,
     UserCreationForm as BaseUserCreationForm, )
 from django.utils.translation import ugettext_lazy as _
 
-from auth_custom import signup_confirmation
+from auth_custom.helpers import sign_up_confirmation
 from auth_custom.models import User
 from auth_custom.validators import validate_username
 
@@ -168,7 +168,9 @@ class SignUpForm(forms.Form):
         widget=forms.HiddenInput)
     confirmation_key = forms.CharField(
         required=True,
-        validators=[signup_confirmation.validate_key, ],
+        validators=[
+            sign_up_confirmation.validate_key,
+        ],
         widget=forms.HiddenInput)
 
     first_name = forms.CharField(

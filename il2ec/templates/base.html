@@ -117,11 +117,11 @@
               </form>
             </li>
             <!-- Language selector END -->
-            {% if not signin_page %}
+            {% if not sign_in_page %}
             <!-- Sign in START -->
-            <li id="dropdown-signin" class="dropdown">
+            <li id="dropdown-sign-in" class="dropdown">
                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans %}Sign in{% endtrans %} <b class="caret"></b></a>
-               <ul id="signin-menu" class="dropdown-menu">
+               <ul id="sign-in-menu" class="dropdown-menu">
                   <li>
                   {% include "auth_custom/blocks/sign-in.html" %}
                   </li>
@@ -201,7 +201,7 @@
   })
 
   /* Fix 'focus lost' for sign in dropdown menu due to usage of tabs ------- */
-  $('#dropdown-signin').on('hide.bs.dropdown', function() {
+  $('#dropdown-sign-in').on('hide.bs.dropdown', function() {
     $(this).removeClass('active')
   })
 
@@ -223,13 +223,13 @@
   })
 
   /* Submit 'sign in' request ---------------------------------------------- */
-  $('#id_form_signin').submit(function(e) {
+  $('#id_form_sign_in').submit(function(e) {
     e.preventDefault()
 
     var frm = this
     , $frm = $(this)
     , url = $frm.attr('action')
-    , button = $frm.find('#id_submit_signin').get(0)
+    , button = $frm.find('#id_submit_sign_in').get(0)
 
     if (typeof button.ladda === "undefined") {
       button.ladda = Ladda.create(button)
@@ -245,7 +245,7 @@
           /* Do not call 'reload' - authorized user's language may differ from
            * language on current page.
            */
-          window.location = "{{ signin_next or CURRENT_PATH }}"
+          window.location = "{{ sign_in_next or CURRENT_PATH }}"
         } else {
           frm.show_error(response.error.message)
         }
@@ -279,7 +279,8 @@
       , $frm.serialize()
       , function(response) {
         if (response.status == 'success') {
-          // TODO:
+          $frm.find('#id_target_email').text(response.email)
+          $frm.find('.alert-success').show()
         } else {
           frm.show_error(response.error.message)
         }

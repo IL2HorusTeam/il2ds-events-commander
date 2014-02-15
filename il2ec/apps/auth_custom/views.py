@@ -9,14 +9,15 @@ from coffin.shortcuts import redirect, render, render_to_string, resolve_url
 from coffin.views.generic import FormView
 
 from django.conf import settings as dj_settings
+
 from django.contrib.auth import (authenticate, login, logout, get_user_model,
     REDIRECT_FIELD_NAME, )
 from django.contrib.auth.decorators import login_required
+
 from django.core.exceptions import ValidationError
 from django.core.validators import  validate_email
 
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
-
 from django.template import RequestContext
 
 from django.views.decorators.debug import sensitive_post_parameters
@@ -28,10 +29,11 @@ from django.utils.http import is_safe_url
 from django.utils.timesince import timeuntil
 from django.utils.translation import activate, deactivate, ugettext as _
 
-from auth_custom import signup_confirmation, settings
+from auth_custom import settings
+from auth_custom.helpers import sign_up_confirmation, send_remind_me_email
 from auth_custom.decorators import anonymous_required
-from auth_custom.forms import (SignInForm, SignUpForm,
-    SignUpRequestForm, RemindMeForm, )
+from auth_custom.forms import (SignInForm, SignUpForm, SignUpRequestForm,
+    RemindMeForm, )
 from auth_custom.models import SignUpRequest, User
 
 from website.responses import JSONResponse
@@ -62,8 +64,8 @@ class SignInView(FormView):
     def dispatch(self, *args, **kwargs):
         return super(SignInView, self).dispatch(*args, **kwargs)
 
-    @method_decorator(sensitive_post_parameters())
     @method_decorator(csrf_protect)
+    @method_decorator(sensitive_post_parameters())
     def post(self, request, *args, **kwargs):
         """
         Handles POST requests, instantiating a form instance with the passed
@@ -88,8 +90,8 @@ class SignInView(FormView):
         """
         redirect_to = request.REQUEST.get(self.redirect_field_name, '')
         context = {
-            'signin_page': True,
-            'signin_next': redirect_to,
+            'sign_in_page': True,
+            'sign_in_next': redirect_to,
         }
         return render(request, self.template_name, context)
 
@@ -119,6 +121,7 @@ class SignUpRequestView(FormView):
         return super(SignUpRequestView, self).dispatch(*args, **kwargs)
 
     @method_decorator(csrf_protect)
+    @method_decorator(sensitive_post_parameters())
     def post(self, request, *args, **kwargs):
         """
         Handles POST requests, instantiating a form instance with the passed
@@ -139,20 +142,21 @@ class SignUpRequestView(FormView):
                     message=_("Specified email is already in use."))
 
             try:
-                signup_request = SignUpRequest.objects.create_from_email(email)
+                sign_up_request = SignUpRequest.objects.create_from_email(
+                                    email)
             except SignUpRequest.AlreadyExists as e:
                 return JSONResponse.error(message=unicode(e))
 
-            if signup_confirmation.send_email(request, signup_request):
-                signup_request.save()
+            if sign_up_confirmation.send_email(request, sign_up_request):
+                sign_up_request.save()
             else:
                 return JSONResponse.error(
-                    message=_("Sorry, we are failed to send an email to you. "
+                    message=_("Sorry, we failed to send an email to you. "
                               "Please, try again a bit later."))
 
             activate(request.LANGUAGE_CODE)
-            time_left = timeuntil(signup_request.expiration_date,
-                                  signup_request.created)
+            time_left = timeuntil(sign_up_request.expiration_date,
+                                  sign_up_request.created)
             deactivate()
 
             return JSONResponse.success(payload={
@@ -190,16 +194,16 @@ def sign_up(request, email, confirmation_key,
     except ValidationError as e:
         context['errors'].append(unicode(e.message))
     try:
-        signup_confirmation.validate_key(confirmation_key)
+        sign_up_confirmation.validate_key(confirmation_key)
     except ValidationError as e:
         context['errors'].append(unicode(e.message))
 
     if context['errors']:
         return _render()
 
-    signup_request = SignUpRequest.objects.get_unexpired(email,
-                                                         confirmation_key)
-    if signup_request is None:
+    sign_up_request = SignUpRequest.objects.get_unexpired(email,
+                                                          confirmation_key)
+    if sign_up_request is None:
         context['errors'].append(_("Sign up request with specified parameters "
                                    "does not exist."))
         return _render()
@@ -215,7 +219,7 @@ def sign_up(request, email, confirmation_key,
     })
 
     info = {
-        'request_id': signup_request.id,
+        'request_id': sign_up_request.id,
     }
     info.update(data)
     request.session[settings.SESSION_SIGN_UP_INFO_KEY] = info
@@ -226,6 +230,7 @@ def sign_up(request, email, confirmation_key,
 @never_cache
 @csrf_protect
 @anonymous_required()
+@sensitive_post_parameters()
 def sign_up_invoke(request, form_class=SignUpForm):
     """
     Handles sign up AJAX POST requests.
@@ -255,14 +260,14 @@ def sign_up_invoke(request, form_class=SignUpForm):
             return _security_error()
 
         # Ensure sign up request still exists and it's ID equals to known ID --
-        signup_request = SignUpRequest.objects.get_unexpired(email,
-                                                             confirmation_key)
-        if signup_request is None:
+        sign_up_request = SignUpRequest.objects.get_unexpired(email,
+                                                              confirmation_key)
+        if sign_up_request is None:
             return JSONResponse.error(
                 code=form_class.FATAL_ERROR_CODE,
                 message=_("Sign up request with specified parameters does not "
                           "exist."))
-        if signup_request.id != info['request_id']:
+        if sign_up_request.id != info['request_id']:
             return _security_error()
 
         # Fulfil registration -------------------------------------------------
@@ -276,7 +281,7 @@ def sign_up_invoke(request, form_class=SignUpForm):
             first_name=form.cleaned_data['first_name'],
             last_name=form.cleaned_data['last_name'],
             language=form.cleaned_data['language'])
-        signup_request.delete()
+        sign_up_request.delete()
         del request.session[settings.SESSION_SIGN_UP_INFO_KEY]
 
         # Sign in user --------------------------------------------------------
@@ -304,9 +309,11 @@ def sign_up_invoke(request, form_class=SignUpForm):
 @never_cache
 @csrf_protect
 @anonymous_required()
-def remind_me(request, form_class=RemindMeForm):
+@sensitive_post_parameters()
+def remind_me_request(request, form_class=RemindMeForm):
     """
     Handles AJAX POST requests for reminding username and resetting password.
+    Username and link for password resetting will be sent to user by email.
     """
     if not (request.method == "POST" and request.is_ajax()):
         return HttpResponseBadRequest()
@@ -314,8 +321,32 @@ def remind_me(request, form_class=RemindMeForm):
     form = form_class(data=request.POST)
     if form.is_valid():
         user = form.get_user()
-        # TODO:
-        return JSONResponse.success()
+        if send_remind_me_email(request, user):
+            return JSONResponse.success(payload={
+                'email': user.email,
+            })
+        else:
+            return JSONResponse.error(
+                message=_("Sorry, we failed to send an email to you. "
+                          "Please, try again a bit later."))
     else:
         msg = ' '.join(itertools.chain(*form.errors.values()))
         return JSONResponse.error(message=unicode(msg))
+
+
+# Doesn't need csrf_protect since no-one can guess the URL
+@never_cache
+@anonymous_required()
+def password_reset(request, uidb64, token,
+                   template_name='auth_custom/pages/password-reset.html'):
+    """
+    View that checks the hash in a password reset link and presents a
+    form for entering a new password.
+    """
+    LOG.info("Password reset request: '{uid}', '{token}'".format(
+             uid=uidb64, token=token))
+
+    # TODO:
+
+    context = {}
+    return render(request, template_name, context)

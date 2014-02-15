@@ -7,9 +7,12 @@ import os
 from il2ec.settings.base import * # pylint: disable=W0614,W0401
 
 try:
-    from il2ec.settings.local.security import EMAIL_HOST_PASSWORD, SECRET_KEY
+    from il2ec.settings.local.security import EMAIL_HOST_PASSWORD
 except ImportError:
     EMAIL_HOST_PASSWORD = None
+try:
+    from il2ec.settings.local.security import SECRET_KEY
+except ImportError:
     SECRET_KEY = '22mrx$5(7iik*hw!w-9x!7z78$f861**q#qv0bt7tewb1d-7+='
 
 #------------------------------------------------------------------------------
