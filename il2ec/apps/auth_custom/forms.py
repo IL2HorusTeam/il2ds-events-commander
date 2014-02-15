@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from auth_custom import signup_confirmation
 from auth_custom.models import User
-from auth_custom.regex import RE_USERNAME
+from auth_custom.validators import validate_username
 
 
 class SignInForm(forms.Form):
@@ -32,7 +32,7 @@ class SignInForm(forms.Form):
         required=False)
 
     error_messages = {
-        'invalid_data': _("Wrong authentication data."),
+        'invalid_data': _("Invalid credentials."),
         'inactive': _("Account is inactive."),
     }
 
@@ -80,11 +80,10 @@ class UserCreationForm(BaseUserCreationForm):
         label=_("Username"),
         help_text=_("Name which is used in game"),
         max_length=30,
-        regex=RE_USERNAME,
+        regex=validate_username.regex.pattern,
         required=True,
         error_messages={
-            'invalid': _("This value may contain only 2 to 30 letters, numbers"
-                         " and @/./+/-/=/_/(/)/[/]/{/} characters.")
+            'invalid': validate_username.message,
         })
     email = forms.EmailField(
         label=_("Email"),
@@ -127,11 +126,10 @@ class UserChangeForm(BaseUserChangeForm):
         label=_("Username"),
         help_text=_("Name which is used in game"),
         max_length=30,
-        regex=RE_USERNAME,
+        regex=validate_username.regex.pattern,
         required=True,
         error_messages={
-            'invalid': _("This value may contain only 2 to 30 letters, numbers"
-                         " and @/./+/-/=/_/(/)/[/]/{/} characters.")
+            'invalid': validate_username.message,
         })
 
     class Meta:
@@ -184,11 +182,10 @@ class SignUpForm(forms.Form):
         label=_("Username"),
         help_text=_("Your in-game name"),
         max_length=30,
-        regex=RE_USERNAME,
+        regex=validate_username.regex.pattern,
         required=True,
         error_messages={
-            'invalid': _("This value may contain only 2 to 30 letters, numbers"
-                         " and @/./+/-/=/_/(/)/[/]/{/} characters.")
+            'invalid': validate_username.message,
         })
     password = forms.CharField(
         label=_("Password"),

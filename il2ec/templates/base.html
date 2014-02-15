@@ -191,7 +191,7 @@
         xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}")
       }
     }
-  });
+  })
 
   /* Process selecting of language ----------------------------------------- */
   $('.change_language').click(function(e) {
@@ -206,7 +206,7 @@
   })
 
   /* AJAX forms helpers ---------------------------------------------------- */
-  $('.form-ajax').each(function(){
+  $('.form-ajax').each(function() {
     var frm = this
     , $frm = $(this)
 

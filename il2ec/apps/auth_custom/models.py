@@ -4,11 +4,9 @@ Authentication models.
 """
 import datetime
 import logging
-import re
 import warnings
 
 from django.conf import settings
-from django.core import validators
 from django.contrib.auth.models import (AbstractBaseUser, UserManager,
     PermissionsMixin, )
 from django.contrib.auth.signals import user_logged_in
@@ -19,8 +17,8 @@ from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
 from auth_custom import signup_confirmation
-from auth_custom.regex import RE_USERNAME
 from auth_custom.settings import EMAIL_CONFIRMATION_DAYS
+from auth_custom.validators import validate_username
 
 from misc.exceptions import ObjectAlreadyExistsError
 
@@ -118,14 +116,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name=_("username"),
         max_length=30,
         unique=True,
-        help_text=_("Required. May contain only 2 to 30 letters, numbers "
-                    "and @/./+/-/=/_/(/)/[/]/{/} characters."),
+        help_text=validate_username.message,
         validators=[
-            validators.RegexValidator(
-                regex=re.compile(RE_USERNAME),
-                message=_("Enter a valid username."),
-                code="invalid"
-            ),
+            validate_username,
         ])
     first_name = models.CharField(
         verbose_name=_("first name"),
