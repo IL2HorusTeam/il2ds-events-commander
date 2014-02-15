@@ -7,11 +7,17 @@ import logging
 import warnings
 
 from django.conf import settings
-from django.contrib.auth.models import (AbstractBaseUser, UserManager,
-    PermissionsMixin, )
+
+from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
+    UserManager as BaseUserManager, )
 from django.contrib.auth.signals import user_logged_in
+
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+
 from django.db import models
 from django.dispatch import receiver
+
 from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
@@ -54,7 +60,7 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
     def get_unexpired(self, email, confirmation_key):
         """
         Get unexpired sign up request for specified email and confirmation key
-        or 'None'
+        or 'None'.
         """
         now = timezone.now()
         try:
@@ -98,6 +104,27 @@ class SignUpRequest(models.Model):
 
     def __unicode__(self):
         return _("Sign up request for {email}").format(email=self.email)
+
+
+class UserManager(BaseUserManager):
+    """
+    Custom menager for User model.
+    """
+    def get_by_username_or_email(self, username_email):
+        """
+        Try to get user instance by username or email.
+        """
+        try:
+            validate_email(username_email)
+            kwargs = {'email': username_email}
+        except ValidationError:
+            try:
+                validate_username(username_email)
+                kwargs = {'username': username_email}
+            except ValidationError:
+                raise ValueError(_("Invalid username or email."))
+
+        return self.get(**kwargs)
 
 
 class User(AbstractBaseUser, PermissionsMixin):

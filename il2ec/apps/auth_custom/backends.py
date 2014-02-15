@@ -4,13 +4,8 @@ Different authentication backends.
 """
 import logging
 
-from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
-
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-
-from auth_custom.validators import validate_username
+from auth_custom.models import User
 
 
 LOG = logging.getLogger(__name__)
@@ -25,31 +20,18 @@ class CustomModelBackend(ModelBackend):
         """
         Redefine method of the base class. Username can contain email address.
         """
-        UserModel = get_user_model() # pylint: disable=C0103
-
         if username is None:
-            username = kwargs.get(UserModel.USERNAME_FIELD)
-
-        kwargs = {}
+            username = kwargs.get(User.USERNAME_FIELD)
 
         try:
-            validate_email(username)
-            kwargs.update({'email': username})
-        except ValidationError:
-            try:
-                validate_username(username)
-                kwargs.update({'username': username})
-            except ValidationError:
-                pass
-
-        if kwargs:
-            try:
-                user = UserModel.objects.get(**kwargs)
-                if user.check_password(password):
-                    return user
-            except UserModel.DoesNotExist:
-                pass
+            user = User.objects.get_by_username_or_email(username)
+            if user.check_password(password):
+                return user
+        except ValueError:
+            pass
+        except User.DoesNotExist:
+            pass
 
         # Run the default password hasher once to reduce the timing
         # difference between an existing and a non-existing user (#20760).
-        UserModel().set_password(password)
+        User().set_password(password)
