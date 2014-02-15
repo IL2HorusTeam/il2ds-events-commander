@@ -38,22 +38,18 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
         """
         now = timezone.now()
 
-        if SignUpRequest.objects.filter(email=email,
-                                        expiration_date__gt=now).exists():
-            raise SignUpRequest.AlreadyExists(
+        if self.filter(email=email, expiration_date__gt=now).exists():
+            raise self.model.AlreadyExists(
                 _("Sign up request for {email} already exists.").format(
                   email=email))
 
         expiration_date = now + datetime.timedelta(
-            days=EMAIL_CONFIRMATION_DAYS)
+                                    days=EMAIL_CONFIRMATION_DAYS)
         confirmation_key = signup_confirmation.generate_key(email,
                                                             unicode(now))
 
-        return SignUpRequest(email=email,
-                             confirmation_key=confirmation_key,
-                             created=now,
-                             expiration_date=expiration_date)
-
+        return self.model(email=email, confirmation_key=confirmation_key,
+                          created=now, expiration_date=expiration_date)
 
     def get_unexpired(self, email, confirmation_key):
         """
@@ -62,13 +58,10 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
         """
         now = timezone.now()
         try:
-            return SignUpRequest.objects.filter(
-                email=email,
-                confirmation_key=confirmation_key,
-                expiration_date__gt=now)[:1].get()
-        except SignUpRequest.DoesNotExist:
+            return self.filter(email=email, confirmation_key=confirmation_key,
+                               expiration_date__gt=now)[:1].get()
+        except self.model.DoesNotExist:
             return None
-
 
     def delete_expired(self):
         """
