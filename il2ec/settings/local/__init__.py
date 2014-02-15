@@ -5,7 +5,12 @@ Settings for local development server.
 import os
 
 from il2ec.settings.base import * # pylint: disable=W0614,W0401
-from il2ec.settings.local.security import *
+
+try:
+    from il2ec.settings.local.security import EMAIL_HOST_PASSWORD, SECRET_KEY
+except ImportError:
+    EMAIL_HOST_PASSWORD = None
+    SECRET_KEY = '22mrx$5(7iik*hw!w-9x!7z78$f861**q#qv0bt7tewb1d-7+='
 
 #------------------------------------------------------------------------------
 # Main project settings
@@ -13,9 +18,6 @@ from il2ec.settings.local.security import *
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '22mrx$5(7iik*hw!w-9x!7z78$f861**q#qv0bt7tewb1d-7+='
 
 DATABASES = {
     'default': {
