@@ -12,7 +12,7 @@ from django.conf import settings as dj_settings
 
 from django.contrib.auth import (authenticate, login, logout, get_user_model,
     REDIRECT_FIELD_NAME, )
-from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 
@@ -35,7 +35,7 @@ from auth_custom import settings
 from auth_custom.helpers import sign_up_confirmation, send_remind_me_email
 from auth_custom.decorators import anonymous_required
 from auth_custom.forms import (SignInForm, SignUpForm, SignUpRequestForm,
-    RemindMeForm, )
+    RemindMeForm, GeneralSettingsForm, )
 from auth_custom.models import SignUpRequest, User
 
 from website.responses import JSONResponse
@@ -337,7 +337,6 @@ def remind_me_request(request, form_class=RemindMeForm):
 
 @csrf_protect
 @never_cache
-@anonymous_required()
 def password_reset(request, uidb64, token,
                    form_class=SetPasswordForm,
                    template_name='auth_custom/pages/password-reset.html',
@@ -370,5 +369,22 @@ def password_reset(request, uidb64, token,
     context = {
         'form': form,
         'valid_link': valid_link,
+    }
+    return render(request, template_name, context)
+
+
+@login_required
+def user_settings(request,
+                  general_settings_form_class=GeneralSettingsForm,
+                  password_change_form_class=PasswordChangeForm,
+                  template_name='auth_custom/pages/user-settings.html'):
+    """
+    Display user settings and apply changes.
+    """
+    if not request.method == "GET":
+        return HttpResponseBadRequest()
+    context = {
+        'form_general': general_settings_form_class(),
+        'form_password': password_change_form_class(request.user),
     }
     return render(request, template_name, context)

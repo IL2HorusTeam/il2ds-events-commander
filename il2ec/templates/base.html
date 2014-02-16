@@ -99,10 +99,10 @@
           </div>
         </td>
         <td class='nav-side'>
-          <!-- Anonymous section START -->
-          {% if user.is_anonymous() %}
           <ul id='navbar-side' class="nav navbar-nav navbar-right">
-          <!-- Language selector START -->
+          {% if user.is_anonymous() %}
+            <!-- Anonymous section START -->
+            <!-- Language selector START -->
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans %}Language{% endtrans %}: {{ LANGUAGE_NAME }} <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -129,9 +129,26 @@
             </li>
             <!-- Sign in END -->
             {% endif %}
-          </ul>
           <!-- Anonymous section END -->
+          {% else %}
+          <!-- Authorized section START -->
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }} <b class="caret"></b></a>
+              <ul id="nav_user_menu" class="dropdown-menu">
+                {% set full_name=user.get_full_name() %}
+                {% if full_name %}
+                  <li id="nav_full_name" class="dropdown-header">{{ full_name }}</li>
+                  <li class="divider"></li>
+                {% endif %}
+                <li><a href="#">{% trans %}Request connection{% endtrans %}</a></li>
+                <li><a href="{% url auth-custom-user-settings %}">{% trans %}Settings{% endtrans %}</a></li>
+                <li class="divider"></li>
+                <li><a href="{% url auth-custom-sign-out %}">{% trans %}Sign out{% endtrans %}</a></li>
+              </ul>
+            </li>
+          <!-- Authorized section END -->
           {% endif %}
+          </ul>
         </td>
       </tr>
     </table>

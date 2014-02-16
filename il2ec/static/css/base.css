@@ -188,6 +188,15 @@ body {
     padding: 3px 15px !important;
   }
 }
+/* User menu --------------------------------------------------------------- */
+#nav_user_menu.dropdown-menu {
+  min-width: 270px;
+}
+#nav_full_name {
+  padding: 10px 20px 0px 20px;
+  font-size: 16px;
+}
+
 /* Form helpers ------------------------------------------------------------ */
 .alerts-placeholder {
   display: none;
@@ -197,4 +206,9 @@ body {
 .ladda-button[data-loading].btn:hover,
 .ladda-button[data-loading].btn:focus {
   background-position: 0 0 !important;
+}
+
+/* Other ------------------------------------------------------------------- */
+div.panel[data-toggle="collapse"] .panel-heading:hover {
+  cursor: pointer;
 }

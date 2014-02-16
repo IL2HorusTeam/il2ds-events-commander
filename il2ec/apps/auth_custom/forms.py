@@ -79,6 +79,10 @@ class UserCreationForm(BaseUserCreationForm):
     A form that creates a user, with no privileges, from the given username,
     email and password. Used in admin.
     """
+    error_messages = dict(BaseUserCreationForm.error_messages, **{
+        'duplicate_email': _("A user with that email already exists."),
+    })
+
     username = forms.RegexField(
         label=_("Username"),
         help_text=_("Name which is used in game"),
@@ -91,12 +95,6 @@ class UserCreationForm(BaseUserCreationForm):
     email = forms.EmailField(
         label=_("Email"),
         required=True)
-
-    def __init__(self, *args, **kargs):
-        super(UserCreationForm, self).__init__(*args, **kargs)
-        self.error_messages.update({
-            'duplicate_email': _("A user with that email already exists."),
-        })
 
     class Meta:
         model = User
@@ -271,3 +269,29 @@ class RemindMeForm(forms.Form):
 
     def get_user(self):
         return self.user_cache
+
+
+class GeneralSettingsForm(forms.Form):
+    """
+    Form for displaying and changing general user settings.
+    """
+    first_name = forms.CharField(
+        label=_("First name"),
+        help_text=_("Your first name"),
+        max_length=30,
+        required=True)
+    last_name = forms.CharField(
+        label=_("Last name"),
+        help_text=_("Your last name (optional)"),
+        max_length=30,
+        required=False)
+    email = forms.EmailField(
+        label=_("Email"),
+        help_text=_("Email for contacting you"),
+        required=True)
+    language = forms.ChoiceField(
+        label=_("Language"),
+        help_text=_("Language to use on website and in game chat"),
+        choices=settings.LANGUAGES,
+        required=True,
+        widget=forms.Select)

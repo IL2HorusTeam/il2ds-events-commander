@@ -20,7 +20,7 @@
     <span class="help-block">{% trans %}Before you join, we need to check your email. Give us your email and further instructions will be sent to you.{% endtrans %}</span>
 
     <div id="success_block" class="alert alert-success alerts-placeholder">
-      {% trans email="<b id='request_email'></b>"|safe %}
+      {% trans email="<b id='target_email'></b>"|safe %}
         Instructions for email confirmation were sent to {{ email }}. Check out your inbox!
       {% endtrans %}
       <br/>
@@ -41,7 +41,7 @@
       <div class="form-group">
         <div class="input-group">
           <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
-          <input type="email" class="form-control" name="email" id="id_username_email" data-toggle="tooltip" title="{{ form.email.help_text }}" placeholder="{{ form.email.label }}" required>
+          <input type="email" class="form-control" name="email" id="id_email" data-toggle="tooltip" title="{{ form.email.help_text }}" placeholder="{{ form.email.label }}" required>
           <span class="input-group-btn">
             <button id="id_submit_sign_up_request" type="submit" class="btn btn-primary ladda-button" data-style="zoom-out">{% trans %}Go!{% endtrans %}</button>
           </span>
@@ -76,7 +76,7 @@
           $('p.help-text').remove()
           $('#block-sign-up-request').parent().remove()
 
-          $('#request_email').text(response.email)
+          $('#target_email').text(response.email)
           $('#time_left').text(response.time_left)
           $('#success_block').show()
         } else {

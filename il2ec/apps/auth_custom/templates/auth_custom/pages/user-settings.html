@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block head_title %}
+{% trans %}Account settings{% endtrans %}
+{% endblock %}
+
+{% block content %}
+<div class="row offset-bottom">
+  <div class="col-md-4 col-md-offset-4">
+    <legend>{% trans %}Account settings{% endtrans %}</legend>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">{% trans %}General settings{% endtrans %}</h3>
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" role="form" id="id_form_general" action="" method="post">
+          {% csrf_token %}
+          <div class="offset-bottom">
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
+              <input type="text" class="form-control" id="id_first_name" name="first_name"
+                     data-toggle="tooltip" title="{{ form_general.first_name.help_text }}"
+                     placeholder="{{ form_general.first_name.label }}"
+                     value="{{ user.first_name }}" required>
+            </div>
+          </div>
+          <div class="offset-bottom">
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
+              <input type="text" class="form-control" id="id_last_name" name="last_name"
+                     data-toggle="tooltip" title="{{ form_general.last_name.help_text }}"
+                     placeholder="{{ form_general.last_name.label }}"
+                     value="{{ user.last_name }}">
+            </div>
+          </div>
+          <div class="offset-bottom">
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
+              <input type="email" class="form-control" id="id_email" name="email"
+                     data-toggle="tooltip" title="{{ form_general.email.help_text }}"
+                     placeholder="{{ form_general.email.label }}"
+                     value="{{ user.email }}" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8 has-error alerts-placeholder"></div>
+            <label for="select_language" class="col-sm-4 control-label">{{ form_general.language.label }}</label>
+            <div class="col-sm-6">
+              <select class="form-control" id="id_language" name="language"
+                      data-toggle="tooltip" title="{{ form_general.language.help_text }}">
+              {% for (code, name) in form_general.language.field.choices %}
+                <option title="{{ name }}" value="{{ code }}"{% if code == user.language %} selected='selected'{% endif %}>{{ code|native_lang }}</option>
+              {% endfor %}
+              </select>
+            </div>
+          </div>
+          <button id="id_submit_generic" type="submit" class="btn btn-primary btn-block ladda-button" data-style="zoom-out">{% trans %}Apply settings{% endtrans %}</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="panel panel-default" data-toggle="collapse" data-target="#collapse_password">
+      <div class="panel-heading">
+        <h3 class="panel-title">{% trans %}Change password{% endtrans %}</h3>
+      </div>
+      <div id="collapse_password" class="panel-collapse collapse">
+        <div class="panel-body">
+          <form class="form-horizontal" role="form" id="id_form_password" action="" method="post">
+            {% csrf_token %}
+            <div class="offset-bottom">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                <input type="password" class="form-control" id="id_old_password" name="old_password"
+                       data-toggle="tooltip" title="{{ form_password.old_password.label }}"
+                       placeholder="{{ form_password.old_password.label }}" required>
+              </div>
+            </div>
+            <div class="offset-bottom">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                <input type="password" class="form-control" id="id_new_password1" name="new_password1"
+                       data-toggle="tooltip" title="{{ form_password.new_password1.label }}"
+                       placeholder="{{ form_password.new_password1.label }}" required>
+              </div>
+            </div>
+            <div class="offset-bottom">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                <input type="password" class="form-control" id="id_new_password2" name="new_password2"
+                       data-toggle="tooltip" title="{{ form_password.new_password2.label }}"
+                       placeholder="{{ form_password.new_password2.label }}" required>
+              </div>
+            </div>
+            <button id="id_submit_password" type="submit" class="btn btn-primary ladda-button" data-style="zoom-out">{% trans %}Update{% endtrans %}</button>
+            <button type="button" class="btn btn-link pull-right">{% trans %}Forgot password{% endtrans %}?</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-warning" data-toggle="collapse" data-target="#collapse_username">
+      <div class="panel-heading">
+        <h3 class="panel-title">{% trans %}Change username{% endtrans %}</h3>
+      </div>
+      <div id="collapse_username" class="panel-collapse collapse">
+        <div class="panel-body">
+          <p>{% trans %}Changing your username can have unintended side effects{% endtrans %}.</p>
+          <button type="button" class="btn btn-default">{% trans %}Change username{% endtrans %}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-danger" data-toggle="collapse" data-target="#collapse_deactivate">
+      <div class="panel-heading">
+        <h3 class="panel-title">{% trans %}Deactivate account{% endtrans %}</h3>
+      </div>
+      <div id="collapse_deactivate" class="panel-collapse collapse">
+        <div class="panel-body">
+          <p>{% trans %}Deactivating means that no one will see your profile. We'll miss you, but you're welcome back any time.{% endtrans %}</p>
+          <button type="button" class="btn btn-default" style="color: #B65656;">{% trans %}Deactivate{% endtrans %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
