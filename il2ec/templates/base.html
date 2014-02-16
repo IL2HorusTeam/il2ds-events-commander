@@ -142,6 +142,9 @@
                   <li class="divider"></li>
                 {% endif %}
                 <li><a href="#">{% trans %}Request connection{% endtrans %}</a></li>
+                {% if user.is_superuser or user.is_staff %}
+                  <li><a href="{% url admin:index %}">{% trans %}Admin panel{% endtrans %}</a></li>
+                {% endif %}
                 <li><a href="{% url auth-custom-user-settings %}">{% trans %}Settings{% endtrans %}</a></li>
                 <li class="divider"></li>
                 <li><a href="{% url auth-custom-sign-out %}">{% trans %}Sign out{% endtrans %}</a></li>
