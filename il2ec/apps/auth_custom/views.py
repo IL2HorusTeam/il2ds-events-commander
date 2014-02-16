@@ -311,7 +311,6 @@ def sign_up_invoke(request, form_class=SignUpForm):
 
 @never_cache
 @csrf_protect
-@anonymous_required()
 @sensitive_post_parameters()
 def remind_me_request(request, form_class=RemindMeForm):
     """
@@ -321,20 +320,24 @@ def remind_me_request(request, form_class=RemindMeForm):
     if not (request.method == "POST" and request.is_ajax()):
         return HttpResponseBadRequest()
 
-    form = form_class(data=request.POST)
-    if form.is_valid():
-        user = form.get_user()
-        if send_remind_me_email(request, user):
-            return JSONResponse.success(payload={
-                'email': user.email,
-            })
+    user = request.user
+
+    if user.is_anonymous():
+        form = form_class(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
         else:
-            return JSONResponse.error(
-                message=_("Sorry, we failed to send an email to you. "
-                          "Please, try again a bit later."))
+            msg = ' '.join(itertools.chain(*form.errors.values()))
+            return JSONResponse.error(message=unicode(msg))
+
+    if send_remind_me_email(request, user):
+        return JSONResponse.success(payload={
+            'email': user.email,
+        })
     else:
-        msg = ' '.join(itertools.chain(*form.errors.values()))
-        return JSONResponse.error(message=unicode(msg))
+        return JSONResponse.error(
+            message=_("Sorry, we failed to send an email to you. "
+                      "Please, try again a bit later."))
 
 
 @csrf_protect
@@ -375,7 +378,34 @@ def password_reset(request, uidb64, token,
     return render(request, template_name, context)
 
 
+@csrf_protect
 @login_required
+@never_cache
+def password_change(request, form_class=PasswordChangeForm):
+    """
+    Process AJAX request for changing user password.
+    """
+    if not (request.method == "POST" and request.is_ajax()):
+        return HttpResponseBadRequest()
+
+    user = request.user
+    form = form_class(user, data=request.POST)
+
+    if form.is_valid():
+        form.save()
+        return JSONResponse.success()
+    else:
+        errors = {
+            field_name: ' '.join([unicode(e) for e in error_list])
+                        for field_name, error_list in form.errors.items()
+        }
+        return JSONResponse.error(payload={
+            'errors': errors
+        })
+
+
+@login_required
+@never_cache
 def user_settings(request,
                   general_settings_form_class=GeneralSettingsForm,
                   password_change_form_class=PasswordChangeForm,
@@ -392,8 +422,9 @@ def user_settings(request,
     return render(request, template_name, context)
 
 
-@login_required
 @csrf_protect
+@login_required
+@never_cache
 def general_settings(request, form_class=GeneralSettingsForm):
     """
     Process AJAX request for changing user general settings.
@@ -414,31 +445,6 @@ def general_settings(request, form_class=GeneralSettingsForm):
         update_current_language(request, user.language)
         messages.success(request, _("New settings were successfully applied."))
 
-        return JSONResponse.success()
-    else:
-        errors = {
-            field_name: ' '.join([unicode(e) for e in error_list])
-                        for field_name, error_list in form.errors.items()
-        }
-        return JSONResponse.error(payload={
-            'errors': errors
-        })
-
-
-@login_required
-@csrf_protect
-def password_change(request, form_class=PasswordChangeForm):
-    """
-    Process AJAX request for changing user password.
-    """
-    if not (request.method == "POST" and request.is_ajax()):
-        return HttpResponseBadRequest()
-
-    user = request.user
-    form = form_class(user, data=request.POST)
-
-    if form.is_valid():
-        form.save()
         return JSONResponse.success()
     else:
         errors = {

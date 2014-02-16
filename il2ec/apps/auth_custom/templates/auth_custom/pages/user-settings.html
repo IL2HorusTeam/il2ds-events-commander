@@ -147,6 +147,32 @@
     </div>
   </div>
 </div>
+
+<!-- Modal forgot password -->
+<div class="modal fade" id="id_modal_password" tabindex="-1" role="dialog" aria-labelledby="id_modal_password_label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="id_modal_password_label">{% trans %}Password reset request{% endtrans %}</h4>
+      </div>
+      <div class="modal-body">
+        <form id="id_form_password_modal" class="form-ajax" action="{% url auth-custom-remind-me-request %}" method="post">
+          {% csrf_token %}
+          <div class="alert alert-success alerts-placeholder">
+            <span class='form-message'>{% trans %}Data and instructions were sent to{% endtrans %} <b><span id="id_target_email"></span></b>.</span>
+          </div>
+          <div class="alert alert-danger alerts-placeholder">
+            <span class='form-message'></span>
+          </div>
+        </form>
+        <div class="progress progress-striped active">
+          <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block script_extras %}
@@ -281,6 +307,35 @@
     })
 
     return false
+  })
+
+  /* Submit password reset- ------------------------------------------------ */
+  $('#id_forgot_password').click(function() {
+    var dialog = $('#id_modal_password')
+    , $frm = dialog.find('form')
+    , frm = $frm.get(0)
+    , url = $frm.attr('action')
+
+    dialog.modal('show')
+    $.post(url
+      , $frm.serialize()
+      , function(response) {
+        if (response.status == 'success') {
+          dialog.find('#id_target_email').text(response.email)
+          dialog.find('.alert-success').show()
+        } else {
+          frm.show_error(response.error.message)
+        }
+      }
+      , "json"
+    ).fail(function(request, status, error) {
+      frm.show_error("{% trans %}Request execution error{% endtrans %}")
+    }).always(function(data) {
+      dialog.find('div.progress').remove()
+    })
+  })
+  $('#id_form_password_modal').submit(function(e) {
+    e.preventDefault()
   })
 </script>
 {% endblock %}

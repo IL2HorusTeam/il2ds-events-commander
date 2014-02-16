@@ -184,7 +184,7 @@
 <script src="{{ STATIC_URL }}lib/ladda/ladda.min.js"></script>
 
 <script type="text/javascript">
-  /* Enable tooltips */
+  /* Configure tooltips ---------------------------------------------------- */
   var tooltip_delay = { show: 500, hide: 100 }
 
   $('[data-toggle="tooltip-nav"]').tooltip({
@@ -194,6 +194,23 @@
   $('[data-toggle="tooltip"]').tooltip({
     placement: 'top',
     delay: tooltip_delay,
+  })
+
+  /* AJAX forms helpers ---------------------------------------------------- */
+  $('.form-ajax').each(function() {
+    var frm = this
+    , $frm = $(this)
+
+    frm.show_error = function(message) {
+      $frm.find('.alert-danger .form-message').text(message)
+      $frm.find('.alert-danger').show()
+    }
+    frm.hide_messages = function() {
+      $frm.find('.alerts-placeholder').hide()
+    }
+    $frm.find('.alert .close').click(function() {
+      $(this).parent().hide()
+    })
   })
 </script>
 
@@ -224,23 +241,6 @@
   /* Fix 'focus lost' for sign in dropdown menu due to usage of tabs ------- */
   $('#dropdown-sign-in').on('hide.bs.dropdown', function() {
     $(this).removeClass('active')
-  })
-
-  /* AJAX forms helpers ---------------------------------------------------- */
-  $('.form-ajax').each(function() {
-    var frm = this
-    , $frm = $(this)
-
-    frm.show_error = function(message) {
-      $frm.find('.alert-danger .form-message').text(message)
-      $frm.find('.alert-danger').show()
-    }
-    frm.hide_messages = function() {
-      $frm.find('.alerts-placeholder').hide()
-    }
-    $frm.find('.alert .close').click(function() {
-      $(this).parent().hide()
-    })
   })
 
   /* Submit 'sign in' request ---------------------------------------------- */
