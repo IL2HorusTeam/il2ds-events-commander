@@ -5,17 +5,25 @@
 {% endblock %}
 
 {% block content %}
-<div class="row offset-bottom">
+<div class="row">
   <div class="col-md-4 col-md-offset-4">
     <legend>{% trans %}Account settings{% endtrans %}</legend>
+
+    {% include "website/blocks/messages.html" %}
 
     <div class="panel panel-default">
       <div class="panel-heading">
         <h3 class="panel-title">{% trans %}General settings{% endtrans %}</h3>
       </div>
       <div class="panel-body">
-        <form class="form-horizontal" role="form" id="id_form_general" action="" method="post">
+        <form class="form-horizontal" role="form" id="id_form_general" action="{% url auth-custom-general-settings %}" method="post">
           {% csrf_token %}
+
+          <div id="non_field_errors" class="alert alert-danger alert-dismissable alerts-placeholder">
+            <button type="button" class="close" aria-hidden="true">&times;</button>
+            <span class='form-message'></span>
+          </div>
+
           <div class="offset-bottom">
             <div class="input-group">
               <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
@@ -55,7 +63,9 @@
               </select>
             </div>
           </div>
-          <button id="id_submit_generic" type="submit" class="btn btn-primary btn-block ladda-button" data-style="zoom-out">{% trans %}Apply settings{% endtrans %}</button>
+          <button id="id_submit_generic" type="submit"
+                  class="btn btn-primary btn-block ladda-button"
+                  data-style="zoom-out">{% trans %}Apply settings{% endtrans %}</button>
         </form>
       </div>
     </div>
@@ -92,8 +102,11 @@
                        placeholder="{{ form_password.new_password2.label }}" required>
               </div>
             </div>
-            <button id="id_submit_password" type="submit" class="btn btn-primary ladda-button" data-style="zoom-out">{% trans %}Update{% endtrans %}</button>
-            <button type="button" class="btn btn-link pull-right">{% trans %}Forgot password{% endtrans %}?</button>
+            <button id="id_submit_password" type="submit"
+                    class="btn btn-primary ladda-button"
+                    data-style="zoom-out">{% trans %}Update{% endtrans %}</button>
+            <button id="id_forgot_password" type="button"
+                    class="btn btn-link pull-right">{% trans %}Forgot password{% endtrans %}?</button>
           </form>
         </div>
       </div>
@@ -124,4 +137,82 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block script_extras %}
+<script type="text/javascript">
+  /* Hide form messages ---------------------------------------------------- */
+  $('form .alert-dismissable .close').click(function() {
+    $(this).parent().hide()
+  })
+
+  /* Submit general settings update ---------------------------------------- */
+  $('#id_form_general').submit(function(e) {
+    e.preventDefault()
+
+    var frm = this
+    , $frm = $(this)
+    , url = $frm.attr('action')
+    , button = $frm.find('#id_submit_generic').get(0)
+
+    if (typeof button.ladda === "undefined") {
+      button.ladda = Ladda.create(button)
+    }
+
+    function _show_field_error(container, value) {
+      container.addClass('has-error')
+      container.prepend('<span class="control-label">' + value + '</span>')
+    }
+
+    function _show_non_field_errors(data) {
+      var block = $frm.find('#non_field_errors')
+      block.find('span.form-message').text(data)
+      block.show()
+    }
+
+    $frm.find('.alerts-placeholder').hide()
+    $frm.find('.has-error span.control-label').remove()
+    $frm.find('.has-error').removeClass('has-error')
+
+    button.ladda.start()
+    $.post(url
+      , $frm.serialize()
+      , function(response) {
+        if (response.status == 'success') {
+          /* Do not call 'reload' - new language may differ from current
+           * language.
+           */
+          window.location = "{{ CURRENT_PATH }}"
+        } else {
+          if (typeof response.errors != 'undefined') {
+            for (var key in response.errors) {
+              if (response.errors.hasOwnProperty(key)) {
+                var element = $('#id_' + key)
+                , container = element.parent().parent()
+
+                if (key == 'language') {
+                  container = container.find('.alerts-placeholder')
+                  _show_field_error(container, response.errors[key])
+                  element.parent().addClass('has-error')
+                  container.show()
+                } else {
+                  _show_field_error(container, response.errors[key])
+                }
+              }
+            }
+          } else {
+            _show_non_field_errors(response.error.message)
+          }
+        }
+      }
+      , "json"
+    ).fail(function(request, status, error) {
+      _show_non_field_errors("{% trans %}Request execution error{% endtrans %}")
+    }).always(function(data) {
+      button.ladda.stop()
+    })
+
+    return false
+  })
+</script>
 {% endblock %}

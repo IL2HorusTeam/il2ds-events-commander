@@ -27,4 +27,6 @@ urlpatterns = patterns('',
 
     url(r'^user/settings/$', 'auth_custom.views.user_settings',
         name='auth-custom-user-settings'),
+    url(r'^user/settings/general/$', 'auth_custom.views.general_settings',
+        name='auth-custom-general-settings'),
 )

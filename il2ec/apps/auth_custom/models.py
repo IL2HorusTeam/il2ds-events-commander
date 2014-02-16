@@ -22,7 +22,7 @@ from django.utils import timezone
 from django.utils.http import urlquote
 from django.utils.translation import ugettext_lazy as _
 
-from auth_custom.helpers import sign_up_confirmation
+from auth_custom.helpers import sign_up_confirmation, update_current_language
 from auth_custom.settings import EMAIL_CONFIRMATION_DAYS
 from auth_custom.validators import validate_username
 
@@ -246,5 +246,5 @@ def set_preferred_language(sender, **kwargs):
     """
     Called when a user signs in. Sets current language to preferred.
     """
-    lang_code = kwargs['user'].language
-    kwargs['request'].session['django_language'] = lang_code
+    update_current_language(request=kwargs['request'],
+                            language=kwargs['user'].language)

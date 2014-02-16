@@ -104,3 +104,10 @@ def send_remind_me_email(http_request, user,
     # Execute Celery task directly as normal function
     return send_mail(subject, template_name, context,
                      to_emails=to_emails, language_code=user.language)
+
+
+def update_current_language(request, language):
+    """
+    Update current language for web user.
+    """
+    request.session['django_language'] = language

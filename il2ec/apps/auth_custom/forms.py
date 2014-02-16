@@ -57,12 +57,10 @@ class SignInForm(forms.Form):
                                            password=password)
             if self.user_cache is None:
                 raise forms.ValidationError(
-                    self.error_messages['invalid_data'],
-                    code='invalid_data')
+                    self.error_messages['invalid_data'], code='invalid_data')
             elif not self.user_cache.is_active:
                 raise forms.ValidationError(
-                    self.error_messages['inactive'],
-                    code='inactive')
+                    self.error_messages['inactive'], code='inactive')
         return self.cleaned_data
 
     def get_user_id(self):
@@ -80,7 +78,7 @@ class UserCreationForm(BaseUserCreationForm):
     email and password. Used in admin.
     """
     error_messages = dict(BaseUserCreationForm.error_messages, **{
-        'duplicate_email': _("A user with that email already exists."),
+        'duplicate_email': _("This email is already used."),
     })
 
     username = forms.RegexField(
@@ -112,8 +110,7 @@ class UserCreationForm(BaseUserCreationForm):
         email = self.cleaned_data['email']
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError(
-                self.error_messages['duplicate_email'],
-                code='duplicate_email')
+                self.error_messages['duplicate_email'], code='duplicate_email')
         return email
 
 
@@ -157,7 +154,7 @@ class SignUpForm(forms.Form):
     FATAL_ERROR_CODE = 1
 
     error_messages = {
-        'duplicate_email': _("A user with that email already exists."),
+        'duplicate_email': _("This email is already used."),
         'duplicate_username': _("A user with that username already exists."),
     }
 
@@ -219,8 +216,7 @@ class SignUpForm(forms.Form):
         email = self.cleaned_data['email']
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError(
-                self.error_messages['duplicate_email'],
-                code='duplicate_email')
+                self.error_messages['duplicate_email'], code='duplicate_email')
         return email
 
 
@@ -255,16 +251,13 @@ class RemindMeForm(forms.Form):
                 self.user_cache = User.objects.get_by_username_or_email(value)
             except ValueError:
                 raise forms.ValidationError(
-                    self.error_messages['invalid_data'],
-                    code='invalid_data')
+                    self.error_messages['invalid_data'], code='invalid_data')
             except User.DoesNotExist:
                 raise forms.ValidationError(
-                    self.error_messages['not_found'],
-                    code='not_found')
+                    self.error_messages['not_found'], code='not_found')
             if not self.user_cache.is_active:
                 raise forms.ValidationError(
-                    self.error_messages['inactive'],
-                    code='inactive')
+                    self.error_messages['inactive'], code='inactive')
         return self.cleaned_data
 
     def get_user(self):
@@ -275,6 +268,10 @@ class GeneralSettingsForm(forms.Form):
     """
     Form for displaying and changing general user settings.
     """
+    error_messages = {
+        'duplicate_email': _("This email is already used."),
+    }
+
     first_name = forms.CharField(
         label=_("First name"),
         help_text=_("Your first name"),
@@ -295,3 +292,15 @@ class GeneralSettingsForm(forms.Form):
         choices=settings.LANGUAGES,
         required=True,
         widget=forms.Select)
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(GeneralSettingsForm, self).__init__(*args, **kwargs)
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if (email != self.user.email
+            and User.objects.filter(email=email).exists()):
+            raise forms.ValidationError(
+                self.error_messages['duplicate_email'], code='duplicate_email')
+        return email

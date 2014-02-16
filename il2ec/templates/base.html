@@ -1,3 +1,4 @@
+{% load website_utils %}
 <!DOCTYPE html>
 {% set PROJECT_NAME = settings.PROJECT_NAME %}
 <html lang="{{ LANGUAGE_CODE }}">
@@ -231,8 +232,8 @@
       $frm.find('.alert-danger .form-message').text(message)
       $frm.find('.alert-danger').show()
     }
-    frm.hide_error = function() {
-      $frm.find('.alert-danger').hide()
+    frm.hide_messages = function() {
+      $frm.find('.alerts-placeholder').hide()
     }
     $frm.find('.alert .close').click(function() {
       $(this).parent().hide()
@@ -252,13 +253,12 @@
       button.ladda = Ladda.create(button)
     }
 
-    frm.hide_error()
+    frm.hide_messages()
     button.ladda.start()
     $.post(url
       , $frm.serialize()
       , function(response) {
         if (response.status == 'success') {
-          $frm.find('.alert-success').show()
           /* Do not call 'reload' - authorized user's language may differ from
            * language on current page.
            */
@@ -290,7 +290,7 @@
       button.ladda = Ladda.create(button)
     }
 
-    frm.hide_error()
+    frm.hide_messages()
     button.ladda.start()
     $.post(url
       , $frm.serialize()

@@ -19,3 +19,14 @@ def native_lang(value):
         return value
     name, native = lang_dict[value]
     return native
+
+
+@register.filter
+def message_styles(message):
+    """
+    Returns a string of separated by space CSS style names for particular
+    message from django.contrib.messages.
+    """
+    tags = message.tags.split()
+    return ' '.join([
+        'alert-%s' % tag.replace('error', 'danger') for tag in tags])

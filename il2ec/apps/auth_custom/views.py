@@ -10,6 +10,7 @@ from coffin.views.generic import FormView
 
 from django.conf import settings as dj_settings
 
+from django.contrib import messages
 from django.contrib.auth import (authenticate, login, logout, get_user_model,
     REDIRECT_FIELD_NAME, )
 from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm
@@ -32,7 +33,8 @@ from django.utils.timesince import timeuntil
 from django.utils.translation import activate, deactivate, ugettext as _
 
 from auth_custom import settings
-from auth_custom.helpers import sign_up_confirmation, send_remind_me_email
+from auth_custom.helpers import (sign_up_confirmation, send_remind_me_email,
+    update_current_language, )
 from auth_custom.decorators import anonymous_required
 from auth_custom.forms import (SignInForm, SignUpForm, SignUpRequestForm,
     RemindMeForm, GeneralSettingsForm, )
@@ -384,7 +386,40 @@ def user_settings(request,
     if not request.method == "GET":
         return HttpResponseBadRequest()
     context = {
-        'form_general': general_settings_form_class(),
+        'form_general': general_settings_form_class(request.user),
         'form_password': password_change_form_class(request.user),
     }
     return render(request, template_name, context)
+
+
+@login_required
+@csrf_protect
+def general_settings(request, form_class=GeneralSettingsForm):
+    """
+    Process AJAX request for changing user general settings.
+    """
+    if not (request.method == "POST" and request.is_ajax()):
+        return HttpResponseBadRequest()
+
+    user = request.user
+    form = form_class(user, data=request.POST)
+
+    if form.is_valid():
+        user.first_name = form.cleaned_data['first_name']
+        user.last_name = form.cleaned_data['last_name']
+        user.email = form.cleaned_data['email']
+        user.language = form.cleaned_data['language']
+        user.save()
+
+        update_current_language(request, user.language)
+        messages.success(request, _("New settings were successfully applied."))
+
+        return JSONResponse.success()
+    else:
+        errors = {
+            field_name: ' '.join([unicode(e) for e in error_list])
+                        for field_name, error_list in form.errors.items()
+        }
+        return JSONResponse.error(payload={
+            'errors': errors
+        })

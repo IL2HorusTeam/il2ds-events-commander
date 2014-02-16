@@ -6,15 +6,12 @@
         <form class="form form-ajax" role="form" id="id_form_sign_in" action="{% url auth-custom-sign-in %}" method="post">
           <legend>{% trans %}Sign in{% endtrans %}</legend>
           {% csrf_token %}
-          <!-- Form messages START -->
-          <div class="alert alert-success alerts-placeholder">
-            <span class='form-message'>{% trans %}Success{% endtrans %}!</span>
-          </div>
+          <!-- Form errors START -->
           <div class="alert alert-danger alert-dismissable alerts-placeholder">
             <button type="button" class="close" aria-hidden="true">&times;</button>
             <span class='form-message'></span>
           </div>
-          <!-- Form messages END -->
+          <!-- Form errors END -->
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
