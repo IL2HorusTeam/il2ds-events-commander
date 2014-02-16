@@ -24,6 +24,8 @@ urlpatterns = patterns('',
     url(r'^password/reset/(?P<uidb64>[0-9A-Za-z]+)/(?P<token>.+)/$',
         'auth_custom.views.password_reset',
         name='auth-custom-password-reset'),
+    url(r'^password/change/$', 'auth_custom.views.password_change',
+        name='auth-custom-password-change'),
 
     url(r'^user/settings/$', 'auth_custom.views.user_settings',
         name='auth-custom-user-settings'),

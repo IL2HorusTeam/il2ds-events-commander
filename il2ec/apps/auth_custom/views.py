@@ -423,3 +423,28 @@ def general_settings(request, form_class=GeneralSettingsForm):
         return JSONResponse.error(payload={
             'errors': errors
         })
+
+
+@login_required
+@csrf_protect
+def password_change(request, form_class=PasswordChangeForm):
+    """
+    Process AJAX request for changing user password.
+    """
+    if not (request.method == "POST" and request.is_ajax()):
+        return HttpResponseBadRequest()
+
+    user = request.user
+    form = form_class(user, data=request.POST)
+
+    if form.is_valid():
+        form.save()
+        return JSONResponse.success()
+    else:
+        errors = {
+            field_name: ' '.join([unicode(e) for e in error_list])
+                        for field_name, error_list in form.errors.items()
+        }
+        return JSONResponse.error(payload={
+            'errors': errors
+        })

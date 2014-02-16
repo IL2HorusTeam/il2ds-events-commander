@@ -209,6 +209,6 @@ body {
 }
 
 /* Other ------------------------------------------------------------------- */
-div.panel[data-toggle="collapse"] .panel-heading:hover {
+div.panel-heading[data-toggle="collapse"]:hover {
   cursor: pointer;
 }

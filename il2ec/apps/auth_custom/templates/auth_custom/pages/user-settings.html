@@ -70,14 +70,24 @@
       </div>
     </div>
 
-    <div class="panel panel-default" data-toggle="collapse" data-target="#collapse_password">
-      <div class="panel-heading">
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="collapse" data-target="#collapse_password">
         <h3 class="panel-title">{% trans %}Change password{% endtrans %}</h3>
       </div>
       <div id="collapse_password" class="panel-collapse collapse">
         <div class="panel-body">
-          <form class="form-horizontal" role="form" id="id_form_password" action="" method="post">
+          <form class="form-horizontal" role="form" id="id_form_password" action="{% url auth-custom-password-change %}" method="post">
             {% csrf_token %}
+
+            <div class="alert alert-success alert-dismissable alerts-placeholder">
+              <button type="button" class="close" aria-hidden="true">&times;</button>
+              <span class='form-message'>{% trans %}Password was successfully updated{% endtrans %}.</span>
+            </div>
+            <div id="non_field_errors" class="alert alert-danger alert-dismissable alerts-placeholder">
+              <button type="button" class="close" aria-hidden="true">&times;</button>
+              <span class='form-message'></span>
+            </div>
+
             <div class="offset-bottom">
               <div class="input-group">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
@@ -112,8 +122,8 @@
       </div>
     </div>
 
-    <div class="panel panel-warning" data-toggle="collapse" data-target="#collapse_username">
-      <div class="panel-heading">
+    <div class="panel panel-warning">
+      <div class="panel-heading" data-toggle="collapse" data-target="#collapse_username">
         <h3 class="panel-title">{% trans %}Change username{% endtrans %}</h3>
       </div>
       <div id="collapse_username" class="panel-collapse collapse">
@@ -124,8 +134,8 @@
       </div>
     </div>
 
-    <div class="panel panel-danger" data-toggle="collapse" data-target="#collapse_deactivate">
-      <div class="panel-heading">
+    <div class="panel panel-danger">
+      <div class="panel-heading" data-toggle="collapse" data-target="#collapse_deactivate">
         <h3 class="panel-title">{% trans %}Deactivate account{% endtrans %}</h3>
       </div>
       <div id="collapse_deactivate" class="panel-collapse collapse">
@@ -198,6 +208,64 @@
                 } else {
                   _show_field_error(container, response.errors[key])
                 }
+              }
+            }
+          } else {
+            _show_non_field_errors(response.error.message)
+          }
+        }
+      }
+      , "json"
+    ).fail(function(request, status, error) {
+      _show_non_field_errors("{% trans %}Request execution error{% endtrans %}")
+    }).always(function(data) {
+      button.ladda.stop()
+    })
+
+    return false
+  })
+
+  /* Submit password update ------------------------------------------------ */
+  $('#id_form_password').submit(function(e) {
+    e.preventDefault()
+
+    var frm = this
+    , $frm = $(this)
+    , url = $frm.attr('action')
+    , button = $frm.find('#id_submit_password').get(0)
+
+    if (typeof button.ladda === "undefined") {
+      button.ladda = Ladda.create(button)
+    }
+
+    function _show_field_error(container, value) {
+      container.addClass('has-error')
+      container.prepend('<span class="control-label">' + value + '</span>')
+    }
+
+    function _show_non_field_errors(data) {
+      var block = $frm.find('#non_field_errors')
+      block.find('span.form-message').text(data)
+      block.show()
+    }
+
+    $frm.find('.alerts-placeholder').hide()
+    $frm.find('.has-error span.control-label').remove()
+    $frm.find('.has-error').removeClass('has-error')
+
+    button.ladda.start()
+    $.post(url
+      , $frm.serialize()
+      , function(response) {
+        if (response.status == 'success') {
+          $frm.find('input.form-control').val('')
+          $frm.find('div.alert-success').show()
+        } else {
+          if (typeof response.errors != 'undefined') {
+            for (var key in response.errors) {
+              if (response.errors.hasOwnProperty(key)) {
+                var container = $('#id_' + key).parent().parent()
+                _show_field_error(container, response.errors[key])
               }
             }
           } else {
