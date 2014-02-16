@@ -316,7 +316,10 @@
     , frm = $frm.get(0)
     , url = $frm.attr('action')
 
+    dialog.find('.alerts-placeholder').hide()
+    dialog.find('div.progress').show()
     dialog.modal('show')
+
     $.post(url
       , $frm.serialize()
       , function(response) {
@@ -331,11 +334,12 @@
     ).fail(function(request, status, error) {
       frm.show_error("{% trans %}Request execution error{% endtrans %}")
     }).always(function(data) {
-      dialog.find('div.progress').remove()
+      dialog.find('div.progress').hide()
     })
   })
   $('#id_form_password_modal').submit(function(e) {
     e.preventDefault()
+    return false
   })
 </script>
 {% endblock %}
