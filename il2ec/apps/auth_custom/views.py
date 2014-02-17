@@ -40,6 +40,7 @@ from auth_custom.forms import (SignInForm, SignUpForm, SignUpRequestForm,
     RemindMeForm, GeneralSettingsForm, )
 from auth_custom.models import SignUpRequest, User
 
+from website.decorators import ajax_api
 from website.responses import JSONResponse
 
 
@@ -68,6 +69,7 @@ class SignInView(FormView):
     def dispatch(self, *args, **kwargs):
         return super(SignInView, self).dispatch(*args, **kwargs)
 
+    @method_decorator(ajax_api)
     @method_decorator(csrf_protect)
     @method_decorator(sensitive_post_parameters())
     def post(self, request, *args, **kwargs):
@@ -75,9 +77,6 @@ class SignInView(FormView):
         Handles POST requests, instantiating a form instance with the passed
         POST variables and then checking it for validity.
         """
-        if not request.is_ajax():
-            return HttpResponseBadRequest()
-
         form_class = self.get_form_class()
         form = form_class(data=request.POST)
         if form.is_valid():
@@ -123,6 +122,7 @@ class SignUpRequestView(FormView):
     def dispatch(self, *args, **kwargs):
         return super(SignUpRequestView, self).dispatch(*args, **kwargs)
 
+    @method_decorator(ajax_api)
     @method_decorator(csrf_protect)
     @method_decorator(sensitive_post_parameters())
     def post(self, request, *args, **kwargs):
@@ -130,9 +130,6 @@ class SignUpRequestView(FormView):
         Handles POST requests, instantiating a form instance with the passed
         POST variables and then checking it for validity.
         """
-        if not request.is_ajax():
-            return HttpResponseBadRequest()
-
         form_class = self.get_form_class()
         form = form_class(data=request.POST)
 
@@ -230,6 +227,7 @@ def sign_up(request, email, confirmation_key,
     return _render()
 
 
+@ajax_api
 @never_cache
 @csrf_protect
 @anonymous_required()
@@ -238,9 +236,6 @@ def api_sign_up(request, form_class=SignUpForm):
     """
     Handles sign up AJAX POST requests.
     """
-    if not (request.method == "POST" and request.is_ajax()):
-        return HttpResponseBadRequest()
-
     def _security_error():
         return JSONResponse.error(
             code=form_class.FATAL_ERROR_CODE,
@@ -309,6 +304,7 @@ def api_sign_up(request, form_class=SignUpForm):
         })
 
 
+@ajax_api
 @never_cache
 @csrf_protect
 @sensitive_post_parameters()
@@ -317,9 +313,6 @@ def api_remind_me(request, form_class=RemindMeForm):
     Handles AJAX POST requests for reminding username and resetting password.
     Username and link for password resetting will be sent to user by email.
     """
-    if not (request.method == "POST" and request.is_ajax()):
-        return HttpResponseBadRequest()
-
     user = request.user
 
     if user.is_anonymous():
@@ -378,6 +371,7 @@ def password_reset(request, uidb64, token,
     return render(request, template_name, context)
 
 
+@ajax_api
 @csrf_protect
 @login_required
 @never_cache
@@ -385,9 +379,6 @@ def api_password_change(request, form_class=PasswordChangeForm):
     """
     Process AJAX request for changing user password.
     """
-    if not (request.method == "POST" and request.is_ajax()):
-        return HttpResponseBadRequest()
-
     user = request.user
     form = form_class(user, data=request.POST)
 
@@ -422,6 +413,7 @@ def user_settings(request,
     return render(request, template_name, context)
 
 
+@ajax_api
 @csrf_protect
 @login_required
 @never_cache
@@ -429,9 +421,6 @@ def api_general_settings(request, form_class=GeneralSettingsForm):
     """
     Process AJAX request for changing user general settings.
     """
-    if not (request.method == "POST" and request.is_ajax()):
-        return HttpResponseBadRequest()
-
     user = request.user
     form = form_class(user, data=request.POST)
 
