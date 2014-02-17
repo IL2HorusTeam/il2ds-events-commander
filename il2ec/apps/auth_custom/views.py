@@ -2,7 +2,6 @@
 """
 Views which handle authentication-related requests.
 """
-import itertools
 import logging
 
 from coffin.shortcuts import redirect, render, render_to_string, resolve_url
@@ -84,8 +83,7 @@ class SignInView(FormView):
             _remember_me(request, form)
             return JSONResponse.success()
         else:
-            msg = ' '.join(itertools.chain(*form.errors.values()))
-            return JSONResponse.error(message=unicode(msg))
+            return JSONResponse.form_error(form)
 
     def get(self, request, *args, **kwargs):
         """
@@ -150,9 +148,7 @@ class SignUpRequestView(FormView):
             if sign_up_confirmation.send_email(request, sign_up_request):
                 sign_up_request.save()
             else:
-                return JSONResponse.error(
-                    message=_("Sorry, we failed to send an email to you. "
-                              "Please, try again a bit later."))
+                return JSONResponse.email_error()
 
             activate(request.LANGUAGE_CODE)
             time_left = timeuntil(sign_up_request.expiration_date,
@@ -164,8 +160,7 @@ class SignUpRequestView(FormView):
                 'time_left': time_left,
             })
         else:
-            msg = ' '.join(itertools.chain(*form.errors.values()))
-            return JSONResponse.error(message=msg)
+            return JSONResponse.form_error(form)
 
 
 @never_cache
@@ -295,13 +290,7 @@ def api_sign_up(request, form_class=SignUpForm):
             'redirect_url': redirect_url,
         })
     else:
-        errors = {
-            field_name: ' '.join([unicode(e) for e in error_list])
-                        for field_name, error_list in form.errors.items()
-        }
-        return JSONResponse.error(payload={
-            'errors': errors
-        })
+        return JSONResponse.form_field_errors(form)
 
 
 @ajax_api
@@ -320,17 +309,14 @@ def api_remind_me(request, form_class=RemindMeForm):
         if form.is_valid():
             user = form.get_user()
         else:
-            msg = ' '.join(itertools.chain(*form.errors.values()))
-            return JSONResponse.error(message=unicode(msg))
+            return JSONResponse.form_error(form)
 
     if send_remind_me_email(request, user):
         return JSONResponse.success(payload={
             'email': user.email,
         })
     else:
-        return JSONResponse.error(
-            message=_("Sorry, we failed to send an email to you. "
-                      "Please, try again a bit later."))
+        return JSONResponse.email_error()
 
 
 @csrf_protect
@@ -386,13 +372,7 @@ def api_password_change(request, form_class=PasswordChangeForm):
         form.save()
         return JSONResponse.success()
     else:
-        errors = {
-            field_name: ' '.join([unicode(e) for e in error_list])
-                        for field_name, error_list in form.errors.items()
-        }
-        return JSONResponse.error(payload={
-            'errors': errors
-        })
+        return JSONResponse.form_field_errors(form)
 
 
 @login_required
@@ -436,10 +416,4 @@ def api_general_settings(request, form_class=GeneralSettingsForm):
 
         return JSONResponse.success()
     else:
-        errors = {
-            field_name: ' '.join([unicode(e) for e in error_list])
-                        for field_name, error_list in form.errors.items()
-        }
-        return JSONResponse.error(payload={
-            'errors': errors
-        })
+        return JSONResponse.form_field_errors(form)

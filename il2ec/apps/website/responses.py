@@ -2,10 +2,15 @@
 """
 Additional web responses.
 """
+import itertools
+import logging
 import simplejson as json
 
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
+
+
+LOG = logging.getLogger(__name__)
 
 
 class JSONResponse(HttpResponse):
@@ -45,3 +50,35 @@ class JSONResponse(HttpResponse):
         if isinstance(payload, dict):
             data.update(payload)
         return cls(data)
+
+    @classmethod
+    def form_error(cls, form, code=None, payload=None):
+        """
+        Create a response for invalid form with non-field errors.
+        """
+        msg = ' '.join(itertools.chain(*form.errors.values()))
+        return cls.error(message=unicode(msg), code=code, payload=payload)
+
+    @classmethod
+    def form_field_errors(cls, form, message=None, code=None, payload=None):
+        """
+        Create a response for invalid form with field errors.
+        """
+        errors = {
+            field_name: ' '.join([unicode(e) for e in error_list])
+                        for field_name, error_list in form.errors.items()
+        }
+        payload = payload or {}
+        payload.update({
+            'errors': errors,
+        })
+        return cls.error(message=message, code=code, payload=payload)
+
+    @classmethod
+    def email_error(cls, code=None, payload=None):
+        """
+        Create a response for a case when sending email has failed.
+        """
+        return cls.error(message=_("Sorry, we failed to send an email to you. "
+                                   "Please, try again a bit later."),
+                         code=code, payload=payload)
