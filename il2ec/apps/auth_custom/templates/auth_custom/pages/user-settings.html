@@ -16,7 +16,8 @@
         <h3 class="panel-title">{% trans %}General settings{% endtrans %}</h3>
       </div>
       <div class="panel-body">
-        <form class="form-horizontal" role="form" id="id_form_general" action="{% url auth-custom-general-settings %}" method="post">
+        <form class="form-horizontal" role="form" id="id_form_general"
+              action="{% url api-auth-custom-general-settings %}" method="post">
           {% csrf_token %}
 
           <div id="non_field_errors" class="alert alert-danger alert-dismissable alerts-placeholder">
@@ -76,7 +77,8 @@
       </div>
       <div id="collapse_password" class="panel-collapse collapse">
         <div class="panel-body">
-          <form class="form-horizontal" role="form" id="id_form_password" action="{% url auth-custom-password-change %}" method="post">
+          <form class="form-horizontal" role="form" id="id_form_password"
+                action="{% url api-auth-custom-password-change %}" method="post">
             {% csrf_token %}
 
             <div class="alert alert-success alert-dismissable alerts-placeholder">
@@ -149,7 +151,8 @@
 </div>
 
 <!-- Modal forgot password -->
-<div class="modal fade" id="id_modal_password" tabindex="-1" role="dialog" aria-labelledby="id_modal_password_label" aria-hidden="true">
+<div class="modal fade" id="id_modal_password" tabindex="-1" role="dialog"
+     aria-labelledby="id_modal_password_label" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -157,7 +160,7 @@
         <h4 class="modal-title" id="id_modal_password_label">{% trans %}Password reset request{% endtrans %}</h4>
       </div>
       <div class="modal-body">
-        <form id="id_form_password_modal" class="form-ajax" action="{% url auth-custom-remind-me-request %}" method="post">
+        <form id="id_form_password_modal" class="form-ajax" action="{% url api-auth-custom-remind-me %}" method="post">
           {% csrf_token %}
           <div class="alert alert-success alerts-placeholder">
             <span class='form-message'>{% trans %}Data and instructions were sent to{% endtrans %} <b><span id="id_target_email"></span></b>.</span>

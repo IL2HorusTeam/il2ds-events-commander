@@ -16,19 +16,24 @@ urlpatterns = patterns('',
     url(r'^sign-up/(?P<email>.+@.+..+)/(?P<confirmation_key>\w+)$',
         'auth_custom.views.sign_up',
         name='auth-custom-sign-up'),
-    url(r'^sign-up/invoke/$', 'auth_custom.views.sign_up_invoke',
-        name='auth-custom-sign-up-invoke'),
 
-    url(r'^remind-me-request/$', 'auth_custom.views.remind_me_request',
-        name='auth-custom-remind-me-request'),
     url(r'^password/reset/(?P<uidb64>[0-9A-Za-z]+)/(?P<token>.+)/$',
         'auth_custom.views.password_reset',
         name='auth-custom-password-reset'),
-    url(r'^password/change/$', 'auth_custom.views.password_change',
-        name='auth-custom-password-change'),
 
     url(r'^user/settings/$', 'auth_custom.views.user_settings',
         name='auth-custom-user-settings'),
-    url(r'^user/settings/general/$', 'auth_custom.views.general_settings',
-        name='auth-custom-general-settings'),
+
+    # -------------------------------------------------------------------------
+    # API views
+    # -------------------------------------------------------------------------
+    url(r'^api/sign-up/$', 'auth_custom.views.api_sign_up',
+        name='api-auth-custom-sign-up'),
+    url(r'^api/remind-me/$', 'auth_custom.views.api_remind_me',
+        name='api-auth-custom-remind-me'),
+    url(r'^api/password/change/$', 'auth_custom.views.api_password_change',
+        name='api-auth-custom-password-change'),
+    url(r'^api/user/settings/general/$',
+        'auth_custom.views.api_general_settings',
+        name='api-auth-custom-general-settings'),
 )

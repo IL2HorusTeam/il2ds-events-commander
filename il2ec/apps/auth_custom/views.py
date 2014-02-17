@@ -234,7 +234,7 @@ def sign_up(request, email, confirmation_key,
 @csrf_protect
 @anonymous_required()
 @sensitive_post_parameters()
-def sign_up_invoke(request, form_class=SignUpForm):
+def api_sign_up(request, form_class=SignUpForm):
     """
     Handles sign up AJAX POST requests.
     """
@@ -312,7 +312,7 @@ def sign_up_invoke(request, form_class=SignUpForm):
 @never_cache
 @csrf_protect
 @sensitive_post_parameters()
-def remind_me_request(request, form_class=RemindMeForm):
+def api_remind_me(request, form_class=RemindMeForm):
     """
     Handles AJAX POST requests for reminding username and resetting password.
     Username and link for password resetting will be sent to user by email.
@@ -381,7 +381,7 @@ def password_reset(request, uidb64, token,
 @csrf_protect
 @login_required
 @never_cache
-def password_change(request, form_class=PasswordChangeForm):
+def api_password_change(request, form_class=PasswordChangeForm):
     """
     Process AJAX request for changing user password.
     """
@@ -425,7 +425,7 @@ def user_settings(request,
 @csrf_protect
 @login_required
 @never_cache
-def general_settings(request, form_class=GeneralSettingsForm):
+def api_general_settings(request, form_class=GeneralSettingsForm):
     """
     Process AJAX request for changing user general settings.
     """
