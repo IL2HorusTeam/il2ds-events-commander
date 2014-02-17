@@ -40,9 +40,7 @@
           <span class="help-block">{% trans %}Give us your email or username and get your username with instructions for resetting password{% endtrans %}.</span>
           {% csrf_token %}
           <!-- Form messages START -->
-          <div class="alert alert-success alerts-placeholder">
-            <span class='form-message'>{% trans %}Data and instructions were sent to{% endtrans %} <b><span id="id_target_email"></span></b>.</span>
-          </div>
+          {% include "auth_custom/blocks/remind-data-success.html" %}
           <div class="alert alert-danger alert-dismissable alerts-placeholder">
             <button type="button" class="close" aria-hidden="true">&times;</button>
             <span class='form-message'></span>

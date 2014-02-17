@@ -20,15 +20,15 @@
 {% else %}
 <div class="row offset-bottom">
   <div class="col-md-4 col-md-offset-4">
-    <form class="form-horizontal" role="form" id="id_form_sign_up" action="{% url api-auth-custom-sign-up %}" method="post">
+    <form class="form-horizontal form-ajax" role="form" id="id_form_sign_up" action="{% url api-auth-custom-sign-up %}" method="post">
       <legend>Finish sign up</legend>
       <span class="help-block">{% trans %}Just one step to create your account{% endtrans %}</span>
 
       {% csrf_token %}
 
-      <div id="non_field_errors" class="alert alert-danger alert-dismissable alerts-placeholder">
+      <div class="alert alert-danger alert-dismissable alerts-placeholder">
         <button type="button" class="close" aria-hidden="true">&times;</button>
-        <span id="message_placeholder"></span>
+        <span class="form-message"></span>
       </div>
 
       {% for hidden in form.hidden_fields() %}
@@ -95,47 +95,26 @@
 {% block script_extras %}
 {% if not errors %}
 <script type="text/javascript">
-  /* Hide sign up non-field error messages */
-  $('#id_form_sign_up #non_field_errors .close').click(function() {
-    $(this).parent().hide()
-  })
-  /* Submit sign up data */
+  /* Submit sign up data --------------------------------------------------- */
   $('#id_form_sign_up').submit(function(e) {
     e.preventDefault()
 
-    var frm = $(this)
-    , url = frm.attr('action')
-    , button = frm.find('#id_submit_sign_up').get(0)
-
-    if (typeof button.ladda === "undefined") {
-      button.ladda = Ladda.create(button)
-    }
-
-    function _show_field_error(container, value) {
-      container.addClass('has-error')
-      container.prepend('<span class="control-label">' + value + '</span>')
-    }
-
-    function _show_non_field_errors(data) {
-      frm.find('#message_placeholder').text(data)
-      frm.find('#non_field_errors').show()
-    }
+    var frm = this
+    , $frm = $(this)
+    , url = $frm.attr('action')
 
     function _show_fatal_error(data) {
-      var container = frm.parent()
+      var container = $frm.parent()
       , wrapper = container.parent()
 
       container.remove()
       wrapper.prepend('<div class="alert alert-danger col-md-6 col-md-offset-3">' + data + '</div>')
     }
 
-    frm.find('.alerts-placeholder').hide()
-    $('.has-error span.control-label').remove()
-    $('.has-error').removeClass('has-error')
-
-    button.ladda.start()
+    frm.hide_messages()
+    frm.ladda.start()
     $.post(url
-      , frm.serialize()
+      , $frm.serialize()
       , function(response) {
         if (response.status == 'success') {
           window.location = response.redirect_url
@@ -169,25 +148,25 @@
 
                   if (key == 'language') {
                     container = container.find('.alerts-placeholder')
-                    _show_field_error(container, response.errors[key])
+                    frm.show_field_error(container, response.errors[key])
                     element.parent().addClass('has-error')
                     container.show()
                   } else {
-                    _show_field_error(container, response.errors[key])
+                    frm.show_field_error(container, response.errors[key])
                   }
                 }
               }
             }
           } else {
-            _show_non_field_errors(response.error.message)
+            frm.show_error(response.error.message)
           }
         }
       }
       , "json"
     ).fail(function(request, status, error) {
-      _show_non_field_errors("{% trans %}Request execution error{% endtrans %}")
+      frm.show_error("{% trans %}Request execution error{% endtrans %}")
     }).always(function(data) {
-      button.ladda.stop()
+      frm.ladda.stop()
     })
 
     return false

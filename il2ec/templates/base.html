@@ -200,15 +200,43 @@
   $('.form-ajax').each(function() {
     var frm = this
     , $frm = $(this)
+    , button = $frm.find('button[type="submit"].ladda-button')
+
+    if (button.length) {
+      button = button.get(0)
+
+      /* Make lazy initialization of Ladda spiners. They must be created on
+       * currently visible buttons.
+       */
+      frm.ladda = {
+        start: function() {
+          if (typeof button.ladda === "undefined") {
+            button.ladda = Ladda.create(button)
+          }
+          button.ladda.start()
+        }
+        , stop: function() {
+          button.ladda.stop()
+        }
+      }
+    }
 
     frm.show_error = function(message) {
-      $frm.find('.alert-danger .form-message').text(message)
-      $frm.find('.alert-danger').show()
+      var block = $frm.find('.alert-danger.alerts-placeholder').first()
+      block.find('.form-message').text(message)
+      block.show()
+    }
+    frm.show_field_error = function(container, message) {
+      container.addClass('has-error')
+      container.prepend('<span class="control-label">' + message + '</span>')
     }
     frm.hide_messages = function() {
       $frm.find('.alerts-placeholder').hide()
+      $frm.find('.has-error span.control-label').remove()
+      $frm.find('.has-error').removeClass('has-error')
     }
-    $frm.find('.alert .close').click(function() {
+
+    $frm.find('.alert-dismissable .close').click(function() {
       $(this).parent().hide()
     })
   })
@@ -250,14 +278,9 @@
     var frm = this
     , $frm = $(this)
     , url = $frm.attr('action')
-    , button = $frm.find('#id_submit_sign_in').get(0)
-
-    if (typeof button.ladda === "undefined") {
-      button.ladda = Ladda.create(button)
-    }
 
     frm.hide_messages()
-    button.ladda.start()
+    frm.ladda.start()
     $.post(url
       , $frm.serialize()
       , function(response) {
@@ -274,7 +297,7 @@
     ).fail(function(request, status, error) {
       frm.show_error("{% trans %}Request execution error{% endtrans %}")
     }).always(function() {
-      button.ladda.stop()
+      frm.ladda.stop()
     })
 
     return false
@@ -287,14 +310,9 @@
     var frm = this
     , $frm = $(this)
     , url = $frm.attr('action')
-    , button = $frm.find('#id_submit_remind_me').get(0)
-
-    if (typeof button.ladda === "undefined") {
-      button.ladda = Ladda.create(button)
-    }
 
     frm.hide_messages()
-    button.ladda.start()
+    frm.ladda.start()
     $.post(url
       , $frm.serialize()
       , function(response) {
@@ -309,7 +327,7 @@
     ).fail(function(request, status, error) {
       frm.show_error("{% trans %}Request execution error{% endtrans %}")
     }).always(function() {
-      button.ladda.stop()
+      frm.ladda.stop()
     })
 
     return false

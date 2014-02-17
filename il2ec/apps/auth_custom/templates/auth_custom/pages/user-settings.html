@@ -16,11 +16,11 @@
         <h3 class="panel-title">{% trans %}General settings{% endtrans %}</h3>
       </div>
       <div class="panel-body">
-        <form class="form-horizontal" role="form" id="id_form_general"
+        <form class="form-horizontal form-ajax" role="form" id="id_form_general"
               action="{% url api-auth-custom-general-settings %}" method="post">
           {% csrf_token %}
 
-          <div id="non_field_errors" class="alert alert-danger alert-dismissable alerts-placeholder">
+          <div class="alert alert-danger alert-dismissable alerts-placeholder">
             <button type="button" class="close" aria-hidden="true">&times;</button>
             <span class='form-message'></span>
           </div>
@@ -77,7 +77,7 @@
       </div>
       <div id="collapse_password" class="panel-collapse collapse">
         <div class="panel-body">
-          <form class="form-horizontal" role="form" id="id_form_password"
+          <form class="form-horizontal form-ajax" role="form" id="id_form_password"
                 action="{% url api-auth-custom-password-change %}" method="post">
             {% csrf_token %}
 
@@ -85,7 +85,7 @@
               <button type="button" class="close" aria-hidden="true">&times;</button>
               <span class='form-message'>{% trans %}Password was successfully updated{% endtrans %}.</span>
             </div>
-            <div id="non_field_errors" class="alert alert-danger alert-dismissable alerts-placeholder">
+            <div class="alert alert-danger alert-dismissable alerts-placeholder">
               <button type="button" class="close" aria-hidden="true">&times;</button>
               <span class='form-message'></span>
             </div>
@@ -160,17 +160,17 @@
         <h4 class="modal-title" id="id_modal_password_label">{% trans %}Password reset request{% endtrans %}</h4>
       </div>
       <div class="modal-body">
-        <form id="id_form_password_modal" class="form-ajax" action="{% url api-auth-custom-remind-me %}" method="post">
+        <form id="id_form_password_modal" class="form-ajax"
+              action="{% url api-auth-custom-remind-me %}" method="post">
           {% csrf_token %}
-          <div class="alert alert-success alerts-placeholder">
-            <span class='form-message'>{% trans %}Data and instructions were sent to{% endtrans %} <b><span id="id_target_email"></span></b>.</span>
-          </div>
+          {% include "auth_custom/blocks/remind-data-success.html" %}
           <div class="alert alert-danger alerts-placeholder">
             <span class='form-message'></span>
           </div>
         </form>
         <div class="progress progress-striped active">
-          <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+          <div class="progress-bar" role="progressbar" style="width: 100%"
+               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
       </div>
     </div>
@@ -180,11 +180,6 @@
 
 {% block script_extras %}
 <script type="text/javascript">
-  /* Hide form messages ---------------------------------------------------- */
-  $('form .alert-dismissable .close').click(function() {
-    $(this).parent().hide()
-  })
-
   /* Submit general settings update ---------------------------------------- */
   $('#id_form_general').submit(function(e) {
     e.preventDefault()
@@ -192,28 +187,9 @@
     var frm = this
     , $frm = $(this)
     , url = $frm.attr('action')
-    , button = $frm.find('#id_submit_generic').get(0)
 
-    if (typeof button.ladda === "undefined") {
-      button.ladda = Ladda.create(button)
-    }
-
-    function _show_field_error(container, value) {
-      container.addClass('has-error')
-      container.prepend('<span class="control-label">' + value + '</span>')
-    }
-
-    function _show_non_field_errors(data) {
-      var block = $frm.find('#non_field_errors')
-      block.find('span.form-message').text(data)
-      block.show()
-    }
-
-    $frm.find('.alerts-placeholder').hide()
-    $frm.find('.has-error span.control-label').remove()
-    $frm.find('.has-error').removeClass('has-error')
-
-    button.ladda.start()
+    frm.hide_messages()
+    frm.ladda.start()
     $.post(url
       , $frm.serialize()
       , function(response) {
@@ -231,24 +207,24 @@
 
                 if (key == 'language') {
                   container = container.find('.alerts-placeholder')
-                  _show_field_error(container, response.errors[key])
+                  frm.show_field_error(container, response.errors[key])
                   element.parent().addClass('has-error')
                   container.show()
                 } else {
-                  _show_field_error(container, response.errors[key])
+                  frm.show_field_error(container, response.errors[key])
                 }
               }
             }
           } else {
-            _show_non_field_errors(response.error.message)
+            frm.show_error(response.error.message)
           }
         }
       }
       , "json"
     ).fail(function(request, status, error) {
-      _show_non_field_errors("{% trans %}Request execution error{% endtrans %}")
+      frm.show_error("{% trans %}Request execution error{% endtrans %}")
     }).always(function(data) {
-      button.ladda.stop()
+      frm.ladda.stop()
     })
 
     return false
@@ -261,28 +237,9 @@
     var frm = this
     , $frm = $(this)
     , url = $frm.attr('action')
-    , button = $frm.find('#id_submit_password').get(0)
 
-    if (typeof button.ladda === "undefined") {
-      button.ladda = Ladda.create(button)
-    }
-
-    function _show_field_error(container, value) {
-      container.addClass('has-error')
-      container.prepend('<span class="control-label">' + value + '</span>')
-    }
-
-    function _show_non_field_errors(data) {
-      var block = $frm.find('#non_field_errors')
-      block.find('span.form-message').text(data)
-      block.show()
-    }
-
-    $frm.find('.alerts-placeholder').hide()
-    $frm.find('.has-error span.control-label').remove()
-    $frm.find('.has-error').removeClass('has-error')
-
-    button.ladda.start()
+    frm.hide_messages()
+    frm.ladda.start()
     $.post(url
       , $frm.serialize()
       , function(response) {
@@ -294,19 +251,19 @@
             for (var key in response.errors) {
               if (response.errors.hasOwnProperty(key)) {
                 var container = $('#id_' + key).parent().parent()
-                _show_field_error(container, response.errors[key])
+                frm.show_field_error(container, response.errors[key])
               }
             }
           } else {
-            _show_non_field_errors(response.error.message)
+            frm.show_error(response.error.message)
           }
         }
       }
       , "json"
     ).fail(function(request, status, error) {
-      _show_non_field_errors("{% trans %}Request execution error{% endtrans %}")
+      frm.show_error("{% trans %}Request execution error{% endtrans %}")
     }).always(function(data) {
-      button.ladda.stop()
+      frm.ladda.stop()
     })
 
     return false

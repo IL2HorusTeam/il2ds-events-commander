@@ -61,14 +61,9 @@
     var frm = this
     , $frm = $(this)
     , url = $frm.attr('action')
-    , button = $frm.find('#id_submit_sign_up_request').get(0)
-
-    if (typeof button.ladda === "undefined") {
-      button.ladda = Ladda.create(button)
-    }
 
     frm.hide_messages()
-    button.ladda.start()
+    frm.ladda.start()
     $.post(url
       , $frm.serialize()
       , function(response) {
@@ -87,7 +82,7 @@
     ).fail(function(request, status, error) {
       frm.show_error("{% trans %}Request execution error{% endtrans %}")
     }).always(function(data) {
-      button.ladda.stop()
+      frm.ladda.stop()
     })
 
     return false
