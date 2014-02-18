@@ -161,7 +161,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name=_("active"),
         default=True,
         help_text=_("Designates whether this user should be treated as "
-                    "active. Unselect this instead of deleting accounts."))
+                    "active. Unselect this instead of deleting accounts. "
+                    "Inactive users can sign in to reactivate their "
+                    "accounts."))
+    is_blocked = models.BooleanField(
+        verbose_name=_("blocked"),
+        default=False,
+        help_text=_("Designates whether this user is blocked. Blocked users "
+                    "can not sign in without intervention of administration."))
     date_joined = models.DateTimeField(
         verbose_name=_("date joined"),
         default=timezone.now)

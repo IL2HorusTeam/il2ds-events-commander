@@ -40,7 +40,7 @@ class UserAdmin(BaseUserAdmin):
             'first_name', 'last_name', 'language',
         )}),
         (_('Permissions'), {'fields': (
-            'is_active', 'is_staff', 'is_superuser', 'groups',
+            'is_active', 'is_blocked', 'is_staff', 'is_superuser', 'groups',
             'user_permissions',
         )}),
         (_('Important dates'), {'fields': (

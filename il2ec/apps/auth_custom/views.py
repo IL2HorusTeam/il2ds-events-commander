@@ -79,8 +79,16 @@ class SignInView(FormView):
         form_class = self.get_form_class()
         form = form_class(data=request.POST)
         if form.is_valid():
-            login(request, form.get_user())
+            user = form.get_user()
+            login(request, user)
             _remember_me(request, form)
+
+            if not user.is_active:
+                user.is_active = True
+                user.save()
+                messages.success(request, _("Your account was reactivated. "
+                                            "Welcome back!"))
+
             return JSONResponse.success()
         else:
             return JSONResponse.form_error(form)
@@ -434,3 +442,21 @@ def api_change_username(request, form_class=ChangeUsernameForm):
         return JSONResponse.success()
     else:
         return JSONResponse.form_field_errors(form)
+
+
+@ajax_api
+@csrf_protect
+@login_required
+@never_cache
+def api_deactivate_account(request):
+    """
+    Process AJAX request for deactivating account.
+    """
+    user = request.user
+    user.is_active = False
+    user.save()
+
+    logout(request)
+    messages.success(request, _("Your account was successfully deactivated. "
+                                "Goobye!"))
+    return JSONResponse.success()

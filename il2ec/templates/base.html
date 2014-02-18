@@ -161,10 +161,17 @@
 
 <!-- Wrap all page content here -->
 <div id="wrap">
-    <div class="container">
-        {% block content %}
-        {% endblock %}
-    </div>
+  <div class="container">
+    {% for message in messages %}
+      <div class="alert alert-dismissable {{ message|message_styles }}">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        {{ message }}
+      </div>
+    {% endfor %}
+
+    {% block content %}
+    {% endblock %}
+  </div>
 </div>
 
 <div id="footer">

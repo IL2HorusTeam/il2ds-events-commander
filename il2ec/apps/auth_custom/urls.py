@@ -40,4 +40,7 @@ urlpatterns = patterns('',
     url(r'^api/user/settings/username/$',
         'auth_custom.views.api_change_username',
         name='api-auth-custom-change-username'),
+    url(r'^api/user/deactivate/$',
+        'auth_custom.views.api_deactivate_account',
+        name='api-auth-custom-deactivate-account'),
 )

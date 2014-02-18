@@ -30,8 +30,9 @@ class Migration(SchemaMigration):
             ('email', self.gf('django.db.models.fields.EmailField')(unique=True, max_length=75)),
             ('is_staff', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('is_blocked', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('date_joined', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('language', self.gf('django.db.models.fields.CharField')(default='en', max_length=5, blank=True)),
+            ('language', self.gf('django.db.models.fields.CharField')(default='en', max_length=5)),
         ))
         db.send_create_signal(u'auth_custom', ['User'])
 
@@ -96,9 +97,10 @@ class Migration(SchemaMigration):
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'is_blocked': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'language': ('django.db.models.fields.CharField', [], {'default': "'en'", 'max_length': '5', 'blank': 'True'}),
+            'language': ('django.db.models.fields.CharField', [], {'default': "'en'", 'max_length': '5'}),
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),

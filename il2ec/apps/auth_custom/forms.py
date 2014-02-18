@@ -38,7 +38,7 @@ class SignInForm(forms.Form):
 
     error_messages = {
         'invalid_data': _("Invalid credentials."),
-        'inactive': _("Account is inactive."),
+        'blocked': _("Account is blocked."),
     }
 
     def __init__(self, request=None, *args, **kwargs):
@@ -58,9 +58,9 @@ class SignInForm(forms.Form):
             if self.user_cache is None:
                 raise forms.ValidationError(
                     self.error_messages['invalid_data'], code='invalid_data')
-            elif not self.user_cache.is_active:
+            elif self.user_cache.is_blocked:
                 raise forms.ValidationError(
-                    self.error_messages['inactive'], code='inactive')
+                    self.error_messages['blocked'], code='blocked')
         return self.cleaned_data
 
     def get_user_id(self):
@@ -228,7 +228,7 @@ class RemindMeForm(forms.Form):
     error_messages = {
         'invalid_data': _("Invalid username or email."),
         'not_found': _("User not found."),
-        'inactive': _("Account is inactive."),
+        'blocked': _("Account is blocked."),
     }
 
     email_username = forms.CharField(
@@ -255,9 +255,9 @@ class RemindMeForm(forms.Form):
             except User.DoesNotExist:
                 raise forms.ValidationError(
                     self.error_messages['not_found'], code='not_found')
-            if not self.user_cache.is_active:
+            if self.user_cache.is_blocked:
                 raise forms.ValidationError(
-                    self.error_messages['inactive'], code='inactive')
+                    self.error_messages['blocked'], code='blocked')
         return self.cleaned_data
 
     def get_user(self):
