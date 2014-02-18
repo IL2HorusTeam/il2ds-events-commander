@@ -36,7 +36,7 @@ from auth_custom.helpers import (sign_up_confirmation, send_remind_me_email,
     update_current_language, )
 from auth_custom.decorators import anonymous_required
 from auth_custom.forms import (SignInForm, SignUpForm, SignUpRequestForm,
-    RemindMeForm, GeneralSettingsForm, )
+    RemindMeForm, GeneralSettingsForm, ChangeUsernameForm, )
 from auth_custom.models import SignUpRequest, User
 
 from website.decorators import ajax_api
@@ -380,6 +380,7 @@ def api_password_change(request, form_class=PasswordChangeForm):
 def user_settings(request,
                   general_settings_form_class=GeneralSettingsForm,
                   password_change_form_class=PasswordChangeForm,
+                  change_username_form_class=ChangeUsernameForm,
                   template_name='auth_custom/pages/user-settings.html'):
     """
     Display user settings and apply changes.
@@ -389,6 +390,7 @@ def user_settings(request,
     context = {
         'form_general': general_settings_form_class(request.user),
         'form_password': password_change_form_class(request.user),
+        'form_username': change_username_form_class(request.user),
     }
     return render(request, template_name, context)
 
@@ -405,15 +407,30 @@ def api_general_settings(request, form_class=GeneralSettingsForm):
     form = form_class(user, data=request.POST)
 
     if form.is_valid():
-        user.first_name = form.cleaned_data['first_name']
-        user.last_name = form.cleaned_data['last_name']
-        user.email = form.cleaned_data['email']
-        user.language = form.cleaned_data['language']
-        user.save()
-
+        form.save()
         update_current_language(request, user.language)
-        messages.success(request, _("New settings were successfully applied."))
 
+        messages.success(request, _("New settings were successfully applied."))
+        return JSONResponse.success()
+    else:
+        return JSONResponse.form_field_errors(form)
+
+
+@ajax_api
+@csrf_protect
+@login_required
+@never_cache
+def api_change_username(request, form_class=ChangeUsernameForm):
+    """
+    Process AJAX request for changing username.
+    """
+    user = request.user
+    form = form_class(user, data=request.POST)
+
+    if form.is_valid():
+        form.save()
+
+        messages.success(request, _("Your username was successfully changed."))
         return JSONResponse.success()
     else:
         return JSONResponse.form_field_errors(form)

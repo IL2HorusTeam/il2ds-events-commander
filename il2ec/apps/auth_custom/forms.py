@@ -180,7 +180,7 @@ class SignUpForm(forms.Form):
         required=False)
     username = forms.RegexField(
         label=_("Username"),
-        help_text=_("Your in-game name"),
+        help_text=_("Name which is used in game"),
         max_length=30,
         regex=validate_username.regex.pattern,
         required=True,
@@ -304,3 +304,51 @@ class GeneralSettingsForm(forms.Form):
             raise forms.ValidationError(
                 self.error_messages['duplicate_email'], code='duplicate_email')
         return email
+
+    def save(self, commit=True):
+        self.user.first_name = self.cleaned_data['first_name']
+        self.user.last_name = self.cleaned_data['last_name']
+        self.user.email = self.cleaned_data['email']
+        self.user.language = self.cleaned_data['language']
+
+        if commit:
+            self.user.save()
+        return self.user
+
+
+class ChangeUsernameForm(forms.Form):
+    """
+    Form for changing current username.
+    """
+    error_messages = {
+        'duplicate_username': _("A user with that username already exists."),
+    }
+
+    username = forms.RegexField(
+        label=_("Username"),
+        help_text=_("Name which is used in game"),
+        max_length=30,
+        regex=validate_username.regex.pattern,
+        required=True,
+        error_messages={
+            'invalid': validate_username.message,
+        })
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(ChangeUsernameForm, self).__init__(*args, **kwargs)
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if (username != self.user.username
+            and User.objects.filter(username=username).exists()):
+            raise forms.ValidationError(
+                self.error_messages['duplicate_username'],
+                code='duplicate_username')
+        return username
+
+    def save(self, commit=True):
+        self.user.username = self.cleaned_data['username']
+        if commit:
+            self.user.save()
+        return self.user

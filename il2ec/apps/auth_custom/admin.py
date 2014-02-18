@@ -49,7 +49,7 @@ class UserAdmin(BaseUserAdmin):
     )
     add_fieldsets = (
         (None, {
-            'classes': ('wide',),
+            'classes': ('wide', ),
             'fields': ('username', 'email', 'password1', 'password2')}
         ),
     )

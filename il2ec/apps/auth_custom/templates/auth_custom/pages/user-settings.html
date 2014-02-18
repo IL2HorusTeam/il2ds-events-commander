@@ -4,6 +4,28 @@
 {% trans %}Account settings{% endtrans %}
 {% endblock %}
 
+{% block head_extras %}
+<style type="text/css">
+  #id_modal_password .modal-dialog {
+    width: 500px;
+  }
+  #id_modal_username .modal-dialog {
+    width: 470px;
+  }
+  #id_modal_username .bg-warning {
+    margin: -21px -20px 15px -20px;
+    padding: 5px 20px;
+    border-bottom: 1px solid #F6DBA1;
+    border-top: 1px solid #F6DBA1;
+    font-size: 12px;
+    color: #9C7231;
+  }
+  #id_tab_confirm_change a.btn {
+    color: #940404;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row">
   <div class="col-md-4 col-md-offset-4">
@@ -20,10 +42,12 @@
               action="{% url api-auth-custom-general-settings %}" method="post">
           {% csrf_token %}
 
+          <!-- Form messages START -->
           <div class="alert alert-danger alert-dismissable alerts-placeholder">
             <button type="button" class="close" aria-hidden="true">&times;</button>
             <span class='form-message'></span>
           </div>
+          <!-- Form messages END -->
 
           <div class="offset-bottom">
             <div class="input-group">
@@ -80,7 +104,7 @@
           <form class="form-horizontal form-ajax" role="form" id="id_form_password"
                 action="{% url api-auth-custom-password-change %}" method="post">
             {% csrf_token %}
-
+            <!-- Form messages START -->
             <div class="alert alert-success alert-dismissable alerts-placeholder">
               <button type="button" class="close" aria-hidden="true">&times;</button>
               <span class='form-message'>{% trans %}Password was successfully updated{% endtrans %}.</span>
@@ -89,6 +113,7 @@
               <button type="button" class="close" aria-hidden="true">&times;</button>
               <span class='form-message'></span>
             </div>
+            <!-- Form messages END -->
 
             <div class="offset-bottom">
               <div class="input-group">
@@ -131,7 +156,8 @@
       <div id="collapse_username" class="panel-collapse collapse">
         <div class="panel-body">
           <p>{% trans %}Changing your username can have unintended side effects{% endtrans %}.</p>
-          <button type="button" class="btn btn-default">{% trans %}Change username{% endtrans %}</button>
+          <button id="id_change_username" type="button"
+                  class="btn btn-default">{% trans %}Change username{% endtrans %}</button>
         </div>
       </div>
     </div>
@@ -156,21 +182,79 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="id_modal_password_label">{% trans %}Password reset request{% endtrans %}</h4>
+        <button type="button" class="close" data-dismiss="modal"
+                aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="id_modal_password_label">
+          {% trans %}Password reset request{% endtrans %}
+        </h4>
       </div>
       <div class="modal-body">
         <form id="id_form_password_modal" class="form-ajax"
               action="{% url api-auth-custom-remind-me %}" method="post">
           {% csrf_token %}
+          <!-- Form messages START -->
           {% include "auth_custom/blocks/remind-data-success.html" %}
           <div class="alert alert-danger alerts-placeholder">
             <span class='form-message'></span>
           </div>
+          <!-- Form messages END -->
         </form>
         <div class="progress progress-striped active">
           <div class="progress-bar" role="progressbar" style="width: 100%"
                aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal change username -->
+<div class="modal fade" id="id_modal_username" tabindex="-1" role="dialog"
+     aria-labelledby="id_modal_username_label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="tab-content">
+        <div class="tab-pane" id="id_tab_confirm_change">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="id_modal_username_label">{% trans %}Really change your username{% endtrans %}?</h4>
+          </div>
+          <div class="modal-body">
+            <p class="bg-warning">
+              {% trans %}Unexpected bad things may happen if you don't read this{% endtrans %}!
+            </p>
+            <p>
+              {% trans %}Take care! Links to your profile from external sources will be broken.{% endtrans %}
+            </p>
+            <a href="#id_tab_change_username" class="btn btn-default btn-block" data-toggle="tab">
+              {% trans %}Okay, let's change my username{% endtrans %}
+            </a>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="id_tab_change_username">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="id_modal_username_label">{% trans %}Enter new username{% endtrans %}  </h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal form-ajax" role="form" id="id_form_change_username"
+                  action="{% url api-auth-custom-change-username %}" method="post">
+              {% csrf_token %}
+              <!-- Form errors START -->
+              <div class="alert alert-danger alert-dismissable alerts-placeholder">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <span class='form-message'></span>
+              </div>
+              <!-- Form errors END -->
+              <div class="offset-bottom">
+                <div class="input-group">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                  <input type="text" class="form-control" id="id_username" name="username" data-toggle="tooltip" title="{{ form_username.username.help_text }}" placeholder="{{ form_username.username.label }}" value="{{ user.username }}" required>
+                </div>
+              </div>
+              <button id="id_submit_change_username" type="submit" class="btn btn-success btn-block ladda-button" data-style="zoom-out">{% trans %}Change my username{% endtrans %}!</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -269,7 +353,7 @@
     return false
   })
 
-  /* Submit password reset- ------------------------------------------------ */
+  /* Submit password reset ------------------------------------------------- */
   $('#id_forgot_password').click(function() {
     var dialog = $('#id_modal_password')
     , $frm = dialog.find('form')
@@ -299,6 +383,50 @@
   })
   $('#id_form_password_modal').submit(function(e) {
     e.preventDefault()
+    return false
+  })
+
+  /* Submit change username ------------------------------------------------ */
+  $('#id_change_username').click(function() {
+    var dialog = $('#id_modal_username')
+    dialog.find('#id_tab_change_username').removeClass('active').addClass('fade')
+    dialog.find('#id_tab_confirm_change').addClass('active')
+    dialog.modal('show')
+  })
+  $('#id_form_change_username').submit(function(e) {
+    e.preventDefault()
+
+    var frm = this
+    , $frm = $(this)
+    , url = $frm.attr('action')
+
+    frm.hide_messages()
+    frm.ladda.start()
+    $.post(url
+      , $frm.serialize()
+      , function(response) {
+        if (response.status == 'success') {
+          location.reload(true)
+        } else {
+          if (typeof response.errors != 'undefined') {
+            for (var key in response.errors) {
+              if (response.errors.hasOwnProperty(key)) {
+                var container = $('#id_' + key).parent().parent()
+                frm.show_field_error(container, response.errors[key])
+              }
+            }
+          } else {
+            frm.show_error(response.error.message)
+          }
+        }
+      }
+      , "json"
+    ).fail(function(request, status, error) {
+      frm.show_error("{% trans %}Request execution error{% endtrans %}")
+    }).always(function(data) {
+      frm.ladda.stop()
+    })
+
     return false
   })
 </script>

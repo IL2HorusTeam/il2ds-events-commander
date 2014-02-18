@@ -36,4 +36,8 @@ urlpatterns = patterns('',
     url(r'^api/user/settings/general/$',
         'auth_custom.views.api_general_settings',
         name='api-auth-custom-general-settings'),
+
+    url(r'^api/user/settings/username/$',
+        'auth_custom.views.api_change_username',
+        name='api-auth-custom-change-username'),
 )
