@@ -38,64 +38,66 @@
     <legend>{% trans %}Account settings{% endtrans %}</legend>
 
     <div class="panel panel-default">
-      <div class="panel-heading">
+      <div class="panel-heading" data-toggle="collapse" data-target="#collapse_general">
         <h3 class="panel-title">{% trans %}General settings{% endtrans %}</h3>
       </div>
-      <div class="panel-body">
-        <form class="form-horizontal form-ajax" role="form" id="id_form_general"
-              action="{% url api-auth-custom-general-settings %}" method="post">
-          {% csrf_token %}
+      <div id="collapse_general" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <form class="form-horizontal form-ajax" role="form" id="id_form_general"
+                action="{% url api-auth-custom-general-settings %}" method="post">
+            {% csrf_token %}
 
-          <!-- Form messages START -->
-          <div class="alert alert-danger alert-dismissable alerts-placeholder">
-            <button type="button" class="close" aria-hidden="true">&times;</button>
-            <span class='form-message'></span>
-          </div>
-          <!-- Form messages END -->
+            <!-- Form messages START -->
+            <div class="alert alert-danger alert-dismissable alerts-placeholder">
+              <button type="button" class="close" aria-hidden="true">&times;</button>
+              <span class='form-message'></span>
+            </div>
+            <!-- Form messages END -->
 
-          <div class="offset-bottom">
-            <div class="input-group">
-              <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
-              <input type="text" class="form-control" id="id_first_name" name="first_name"
-                     data-toggle="tooltip" title="{{ form_general.first_name.help_text }}"
-                     placeholder="{{ form_general.first_name.label }}"
-                     value="{{ user.first_name }}" required>
+            <div class="offset-bottom">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
+                <input type="text" class="form-control" id="id_first_name" name="first_name"
+                       data-toggle="tooltip" title="{{ form_general.first_name.help_text }}"
+                       placeholder="{{ form_general.first_name.label }}"
+                       value="{{ user.first_name }}" required>
+              </div>
             </div>
-          </div>
-          <div class="offset-bottom">
-            <div class="input-group">
-              <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
-              <input type="text" class="form-control" id="id_last_name" name="last_name"
-                     data-toggle="tooltip" title="{{ form_general.last_name.help_text }}"
-                     placeholder="{{ form_general.last_name.label }}"
-                     value="{{ user.last_name }}">
+            <div class="offset-bottom">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
+                <input type="text" class="form-control" id="id_last_name" name="last_name"
+                       data-toggle="tooltip" title="{{ form_general.last_name.help_text }}"
+                       placeholder="{{ form_general.last_name.label }}"
+                       value="{{ user.last_name }}">
+              </div>
             </div>
-          </div>
-          <div class="offset-bottom">
-            <div class="input-group">
-              <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
-              <input type="email" class="form-control" id="id_email" name="email"
-                     data-toggle="tooltip" title="{{ form_general.email.help_text }}"
-                     placeholder="{{ form_general.email.label }}"
-                     value="{{ user.email }}" required>
+            <div class="offset-bottom">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
+                <input type="email" class="form-control" id="id_email" name="email"
+                       data-toggle="tooltip" title="{{ form_general.email.help_text }}"
+                       placeholder="{{ form_general.email.label }}"
+                       value="{{ user.email }}" required>
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-4 col-sm-8 has-error alerts-placeholder"></div>
-            <label for="select_language" class="col-sm-4 control-label">{{ form_general.language.label }}</label>
-            <div class="col-sm-6">
-              <select class="form-control" id="id_language" name="language"
-                      data-toggle="tooltip" title="{{ form_general.language.help_text }}">
-              {% for (code, name) in form_general.language.field.choices %}
-                <option title="{{ name }}" value="{{ code }}"{% if code == user.language %} selected='selected'{% endif %}>{{ code|native_lang }}</option>
-              {% endfor %}
-              </select>
+            <div class="form-group">
+              <div class="col-sm-offset-4 col-sm-8 has-error alerts-placeholder"></div>
+              <label for="select_language" class="col-sm-4 control-label">{{ form_general.language.label }}</label>
+              <div class="col-sm-6">
+                <select class="form-control" id="id_language" name="language"
+                        data-toggle="tooltip" title="{{ form_general.language.help_text }}">
+                {% for (code, name) in form_general.language.field.choices %}
+                  <option title="{{ name }}" value="{{ code }}"{% if code == user.language %} selected='selected'{% endif %}>{{ code|native_lang }}</option>
+                {% endfor %}
+                </select>
+              </div>
             </div>
-          </div>
-          <button id="id_submit_generic" type="submit"
-                  class="btn btn-primary btn-block ladda-button"
-                  data-style="zoom-out">{% trans %}Apply settings{% endtrans %}</button>
-        </form>
+            <button id="id_submit_generic" type="submit"
+                    class="btn btn-primary btn-block ladda-button"
+                    data-style="zoom-out">{% trans %}Apply settings{% endtrans %}</button>
+          </form>
+        </div>
       </div>
     </div>
 
