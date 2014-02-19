@@ -12,7 +12,9 @@ class Migration(SchemaMigration):
         db.create_table(u'auth_custom_signuprequest', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
+            ('language', self.gf('django.db.models.fields.CharField')(default='en', max_length=5)),
             ('confirmation_key', self.gf('django.db.models.fields.CharField')(max_length=40)),
+            ('base_url', self.gf('django.db.models.fields.URLField')(max_length=200)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
             ('expiration_date', self.gf('django.db.models.fields.DateTimeField')()),
         ))
@@ -83,11 +85,13 @@ class Migration(SchemaMigration):
         },
         u'auth_custom.signuprequest': {
             'Meta': {'ordering': "['-expiration_date', 'email']", 'object_name': 'SignUpRequest'},
+            'base_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
             'confirmation_key': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
             'expiration_date': ('django.db.models.fields.DateTimeField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'language': ('django.db.models.fields.CharField', [], {'default': "'en'", 'max_length': '5'})
         },
         u'auth_custom.user': {
             'Meta': {'object_name': 'User'},

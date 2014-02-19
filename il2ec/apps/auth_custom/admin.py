@@ -21,7 +21,9 @@ class SignUpRequestAdmin(admin.ModelAdmin):
     """
     search_fields = ('email', 'confirmation_key', )
     list_display = ('email', 'expiration_date', )
-    fields = ('email', 'confirmation_key', 'created', 'expiration_date', )
+    fields = (
+        'email', 'confirmation_key', 'created', 'expiration_date', 'base_url',
+        'language', )
     readonly_fields = ('email', 'confirmation_key', 'created', )
 
 

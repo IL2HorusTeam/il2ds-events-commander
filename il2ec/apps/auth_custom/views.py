@@ -145,16 +145,23 @@ class SignUpRequestView(FormView):
             if UserModel.objects.filter(email=email).exists():
                 return JSONResponse.error(
                     message=_("Specified email is already in use."))
+
+            base_url = "{protocol}://{host}".format(
+                protocol=('https' if request.is_secure() else 'http'),
+                host=request.get_host())
+            language = request.LANGUAGE_CODE
+
             try:
                 sign_up_request = \
-                    SignUpRequest.objects.create_from_email(email)
+                    SignUpRequest.objects.create_for_email(
+                        email, base_url, language)
             except SignUpRequest.AlreadyExists as e:
                 return JSONResponse.error(message=unicode(e))
 
-            if not sign_up_request.send_email(request):
+            if not sign_up_request.send_email():
                 return JSONResponse.email_error()
 
-            activate(request.LANGUAGE_CODE)
+            activate(language)
             time_left = timeuntil(sign_up_request.expiration_date,
                                   sign_up_request.created)
             deactivate()

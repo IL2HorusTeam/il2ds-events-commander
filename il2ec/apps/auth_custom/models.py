@@ -26,6 +26,11 @@ from django.utils.http import (urlquote, urlsafe_base64_decode,
     urlsafe_base64_encode, )
 from django.utils.translation import activate, deactivate, ugettext_lazy as _
 
+try:
+    from urllib.parse import urljoin
+except ImportError:
+    from urlparse import urljoin
+
 from auth_custom.helpers import sign_up_confirmation, update_current_language
 from auth_custom.settings import EMAIL_CONFIRMATION_DAYS
 from auth_custom.validators import validate_username
@@ -41,7 +46,7 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
     """
     Sign-up requests manager.
     """
-    def create_from_email(self, email):
+    def create_for_email(self, email, base_url, language=None):
         """
         Create and return sign up request for specified email address.
         Raise 'AlreadyExists' exception, if unexpired sign up request already
@@ -56,11 +61,16 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
 
         expiration_date = \
             now + datetime.timedelta(days=EMAIL_CONFIRMATION_DAYS)
-        confirmation_key = sign_up_confirmation.generate_key(email,
-                                                             unicode(now))
+        confirmation_key = \
+            sign_up_confirmation.generate_key(email, unicode(now))
+        language = language or settings.LANGUAGE_CODE
 
-        return self.create(email=email, confirmation_key=confirmation_key,
-                           created=now, expiration_date=expiration_date)
+        return self.create(email=email,
+                           language=language,
+                           confirmation_key=confirmation_key,
+                           base_url=base_url,
+                           created=now,
+                           expiration_date=expiration_date)
 
     def delete_expired(self):
         """
@@ -68,7 +78,7 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
         """
         self.filter(expiration_date__lt=timezone.now()).delete()
 
-    def request_or_error(self, ridb64, confirmation_key):
+    def request_or_error(self, idb64, confirmation_key):
         """
         Get sign up request by encoded ID and confirmation key.
 
@@ -76,7 +86,7 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
         'error_message' is 'None'.
         """
         try:
-            rid = int(urlsafe_base64_decode(ridb64))
+            rid = int(urlsafe_base64_decode(idb64))
         except (TypeError, ValueError, OverflowError):
             return (None, _("Invalid parameters."))
         try:
@@ -101,13 +111,24 @@ class SignUpRequest(models.Model):
     email, but there can be only one unexpired request.
     """
     AlreadyExists = ObjectAlreadyExistsError
+    email_template = 'auth_custom/emails/confirm-sign-up.html'
 
     email = models.EmailField(
         verbose_name=_("email"),
         unique=False)
+    language = models.CharField(
+        verbose_name=_("preferred language"),
+        blank=False,
+        max_length=5,
+        choices=settings.LANGUAGES,
+        default=settings.LANGUAGE_CODE)
     confirmation_key = models.CharField(
         verbose_name=_("confirmation key"),
         max_length=40)
+    base_url = models.URLField(
+        verbose_name=_("base URL"),
+        help_text=_("URL to website base for particular user. "
+                    "Can have name or IP, etc."))
     created = models.DateTimeField(
         verbose_name=_("created"),
         default=timezone.now)
@@ -121,18 +142,17 @@ class SignUpRequest(models.Model):
         verbose_name_plural = _("sign up requests")
         ordering = ['-expiration_date', 'email']
 
-    def send_email(self, http_request,
-                   template_name='auth_custom/emails/confirm-sign-up.html'):
+    def send_email(self):
         """
         Send email confirmation email message. Return 'True' if succeeded,
         'False' otherwise.
         """
         rid = urlsafe_base64_encode(force_bytes(self.pk))
 
-        activate(http_request.LANGUAGE_CODE)
-        home_url = http_request.build_absolute_uri(resolve_url(
+        activate(self.language)
+        home_url = urljoin(self.base_url, resolve_url(
             'website-index'))
-        confirmation_url = http_request.build_absolute_uri(resolve_url(
+        confirmation_url = urljoin(self.base_url, resolve_url(
             'auth-custom-sign-up', rid, self.confirmation_key))
         deactivate()
 
@@ -147,9 +167,8 @@ class SignUpRequest(models.Model):
         to_emails = [self.email, ]
 
         # Execute Celery task directly as normal function
-        return send_mail(subject, template_name, context,
-                         to_emails=to_emails,
-                         language_code=http_request.LANGUAGE_CODE)
+        return send_mail(subject, self.email_template, context,
+                         to_emails=to_emails, language_code=self.language)
 
     @property
     def is_expired(self):
