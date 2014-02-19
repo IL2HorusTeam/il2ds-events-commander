@@ -19,12 +19,20 @@ class SignUpRequestAdmin(admin.ModelAdmin):
     """
     Description of admin for sign up requests.
     """
+    actions = ('resend_confirmation', )
     search_fields = ('email', 'confirmation_key', )
     list_display = ('email', 'expiration_date', )
     fields = (
         'email', 'confirmation_key', 'created', 'expiration_date', 'base_url',
         'language', )
     readonly_fields = ('email', 'confirmation_key', 'created', )
+
+    def resend_confirmation(self, request, queryset):
+        for sign_up_request in queryset:
+            sign_up_request.send_email()
+        self.message_user(request, _("Emails queued: {count}.").format(
+                                     count=queryset.count()))
+    resend_confirmation.short_description = _("Resend confirmation email")
 
 
 admin.site.register(SignUpRequest, SignUpRequestAdmin)
