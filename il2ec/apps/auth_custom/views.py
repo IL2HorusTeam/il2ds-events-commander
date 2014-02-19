@@ -17,7 +17,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 
 from django.core.exceptions import ValidationError
-from django.core.validators import  validate_email
 
 from django.http import HttpResponseBadRequest
 from django.template import RequestContext
@@ -146,16 +145,13 @@ class SignUpRequestView(FormView):
             if UserModel.objects.filter(email=email).exists():
                 return JSONResponse.error(
                     message=_("Specified email is already in use."))
-
             try:
-                sign_up_request = SignUpRequest.objects.create_from_email(
-                                    email)
+                sign_up_request = \
+                    SignUpRequest.objects.create_from_email(email)
             except SignUpRequest.AlreadyExists as e:
                 return JSONResponse.error(message=unicode(e))
 
-            if sign_up_confirmation.send_email(request, sign_up_request):
-                sign_up_request.save()
-            else:
+            if not sign_up_request.send_email(request):
                 return JSONResponse.email_error()
 
             activate(request.LANGUAGE_CODE)
@@ -173,60 +169,40 @@ class SignUpRequestView(FormView):
 
 @never_cache
 @anonymous_required()
-def sign_up(request, email, confirmation_key,
+def sign_up(request, ridb64, confirmation_key,
             form_class=SignUpForm,
             template_name='auth_custom/pages/sign-up.html'):
     """
-    Handles sign up GET requests with 'email' and 'key' parameters.
+    Handles sign up GET requests with 'ridb64' and 'confirmation_key'
+    parameters.
     """
-    if settings.SESSION_SIGN_UP_INFO_KEY in request.session:
-        del request.session[settings.SESSION_SIGN_UP_INFO_KEY]
-
     if not request.method == "GET":
         return HttpResponseBadRequest()
 
-    context = {
-        'errors': [],
-    }
+    context = {}
 
-    def _render():
+    def _render(error=None):
+        context.update({
+            'no_errors': error is None,
+        })
+        if error:
+            messages.error(request, unicode(error))
         return render(request, template_name, context)
 
-    try:
-        validate_email(email)
-    except ValidationError as e:
-        context['errors'].append(unicode(e.message))
-    try:
-        sign_up_confirmation.validate_key(confirmation_key)
-    except ValidationError as e:
-        context['errors'].append(unicode(e.message))
+    (sign_up_request, error) = \
+        SignUpRequest.objects.request_or_error(ridb64, confirmation_key)
 
-    if context['errors']:
-        return _render()
+    if error:
+        return _render(error)
 
-    sign_up_request = SignUpRequest.objects.get_unexpired(email,
-                                                          confirmation_key)
-    if sign_up_request is None:
-        context['errors'].append(_("Sign up request with specified parameters "
-                                   "does not exist."))
-        return _render()
-
-    data = {
-        'email': email,
+    form = form_class(initial={
+        'ridb64': ridb64,
         'confirmation_key': confirmation_key,
-    }
-    form = form_class(initial=data)
+    })
     context.update({
-        'email': email,
+        'email': sign_up_request.email,
         'form': form,
     })
-
-    info = {
-        'request_id': sign_up_request.id,
-    }
-    info.update(data)
-    request.session[settings.SESSION_SIGN_UP_INFO_KEY] = info
-
     return _render()
 
 
@@ -239,51 +215,30 @@ def api_sign_up(request, form_class=SignUpForm):
     """
     Handles sign up AJAX POST requests.
     """
-    def _security_error():
-        return JSONResponse.error(
-            code=form_class.FATAL_ERROR_CODE,
-            message=_("Sign up security error."))
-
-    # Ensure existance of sign up info from previous GET
-    if not settings.SESSION_SIGN_UP_INFO_KEY in request.session:
-        return _security_error()
-
     form = form_class(request.POST)
     if form.is_valid():
-        # Check that sign up data from POST equals data from previous GET -----
-        info = request.session[settings.SESSION_SIGN_UP_INFO_KEY]
-
-        email = form.cleaned_data['email']
+        # Get sign up request -------------------------------------------------
+        rid = form.cleaned_data['ridb64']
         confirmation_key = form.cleaned_data['confirmation_key']
 
-        if (email != info['email'] or
-            confirmation_key != info['confirmation_key']):
-            return _security_error()
-
-        # Ensure sign up request still exists and it's ID equals to known ID --
-        sign_up_request = SignUpRequest.objects.get_unexpired(email,
-                                                              confirmation_key)
-        if sign_up_request is None:
-            return JSONResponse.error(
-                code=form_class.FATAL_ERROR_CODE,
-                message=_("Sign up request with specified parameters does not "
-                          "exist."))
-        if sign_up_request.id != info['request_id']:
-            return _security_error()
+        (sign_up_request, error) = \
+            SignUpRequest.objects.request_or_error(rid, confirmation_key)
+        if error:
+            return JSONResponse.error(code=form_class.FATAL_ERROR_CODE,
+                                      message=_("Security error."))
 
         # Fulfil registration -------------------------------------------------
         username = form.cleaned_data['username']
         password = form.cleaned_data['password']
 
         user = User.objects.create_user(
-            email=email,
+            email=sign_up_request.email,
             password=password,
             username=username,
             first_name=form.cleaned_data['first_name'],
             last_name=form.cleaned_data['last_name'],
             language=form.cleaned_data['language'])
         sign_up_request.delete()
-        del request.session[settings.SESSION_SIGN_UP_INFO_KEY]
 
         # Sign in user --------------------------------------------------------
         user = authenticate(username=username, password=password)

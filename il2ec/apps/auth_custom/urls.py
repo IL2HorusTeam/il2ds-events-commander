@@ -13,7 +13,7 @@ urlpatterns = patterns('',
 
     url(r'^sign-up/request/$', SignUpRequestView.as_view(),
         name='auth-custom-sign-up-request'),
-    url(r'^sign-up/(?P<email>.+@.+..+)/(?P<confirmation_key>\w+)$',
+    url(r'^sign-up/(?P<ridb64>[0-9A-Za-z]+)/(?P<confirmation_key>[a-f0-9]{40})$',
         'auth_custom.views.sign_up',
         name='auth-custom-sign-up'),
 

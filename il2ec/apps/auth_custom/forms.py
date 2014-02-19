@@ -158,7 +158,7 @@ class SignUpForm(forms.Form):
         'duplicate_username': _("A user with that username already exists."),
     }
 
-    email = forms.EmailField(
+    ridb64 = forms.CharField(
         required=True,
         widget=forms.HiddenInput)
     confirmation_key = forms.CharField(
