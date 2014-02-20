@@ -69,8 +69,8 @@ class SignInView(FormView):
     def dispatch(self, *args, **kwargs):
         return super(SignInView, self).dispatch(*args, **kwargs)
 
-    @method_decorator(ajax_api)
     @method_decorator(csrf_protect)
+    @method_decorator(ajax_api())
     @method_decorator(sensitive_post_parameters())
     def post(self, request, *args, **kwargs):
         """
@@ -129,8 +129,8 @@ class SignUpRequestView(FormView):
     def dispatch(self, *args, **kwargs):
         return super(SignUpRequestView, self).dispatch(*args, **kwargs)
 
-    @method_decorator(ajax_api)
     @method_decorator(csrf_protect)
+    @method_decorator(ajax_api())
     @method_decorator(sensitive_post_parameters())
     def post(self, request, *args, **kwargs):
         """
@@ -176,13 +176,12 @@ class SignUpRequestView(FormView):
             return JSONResponse.form_error(form)
 
 
+@ajax_api(method='GET')
 def api_sign_up_request_status(request, task_id):
     """
     Temporary view which handles AJAX GET requests for checking status of
     sending email confirmation instructions.
     """
-    if not request.method == "GET" and not request.is_ajax():
-        return HttpResponseBadRequest()
     result = AsyncResult(task_id)
     if result.status == 'PENDING':
         return JSONResponse.error(message=_("Unknown task ID."))
@@ -202,7 +201,7 @@ def sign_up(request, ridb64, confirmation_key,
     Handles sign up GET requests with 'ridb64' and 'confirmation_key'
     parameters.
     """
-    if not request.method == "GET":
+    if not request.method == 'GET':
         return HttpResponseBadRequest()
 
     context = {}
@@ -232,8 +231,7 @@ def sign_up(request, ridb64, confirmation_key,
     return _render()
 
 
-@ajax_api
-@never_cache
+@ajax_api()
 @csrf_protect
 @anonymous_required()
 @sensitive_post_parameters()
@@ -282,8 +280,7 @@ def api_sign_up(request, form_class=SignUpForm):
         return JSONResponse.form_field_errors(form)
 
 
-@ajax_api
-@never_cache
+@ajax_api()
 @csrf_protect
 @sensitive_post_parameters()
 def api_remind_me(request, form_class=RemindMeForm):
@@ -346,10 +343,9 @@ def password_reset(request, uidb64, token,
     return render(request, template_name, context)
 
 
-@ajax_api
 @csrf_protect
+@ajax_api()
 @login_required
-@never_cache
 def api_password_change(request, form_class=PasswordChangeForm):
     """
     Process AJAX request for changing user password.
@@ -374,7 +370,7 @@ def user_settings(request,
     """
     Display user settings and apply changes.
     """
-    if not request.method == "GET":
+    if not request.method == 'GET':
         return HttpResponseBadRequest()
     context = {
         'form_general': general_settings_form_class(request.user),
@@ -384,10 +380,9 @@ def user_settings(request,
     return render(request, template_name, context)
 
 
-@ajax_api
+@ajax_api()
 @csrf_protect
 @login_required
-@never_cache
 def api_general_settings(request, form_class=GeneralSettingsForm):
     """
     Process AJAX request for changing user general settings.
@@ -405,10 +400,9 @@ def api_general_settings(request, form_class=GeneralSettingsForm):
         return JSONResponse.form_field_errors(form)
 
 
-@ajax_api
+@ajax_api()
 @csrf_protect
 @login_required
-@never_cache
 def api_change_username(request, form_class=ChangeUsernameForm):
     """
     Process AJAX request for changing username.
@@ -425,10 +419,9 @@ def api_change_username(request, form_class=ChangeUsernameForm):
         return JSONResponse.form_field_errors(form)
 
 
-@ajax_api
+@ajax_api()
 @csrf_protect
 @login_required
-@never_cache
 def api_deactivate_account(request):
     """
     Process AJAX request for deactivating account.

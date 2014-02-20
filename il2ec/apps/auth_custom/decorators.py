@@ -3,6 +3,7 @@
 Authentication-related decorators.
 """
 from functools import wraps
+
 from django.http import HttpResponseRedirect
 from django.utils.decorators import available_attrs
 

@@ -3,17 +3,29 @@
 General purpose website decorators.
 """
 from functools import wraps
+
 from django.http import HttpResponseBadRequest
+from django.utils.decorators import available_attrs
 
 
-def ajax_api(view_func):
+def ajax_api(method='POST'):
     """
-    Decorator for API views that process AJAX POST requests.
+    Parametrized decorator for API views that checks that request was sent
+    via AJAX by propper method.
     """
-    @wraps(view_func)
-    def wrapped_view(request, *args, **kwargs):
-        if request.method == "POST" and request.is_ajax():
-            return view_func(request, *args, **kwargs)
-        else:
-            return HttpResponseBadRequest()
-    return wrapped_view
+    def decorator(view_func):
+        """
+        View function decorator.
+        """
+        @wraps(view_func, assigned=available_attrs(view_func))
+        def view_func_wrapper(request, *args, **kwargs):
+            """
+            Decorator for target API views that process AJAX requests.
+            """
+            if request.method == method and request.is_ajax():
+                return view_func(request, *args, **kwargs)
+            else:
+                return HttpResponseBadRequest()
+
+        return view_func_wrapper
+    return decorator
