@@ -16,7 +16,7 @@ from django.utils.translation import activate, deactivate
 LOG = logging.getLogger(__name__)
 
 
-@task(ignore_result=True)
+@task(ignore_result=False)
 def send_mail(subject, template_name, context_dict, from_email=None,
               to_emails=None, language_code=None):
     """

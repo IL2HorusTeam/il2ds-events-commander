@@ -144,8 +144,9 @@ class SignUpRequest(models.Model):
 
     def send_email(self):
         """
-        Send email confirmation email message. Return 'True' if succeeded,
-        'False' otherwise.
+        Send email confirmation instructions in background.
+
+        Return Celery's 'AsyncResult'.
         """
         rid = urlsafe_base64_encode(force_bytes(self.pk))
 
@@ -166,9 +167,9 @@ class SignUpRequest(models.Model):
         subject = unicode(_("Confirmation instructions"))
         to_emails = [self.email, ]
 
-        # Execute Celery task directly as normal function
-        return send_mail(subject, self.email_template, context,
-                         to_emails=to_emails, language_code=self.language)
+        return send_mail.delay(subject, self.email_template, context,
+                               to_emails=to_emails,
+                               language_code=self.language)
 
     @property
     def is_expired(self):

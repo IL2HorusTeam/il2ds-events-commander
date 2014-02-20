@@ -33,14 +33,22 @@ urlpatterns = patterns('',
         name='api-auth-custom-remind-me'),
     url(r'^api/password/change/$', 'auth_custom.views.api_password_change',
         name='api-auth-custom-password-change'),
+
     url(r'^api/user/settings/general/$',
         'auth_custom.views.api_general_settings',
         name='api-auth-custom-general-settings'),
-
     url(r'^api/user/settings/username/$',
         'auth_custom.views.api_change_username',
         name='api-auth-custom-change-username'),
+
     url(r'^api/user/deactivate/$',
         'auth_custom.views.api_deactivate_account',
         name='api-auth-custom-deactivate-account'),
+
+    # -------------------------------------------------------------------------
+    # Temporary views
+    # -------------------------------------------------------------------------
+    url(r'^api/sign-up/request/status/(?P<task_id>.+)/$',
+        'auth_custom.views.api_sign_up_request_status',
+        name='api-auth-custom-sign-up-request-status'),
 )

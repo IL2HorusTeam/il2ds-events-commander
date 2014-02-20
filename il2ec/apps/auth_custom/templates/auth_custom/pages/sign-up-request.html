@@ -54,13 +54,59 @@
 
 {% block script_extras %}
 <script type="text/javascript">
-  /* Submit sign up request */
+  /* Submit sign up request and wait for result ---------------------------- */
   $('#id_form_sign_up_request').submit(function(e) {
     e.preventDefault()
 
     var frm = this
     , $frm = $(this)
-    , url = $frm.attr('action')
+
+    /* Periodically submit requests to check status of email sending ------- */
+    function wait_async_result(task_id, email, time_left) {
+      var url = "{% url api-auth-custom-sign-up-request-status task_id='task_id' %}".replace('task_id', task_id)
+      , interval = undefined
+
+      function stop_requester() {
+        clearInterval(interval)
+        frm.ladda.stop()
+      }
+
+      function request_sender() {
+        $.get(url
+          , function(response) {
+            if (response.status == 'success') {
+              if (response.ready) {
+                if (response.successful) {
+
+                  $('p.help-text').remove()
+                  $('#block-sign-up-request').parent().remove()
+
+                  $('#target_email').text(email)
+                  $('#time_left').text(time_left)
+                  $('#success_block').show()
+
+                } else {
+                  frm.show_error("{% trans %}Sorry, we failed to send an email to you. Please, try again a bit later.{% endtrans %}")
+                }
+                stop_requester()
+              }
+            } else {
+              frm.show_error(response.error.message)
+              stop_requester()
+            }
+          }
+          , "json"
+        ).fail(function() {
+          frm.show_error("{% trans %}Request execution error{% endtrans %}")
+          stop_requester()
+        })
+      }
+
+      interval = setInterval(request_sender, 5000)
+    }
+
+    /* Send sign up request and get ID of asunc task ----------------------- */
+    var url = $frm.attr('action')
 
     frm.hide_messages()
     frm.ladda.start()
@@ -68,12 +114,8 @@
       , $frm.serialize()
       , function(response) {
         if (response.status == 'success') {
-          $('p.help-text').remove()
-          $('#block-sign-up-request').parent().remove()
-
-          $('#target_email').text(response.email)
-          $('#time_left').text(response.time_left)
-          $('#success_block').show()
+          wait_async_result(
+            response.task_id, response.email, response.time_left)
         } else {
           frm.show_error(response.error.message)
         }
@@ -81,7 +123,6 @@
       , "json"
     ).fail(function(request, status, error) {
       frm.show_error("{% trans %}Request execution error{% endtrans %}")
-    }).always(function(data) {
       frm.ladda.stop()
     })
 
