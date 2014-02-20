@@ -44,11 +44,4 @@ urlpatterns = patterns('',
     url(r'^api/user/deactivate/$',
         'auth_custom.views.api_deactivate_account',
         name='api-auth-custom-deactivate-account'),
-
-    # -------------------------------------------------------------------------
-    # Temporary views
-    # -------------------------------------------------------------------------
-    url(r'^api/sign-up/request/status/(?P<task_id>.+)/$',
-        'auth_custom.views.api_sign_up_request_status',
-        name='api-auth-custom-sign-up-request-status'),
 )

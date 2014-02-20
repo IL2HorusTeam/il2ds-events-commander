@@ -4,8 +4,13 @@ Main project views.
 """
 import logging
 
+from celery.result import AsyncResult
+
 from coffin.shortcuts import render
 from coffin.views.generic import TemplateView
+
+from website.decorators import ajax_api
+from website.responses import JSONResponse
 
 
 LOG = logging.getLogger(__name__)
@@ -27,6 +32,21 @@ class BaseView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, self.extra_context)
+
+
+@ajax_api(method='GET')
+def api_task_result(request, task_id):
+    """
+    View which handles AJAX GET requests for getting results of Celery tasks.
+    """
+    result = AsyncResult(task_id)
+    if result.status == 'PENDING':
+        return JSONResponse.error(message=_("Unknown task ID."))
+    else:
+        return JSONResponse.success(payload={
+            'ready': result.ready(),
+            'result': result.get(),
+        })
 
 
 class IndexView(BaseView):

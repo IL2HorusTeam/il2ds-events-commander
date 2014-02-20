@@ -4,8 +4,6 @@ Views which handle authentication-related requests.
 """
 import logging
 
-from celery.result import AsyncResult
-
 from coffin.shortcuts import redirect, render, render_to_string, resolve_url
 from coffin.views.generic import FormView
 
@@ -174,22 +172,6 @@ class SignUpRequestView(FormView):
             })
         else:
             return JSONResponse.form_error(form)
-
-
-@ajax_api(method='GET')
-def api_sign_up_request_status(request, task_id):
-    """
-    Temporary view which handles AJAX GET requests for checking status of
-    sending email confirmation instructions.
-    """
-    result = AsyncResult(task_id)
-    if result.status == 'PENDING':
-        return JSONResponse.error(message=_("Unknown task ID."))
-    else:
-        return JSONResponse.success(payload={
-            'ready': result.ready(),
-            'successful': result.successful(),
-        })
 
 
 @never_cache

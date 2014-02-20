@@ -63,7 +63,7 @@
 
     /* Periodically submit requests to check status of email sending ------- */
     function wait_async_result(task_id, email, time_left) {
-      var url = "{% url api-auth-custom-sign-up-request-status task_id='task_id' %}".replace('task_id', task_id)
+      var url = "{% url api-website-task-result task_id='task_id' %}".replace('task_id', task_id)
       , interval = undefined
 
       function stop_requester() {
@@ -76,7 +76,7 @@
           , function(response) {
             if (response.status == 'success') {
               if (response.ready) {
-                if (response.successful) {
+                if (response.result == true) {
 
                   $('p.help-text').remove()
                   $('#block-sign-up-request').parent().remove()
