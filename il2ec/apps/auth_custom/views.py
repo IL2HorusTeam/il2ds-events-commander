@@ -27,7 +27,6 @@ from django.views.decorators.csrf import csrf_protect
 
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url, urlsafe_base64_decode
-from django.utils.timesince import timeuntil
 from django.utils.translation import activate, deactivate, ugettext as _
 
 from auth_custom import settings
@@ -151,24 +150,13 @@ class SignUpRequestView(FormView):
                 host=request.get_host())
             language = request.LANGUAGE_CODE
 
-            try:
-                sign_up_request = \
-                    SignUpRequest.objects.create_for_email(
-                        email, base_url, language)
-            except SignUpRequest.AlreadyExists as e:
-                return JSONResponse.error(message=unicode(e))
-
+            sign_up_request = SignUpRequest.objects.get_or_create_for_email(
+                email, base_url, language)
             async_result = sign_up_request.send_email()
-
-            activate(language)
-            time_left = timeuntil(sign_up_request.expiration_date,
-                                  sign_up_request.created)
-            deactivate()
 
             return JSONResponse.success(payload={
                 'task_id': async_result.id,
                 'email': email,
-                'time_left': time_left,
             })
         else:
             return JSONResponse.form_error(form)

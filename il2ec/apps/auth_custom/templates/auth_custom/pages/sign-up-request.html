@@ -23,10 +23,6 @@
       {% trans email="<b id='target_email'></b>"|safe %}
         Instructions for email confirmation were sent to {{ email }}. Check out your inbox!
       {% endtrans %}
-      <br/>
-      {% trans time_left="<span id='time_left'></span>"|safe %}
-        Your request will expire in {{ time_left }}.
-      {% endtrans %}
     </div>
   </div>
 </div>
@@ -62,7 +58,7 @@
     , $frm = $(this)
 
     /* Periodically submit requests to check status of email sending ------- */
-    function wait_async_result(task_id, email, time_left) {
+    function wait_async_result(task_id, email) {
       var url = "{% url api-website-task-result task_id='task_id' %}".replace('task_id', task_id)
       , interval = undefined
 
@@ -82,7 +78,6 @@
                   $('#block-sign-up-request').parent().remove()
 
                   $('#target_email').text(email)
-                  $('#time_left').text(time_left)
                   $('#success_block').show()
 
                 } else {
@@ -114,8 +109,7 @@
       , $frm.serialize()
       , function(response) {
         if (response.status == 'success') {
-          wait_async_result(
-            response.task_id, response.email, response.time_left)
+          wait_async_result(response.task_id, response.email)
         } else {
           frm.show_error(response.error.message)
           frm.ladda.stop()

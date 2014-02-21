@@ -35,7 +35,6 @@ from auth_custom.helpers import sign_up_confirmation, update_current_language
 from auth_custom.settings import EMAIL_CONFIRMATION_DAYS
 from auth_custom.validators import validate_username
 
-from misc.exceptions import ObjectAlreadyExistsError
 from misc.tasks import send_mail
 
 
@@ -46,31 +45,22 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
     """
     Sign-up requests manager.
     """
-    def create_for_email(self, email, base_url, language=None):
+    def get_or_create_for_email(self, email, base_url, language=None):
         """
-        Create and return sign up request for specified email address.
-        Raise 'AlreadyExists' exception, if unexpired sign up request already
-        exists for specified email.
+        Get existing sign up request for specified email address or create new.
+
+        NOTE: if existing request has expired, it may be deleted by Celery
+              task, so the ID of task may get change after save.
         """
-        now = timezone.now()
+        try:
+            return self.get(email=email)
+        except self.model.DoesNotExist:
+            pass
 
-        if self.filter(email=email, expiration_date__gt=now).exists():
-            raise self.model.AlreadyExists(
-                _("Sign up request for {email} already exists.").format(
-                  email=email))
-
-        expiration_date = \
-            now + datetime.timedelta(days=EMAIL_CONFIRMATION_DAYS)
-        confirmation_key = \
-            sign_up_confirmation.generate_key(email, unicode(now))
         language = language or settings.LANGUAGE_CODE
-
-        return self.create(email=email,
-                           language=language,
-                           confirmation_key=confirmation_key,
-                           base_url=base_url,
-                           created=now,
-                           expiration_date=expiration_date)
+        result = self.model(email=email, language=language, base_url=base_url)
+        result.reset(commit=True)
+        return result
 
     def delete_expired(self):
         """
@@ -110,7 +100,6 @@ class SignUpRequest(models.Model):
     Model for storing sign-up requests. There can be several requests for one
     email, but there can be only one unexpired request.
     """
-    AlreadyExists = ObjectAlreadyExistsError
     email_template = 'auth_custom/emails/confirm-sign-up.html'
 
     email = models.EmailField(
@@ -124,30 +113,46 @@ class SignUpRequest(models.Model):
         default=settings.LANGUAGE_CODE)
     confirmation_key = models.CharField(
         verbose_name=_("confirmation key"),
-        max_length=40)
+        max_length=40,
+        blank=False)
     base_url = models.URLField(
         verbose_name=_("base URL"),
         help_text=_("URL to website base for particular user. "
-                    "Can have name or IP, etc."))
-    created = models.DateTimeField(
-        verbose_name=_("created"),
-        default=timezone.now)
+                    "Can have name or IP, etc."),
+        blank=False)
     expiration_date = models.DateTimeField(
-        verbose_name=_("expiration date"))
+        verbose_name=_("expiration date"),
+        blank=False)
 
     objects = SignUpRequestManager()
 
     class Meta:
         verbose_name = _("sign up request")
         verbose_name_plural = _("sign up requests")
-        ordering = ['-expiration_date', 'email']
+        ordering = ('email', '-expiration_date', )
+
+    def reset(self, commit=False):
+        """
+        Reset date when sign up request is considered to be expired and update
+        confirmation key.
+        """
+        self.expiration_date = \
+            timezone.now() + datetime.timedelta(days=EMAIL_CONFIRMATION_DAYS)
+        self.confirmation_key = sign_up_confirmation.generate_key(
+                                    self.email, unicode(self.expiration_date))
+
+        if commit:
+            self.save()
 
     def send_email(self):
         """
-        Send email confirmation instructions in background.
+        Send email confirmation instructions in background. This will update
+        expiration date and confirmation key.
 
         Return Celery's 'AsyncResult'.
         """
+        self.reset(commit=True)
+
         rid = urlsafe_base64_encode(force_bytes(self.pk))
 
         activate(self.language)
@@ -161,8 +166,6 @@ class SignUpRequest(models.Model):
             'host_address': home_url,
             'host_name': settings.PROJECT_NAME,
             'confirmation_url': confirmation_url,
-            'creation_date': self.created,
-            'expiration_date': self.expiration_date,
         }
         subject = unicode(_("Confirmation instructions"))
         to_emails = [self.email, ]
