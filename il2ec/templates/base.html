@@ -192,7 +192,10 @@
 
 <script type="text/javascript">
   /* Configure tooltips ---------------------------------------------------- */
-  var tooltip_delay = { show: 500, hide: 100 }
+  var tooltip_delay = {
+    show: 500
+    , hide: 100
+  }
 
   $('[data-toggle="tooltip-nav"]').tooltip({
     placement: 'bottom',
@@ -232,6 +235,9 @@
       var block = $frm.find('.alert-danger.alerts-placeholder').first()
       block.find('.form-message').text(message)
       block.show()
+    }
+    frm.show_request_execution_error = function() {
+      frm.show_error("{% trans %}Request execution error{% endtrans %}")
     }
     frm.show_field_error = function(container, message) {
       container.addClass('has-error')
@@ -301,8 +307,8 @@
         }
       }
       , "json"
-    ).fail(function(request, status, error) {
-      frm.show_error("{% trans %}Request execution error{% endtrans %}")
+    ).fail(function() {
+      frm.show_request_execution_error()
     }).always(function() {
       frm.ladda.stop()
     })
@@ -331,8 +337,8 @@
         }
       }
       , "json"
-    ).fail(function(request, status, error) {
-      frm.show_error("{% trans %}Request execution error{% endtrans %}")
+    ).fail(function() {
+      frm.show_request_execution_error()
     }).always(function() {
       frm.ladda.stop()
     })

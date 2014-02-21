@@ -97,7 +97,7 @@
           }
           , "json"
         ).fail(function() {
-          frm.show_error("{% trans %}Request execution error{% endtrans %}")
+          frm.show_request_execution_error()
           stop_requester()
         })
       }
@@ -118,11 +118,12 @@
             response.task_id, response.email, response.time_left)
         } else {
           frm.show_error(response.error.message)
+          frm.ladda.stop()
         }
       }
       , "json"
-    ).fail(function(request, status, error) {
-      frm.show_error("{% trans %}Request execution error{% endtrans %}")
+    ).fail(function() {
+      frm.show_request_execution_error()
       frm.ladda.stop()
     })
 

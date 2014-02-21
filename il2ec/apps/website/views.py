@@ -9,6 +9,8 @@ from celery.result import AsyncResult
 from coffin.shortcuts import render
 from coffin.views.generic import TemplateView
 
+from django.utils.translation import ugettext as _
+
 from website.decorators import ajax_api
 from website.responses import JSONResponse
 

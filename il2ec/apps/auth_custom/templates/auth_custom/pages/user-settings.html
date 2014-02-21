@@ -343,9 +343,9 @@
         }
       }
       , "json"
-    ).fail(function(request, status, error) {
-      frm.show_error("{% trans %}Request execution error{% endtrans %}")
-    }).always(function(data) {
+    ).fail(function() {
+      frm.show_request_execution_error()
+    }).always(function() {
       frm.ladda.stop()
     })
 
@@ -382,9 +382,9 @@
         }
       }
       , "json"
-    ).fail(function(request, status, error) {
-      frm.show_error("{% trans %}Request execution error{% endtrans %}")
-    }).always(function(data) {
+    ).fail(function() {
+      frm.show_request_execution_error()
+    }).always(function() {
       frm.ladda.stop()
     })
 
@@ -413,9 +413,9 @@
         }
       }
       , "json"
-    ).fail(function(request, status, error) {
-      frm.show_error("{% trans %}Request execution error{% endtrans %}")
-    }).always(function(data) {
+    ).fail(function() {
+      frm.show_request_execution_error()
+    }).always(function() {
       dialog.find('div.progress').hide()
     })
   })
@@ -459,9 +459,9 @@
         }
       }
       , "json"
-    ).fail(function(request, status, error) {
-      frm.show_error("{% trans %}Request execution error{% endtrans %}")
-    }).always(function(data) {
+    ).fail(function() {
+      frm.show_request_execution_error()
+    }).always(function() {
       frm.ladda.stop()
     })
 
@@ -487,9 +487,9 @@
         window.location = "{% url website-index %}"
       }
       , "json"
-    ).fail(function(request, status, error) {
-      frm.show_error("{% trans %}Request execution error{% endtrans %}")
-    }).always(function(data) {
+    ).fail(function() {
+      frm.show_request_execution_error()
+    }).always(function() {
       frm.ladda.stop()
     })
 
