@@ -4,9 +4,9 @@ IL-2 DS Events Commander
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/IL2HorusTeam/il2ds-events-commander/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 For developers
---------------
+==============
 
-### Development process overview
+## Development process overview
 
 Development of this project is a fully isolated process. All services and
 servers (except game server) are running on a VirtualBox guest machine. It is
@@ -27,6 +27,8 @@ host machine.
 The approach, described above, provides identical development environment for
 every developer. This environment is close to the real production server
 environment, so minimal amount of deployment issues is expected.
+
+## Creating new environment
 
 To start development on this project, you will need:
 
@@ -139,3 +141,10 @@ To make your work with dedicated server on Linux easier, you can install
 Execute next command to run commander as daemon:
 
     fab commander:run
+
+## Starting existing environment
+
+To start existing provisioned environment, simply run:
+
+    vagrant up
+    fab reload_all
