@@ -110,9 +110,9 @@ def sign_out(request, redirect_field_name=REDIRECT_FIELD_NAME):
     Handle 'sign out' action and redirect to proper page if needed.
     """
     logout(request)
-    referer = request.GET.get(redirect_field_name) or \
-              resolve_url('website-index')
-    return redirect(referer)
+    next = request.GET.get(redirect_field_name) or \
+           resolve_url('website-index')
+    return redirect(next)
 
 
 class SignUpRequestView(FormView):
@@ -279,12 +279,12 @@ def api_remind_me(request, form_class=RemindMeForm):
         else:
             return JSONResponse.form_error(form)
 
-    if send_remind_me_email(request, user):
-        return JSONResponse.success(payload={
-            'email': user.email,
-        })
-    else:
-        return JSONResponse.email_error()
+    async_result = send_remind_me_email(request, user)
+
+    return JSONResponse.success(payload={
+        'task_id': async_result.id,
+        'email': user.email,
+    })
 
 
 @csrf_protect
@@ -292,7 +292,6 @@ def api_remind_me(request, form_class=RemindMeForm):
 def password_reset(request, uidb64, token,
                    form_class=SetPasswordForm,
                    template_name='auth_custom/pages/password-reset.html',
-                   complete_template_name='auth_custom/pages/password-reset-complete.html',
                    token_generator=default_token_generator):
     """
     View that checks the hash in a password reset link and presents a form for
@@ -312,7 +311,18 @@ def password_reset(request, uidb64, token,
             form = form_class(user, request.POST)
             if form.is_valid():
                 form.save()
-                return render(request, complete_template_name, {})
+
+                is_anonymous = request.user.is_anonymous()
+
+                message = _("Your password was successfully updated.")
+                if is_anonymous:
+                    message = message + " " + \
+                          _("You can use it to sign in right now!")
+                messages.success(request, message)
+
+                next_name = 'auth-custom-sign-in' if is_anonymous else \
+                            'website-index'
+                return redirect(resolve_url(next_name))
         else:
             form = form_class(None)
     else:

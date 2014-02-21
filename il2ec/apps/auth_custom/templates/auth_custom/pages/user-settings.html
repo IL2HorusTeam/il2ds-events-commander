@@ -396,28 +396,70 @@
     var dialog = $('#id_modal_password')
     , $frm = dialog.find('form')
     , frm = $frm.get(0)
-    , url = $frm.attr('action')
+    , progress = dialog.find('div.progress')
+
+    /* Periodically submit requests to check status of email sending ------- */
+    function wait_async_result(task_id, email) {
+      var url = "{% url api-website-task-result task_id='task_id' %}".replace('task_id', task_id)
+      , interval = undefined
+
+      function stop_requester() {
+        clearInterval(interval)
+        progress.hide()
+      }
+
+      function request_sender() {
+        $.get(url
+          , function(response) {
+            if (response.status == 'success') {
+              if (response.ready) {
+                if (response.result == true) {
+
+                  dialog.find('#id_target_email').text(email)
+                  dialog.find('.alert-success').show()
+
+                } else {
+                  frm.show_error("{% trans %}Sorry, we failed to send an email to you. Please, try again a bit later.{% endtrans %}")
+                }
+                stop_requester()
+              }
+            } else {
+              frm.show_error(response.error.message)
+              stop_requester()
+            }
+          }
+          , "json"
+        ).fail(function() {
+          frm.show_request_execution_error()
+          stop_requester()
+        })
+      }
+
+      interval = setInterval(request_sender, 5000)
+    }
+
+    /* Send request for reminding data and get ID of async task ------------ */
+    var url = $frm.attr('action')
 
     dialog.find('.alerts-placeholder').hide()
-    dialog.find('div.progress').show()
+    progress.show()
     dialog.modal('show')
-
     $.post(url
       , $frm.serialize()
       , function(response) {
         if (response.status == 'success') {
-          dialog.find('#id_target_email').text(response.email)
-          dialog.find('.alert-success').show()
+          wait_async_result(response.task_id, response.email)
         } else {
           frm.show_error(response.error.message)
+          progress.hide()
         }
       }
       , "json"
     ).fail(function() {
       frm.show_request_execution_error()
-    }).always(function() {
-      dialog.find('div.progress').hide()
+      progress.hide()
     })
+
   })
   $('#id_form_password_modal').submit(function(e) {
     e.preventDefault()

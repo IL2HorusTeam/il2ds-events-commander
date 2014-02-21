@@ -73,12 +73,3 @@ class JSONResponse(HttpResponse):
             'errors': errors,
         })
         return cls.error(message=message, code=code, payload=payload)
-
-    @classmethod
-    def email_error(cls, code=None, payload=None):
-        """
-        Create a response for a case when sending email has failed.
-        """
-        return cls.error(message=_("Sorry, we failed to send an email to you. "
-                                   "Please, try again a bit later."),
-                         code=code, payload=payload)

@@ -52,7 +52,9 @@ def send_remind_me_email(http_request, user,
                          token_generator=default_token_generator):
     """
     Send username reminding email message with instructions for pasword
-    resetting. Return 'True' if succeeded, 'False' otherwise.
+    resetting.
+
+    Return Celery's 'AsyncResult'.
     """
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = token_generator.make_token(user)
@@ -73,9 +75,9 @@ def send_remind_me_email(http_request, user,
     subject = unicode(_("Remind data"))
     to_emails = [user.email, ]
 
-    # Execute Celery task directly as normal function
-    return send_mail(subject, template_name, context,
-                     to_emails=to_emails, language_code=user.language)
+    return send_mail.delay(subject, template_name, context,
+                           to_emails=to_emails,
+                           language_code=user.language)
 
 
 def update_current_language(request, language):
