@@ -9,8 +9,10 @@ from celery.result import AsyncResult
 from coffin.shortcuts import render
 from coffin.views.generic import TemplateView
 
+from django.http import HttpResponseBadRequest
 from django.utils.translation import ugettext as _
 
+from website.forms import AnonymousContactForm, AuthenticatedContactForm
 from website.decorators import ajax_api
 from website.responses import JSONResponse
 
@@ -36,6 +38,13 @@ class BaseView(TemplateView):
         return render(request, self.template_name, self.extra_context)
 
 
+class IndexView(BaseView):
+    """
+    View for the site frontpage.
+    """
+    template_name = "website/pages/index.html"
+
+
 @ajax_api(method='GET')
 def api_task_result(request, task_id):
     """
@@ -51,8 +60,24 @@ def api_task_result(request, task_id):
         })
 
 
-class IndexView(BaseView):
+def contact(request, template_name="website/pages/contact.html"):
     """
-    View for the site frontpage.
+    A view for sending messages to support team.
     """
-    template_name = "website/pages/index.html"
+    if not request.method == 'GET':
+        return HttpResponseBadRequest()
+
+    form_class = AnonymousContactForm if request.user.is_anonymous() else \
+                 AuthenticatedContactForm
+    form = form_class()
+    context = {
+        'form': form,
+    }
+    return render(request, template_name, context)
+
+
+@ajax_api()
+def api_contact(request):
+    """
+    Handles AJAX POST requests for sending messages to support team.
+    """

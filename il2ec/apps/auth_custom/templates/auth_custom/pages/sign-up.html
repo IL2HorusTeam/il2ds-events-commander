@@ -9,7 +9,7 @@
 <div class="row offset-bottom">
   <div class="col-md-4 col-md-offset-4">
     <form class="form-horizontal form-ajax" role="form" id="id_form_sign_up" action="{% url api-auth-custom-sign-up %}" method="post">
-      <legend>Finish sign up</legend>
+      <legend>{% trans %}Finish sign up{% endtrans %}</legend>
       <span class="help-block">{% trans %}Just one step to create your account{% endtrans %}</span>
 
       {% csrf_token %}

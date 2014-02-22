@@ -42,6 +42,11 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'il2.horus.dev@gmail.com'
 EMAIL_PORT = 587
 
+ADMINS = (
+    ("Developers", EMAIL_HOST_USER),
+)
+SUPPORTERS = ADMINS
+
 #------------------------------------------------------------------------------
 # Third party app settings
 #------------------------------------------------------------------------------

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block head_title %}
+{% trans %}Contact support{% endtrans %}
+{% endblock %}
+
+{% block head_extras %}
+<style type="text/css">
+  #addresses {
+    margin-top: 20px;
+    margin-bottom: 30px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    <legend>{% trans %}Contact support{% endtrans %}</legend>
+    {% if settings.SUPPORTERS %}
+      <span class="help-block">
+        {% trans %}We are here to help with any questions or comments. If you just want to say hello, that's nice too.{% endtrans %}
+      </span>
+      <div class="offset-bottom col-md-8 col-md-offset-2">
+        <div id="addresses">
+          {% trans %}Feel free to email us at{% endtrans %}
+          {% for (name, address) in settings.SUPPORTERS %}
+            <a href="mailto:{{ address }}">{{ address }}</a>{% if loop.last %}.{% else %}, {% endif %}
+          {% endfor %}
+        </div>
+
+        <form class="form form-ajax" role="form" id="id_form_contact" action="{% url api-website-contact %}" method="post">
+
+          <div class="alert alert-danger alert-dismissable alerts-placeholder">
+            <button type="button" class="close" aria-hidden="true">&times;</button>
+            <span class='form-message'></span>
+          </div>
+
+          {% if user.is_anonymous() %}
+            <div class="row">
+              <div class="form-group col-md-8">
+                <div class="input-group">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                  <input type="text" class="form-control" name="name" id="id_name" data-toggle="tooltip" title="{{ form.name.help_text }}" placeholder="{{ form.name.label }}" required>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-8">
+                <div class="input-group">
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
+                  <input type="email" class="form-control" name="email" id="id_email" data-toggle="tooltip" title="{{ form.email.help_text }}" placeholder="{{ form.email.label }}" required>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="row">
+              <label class="col-sm-4 control-label">{% trans %}Your name{% endtrans %}</label>
+              <div class="col-sm-8">
+                <p class="form-control-static">{{ user.get_full_name() }}</p>
+              </div>
+            </div>
+            <div class="row offset-bottom">
+              <label class="col-sm-4 control-label">{% trans %}Your email{% endtrans %}</label>
+              <div class="col-sm-8">
+                <p class="form-control-static">{{ user.email }}</p>
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
+              <input type="text" class="form-control" name="subject" id="id_subject" data-toggle="tooltip" title="{{ form.subject.help_text }}" placeholder="{{ form.subject.label }}" required>
+            </div>
+          </div>
+          <div class="form-group">
+              <textarea class="form-control" id="id_body" name="body" placeholder="{{ form.body.help_text }}" rows="5" required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="checkbox">
+              <input type="checkbox" name="send_copy">{{ form.send_copy.label }}
+            </label>
+          </div>
+          <button id="id_submit_contact" type="submit" class="btn btn-success ladda-button" data-style="zoom-out">{% trans %}Send{% endtrans %}</button>
+
+        </form>
+      </div>
+    {% else %}
+      <div class="alert alert-danger">{% trans %}Sorry, support is not configured yet.{% endtrans %}</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block script_extras %}
+<script type="text/javascript">
+  // TODO:
+</script>
+{% endblock %}

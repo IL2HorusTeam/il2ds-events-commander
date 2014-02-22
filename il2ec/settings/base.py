@@ -72,6 +72,9 @@ LANGUAGE_CODES = tuple([code for (code, name) in LANGUAGES])
 HOSTNAME = 'il2ec.dev'
 PROJECT_NAME = _("Awesome IL-2 Project")
 
+ADMINS = ()
+SUPPORTERS = ()
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
