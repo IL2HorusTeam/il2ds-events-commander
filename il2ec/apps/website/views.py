@@ -6,13 +6,17 @@ import logging
 
 from celery.result import AsyncResult
 
-from coffin.shortcuts import render
+from coffin.shortcuts import render, resolve_url
 from coffin.views.generic import TemplateView
 
+from django.conf import settings
 from django.http import HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_protect
 from django.utils.translation import ugettext as _
 
-from website.forms import AnonymousContactForm, AuthenticatedContactForm
+from misc.tasks import send_mail
+
+from website.forms import AnonymousContactForm, ContactForm
 from website.decorators import ajax_api
 from website.responses import JSONResponse
 
@@ -68,16 +72,51 @@ def contact(request, template_name="website/pages/contact.html"):
         return HttpResponseBadRequest()
 
     form_class = AnonymousContactForm if request.user.is_anonymous() else \
-                 AuthenticatedContactForm
-    form = form_class()
+                 ContactForm
     context = {
-        'form': form,
+        'form': form_class(),
     }
     return render(request, template_name, context)
 
 
 @ajax_api()
-def api_contact(request):
+@csrf_protect
+def api_contact(request, template_name='website/emails/contact.html'):
     """
     Handles AJAX POST requests for sending messages to support team.
     """
+    form_class = AnonymousContactForm if request.user.is_anonymous() else \
+                 ContactForm
+    form = form_class(data=request.POST)
+
+    if form.is_valid():
+        if request.user.is_anonymous():
+            email, name = form.cleaned_data['email'], form.cleaned_data['name']
+        else:
+            email, name = request.user.email, request.user.get_full_name()
+
+        subject = u"[{prefix}] {subject}".format(
+                  prefix=_("support"), subject=form.cleaned_data['subject'])
+        to_emails = [address for (_name, address) in settings.SUPPORTERS]
+
+        if form.cleaned_data['send_copy']:
+            to_emails.append(email)
+
+        home_url = request.build_absolute_uri(resolve_url('website-index'))
+        context = {
+            'host_address': home_url,
+            'host_name': settings.PROJECT_NAME,
+            'body': form.cleaned_data['body'],
+            'name': name,
+            'email': email,
+        }
+
+        async_result = send_mail.delay(subject, template_name, context,
+                                       to_emails=to_emails,
+                                       language_code=request.LANGUAGE_CODE)
+
+        return JSONResponse.success(payload={
+            'task_id': async_result.id,
+        })
+    else:
+        return JSONResponse.form_field_errors(form)

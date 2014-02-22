@@ -1,0 +1,11 @@
+<html>
+<body>
+{% trans %}Support request from{% endtrans %}
+{{ name }} (<a href='mailto:{{ email }}' target='blank'>{{ email }}</a>)
+{% trans %}at{% endtrans %}
+<a href='{{ host_address }}' target='blank'>{{ host_name }}</a>:
+<br/>
+<br/>
+{{ body }}
+</body>
+</html>

@@ -61,7 +61,6 @@ class SignInView(FormView):
     template_name = 'auth_custom/pages/sign-in.html'
     redirect_field_name = REDIRECT_FIELD_NAME
 
-    @method_decorator(never_cache)
     @method_decorator(anonymous_required())
     def dispatch(self, *args, **kwargs):
         return super(SignInView, self).dispatch(*args, **kwargs)
@@ -103,7 +102,6 @@ class SignInView(FormView):
         return render(request, self.template_name, context)
 
 
-@never_cache
 def sign_out(request, redirect_field_name=REDIRECT_FIELD_NAME):
     """
     Handle 'sign out' action and redirect to proper page if needed.

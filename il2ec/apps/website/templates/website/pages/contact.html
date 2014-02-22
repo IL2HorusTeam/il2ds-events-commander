@@ -28,20 +28,20 @@
             <a href="mailto:{{ address }}">{{ address }}</a>{% if loop.last %}.{% else %}, {% endif %}
           {% endfor %}
         </div>
-
         <form class="form form-ajax" role="form" id="id_form_contact" action="{% url api-website-contact %}" method="post">
-
+          {% csrf_token %}
           <div class="alert alert-danger alert-dismissable alerts-placeholder">
             <button type="button" class="close" aria-hidden="true">&times;</button>
             <span class='form-message'></span>
           </div>
-
           {% if user.is_anonymous() %}
             <div class="row">
               <div class="form-group col-md-8">
                 <div class="input-group">
                   <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                  <input type="text" class="form-control" name="name" id="id_name" data-toggle="tooltip" title="{{ form.name.help_text }}" placeholder="{{ form.name.label }}" required>
+                  <input type="text" class="form-control" name="name" id="id_name"
+                         data-toggle="tooltip" title="{{ form.name.help_text }}"
+                         placeholder="{{ form.name.label }}" required>
                 </div>
               </div>
             </div>
@@ -49,7 +49,9 @@
               <div class="form-group col-md-8">
                 <div class="input-group">
                   <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
-                  <input type="email" class="form-control" name="email" id="id_email" data-toggle="tooltip" title="{{ form.email.help_text }}" placeholder="{{ form.email.label }}" required>
+                  <input type="email" class="form-control" name="email"id="id_email"
+                         data-toggle="tooltip" title="{{ form.email.help_text }}"
+                         placeholder="{{ form.email.label }}" required>
                 </div>
               </div>
             </div>
@@ -67,27 +69,34 @@
               </div>
             </div>
           {% endif %}
-
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
-              <input type="text" class="form-control" name="subject" id="id_subject" data-toggle="tooltip" title="{{ form.subject.help_text }}" placeholder="{{ form.subject.label }}" required>
+              <input type="text" class="form-control" name="subject" id="id_subject"
+                     data-toggle="tooltip" title="{{ form.subject.help_text }}"
+                     placeholder="{{ form.subject.label }}" required>
             </div>
           </div>
           <div class="form-group">
+            <div>
               <textarea class="form-control" id="id_body" name="body" placeholder="{{ form.body.help_text }}" rows="5" required></textarea>
+            </div>
           </div>
           <div class="form-group">
             <label class="checkbox">
               <input type="checkbox" name="send_copy">{{ form.send_copy.label }}
             </label>
           </div>
-          <button id="id_submit_contact" type="submit" class="btn btn-success ladda-button" data-style="zoom-out">{% trans %}Send{% endtrans %}</button>
-
+          <button id="id_submit_contact" type="submit" class="btn btn-success ladda-button" data-style="zoom-out">{% trans %}Send request{% endtrans %}</button>
         </form>
+        <div class="alert alert-success alerts-placeholder">
+          {% trans %}Thank you for your participation{% endtrans %}!
+          <br/>
+          {% trans %}We'll try to answer as soon as possible{% endtrans %}.
+        </div>
       </div>
     {% else %}
-      <div class="alert alert-danger">{% trans %}Sorry, support is not configured yet.{% endtrans %}</div>
+      <div class="alert alert-danger">{% trans %}Sorry, support is not configured yet{% endtrans %}.</div>
     {% endif %}
   </div>
 </div>
@@ -95,6 +104,83 @@
 
 {% block script_extras %}
 <script type="text/javascript">
-  // TODO:
+  /* Submit support request and wait for result ---------------------------- */
+  $('#id_form_contact').submit(function(e) {
+    e.preventDefault()
+
+    var frm = this
+    , $frm = $(this)
+
+    /* Periodically submit requests to check status of email sending ------- */
+    function wait_async_result(task_id) {
+      var url = "{% url api-website-task-result task_id='task_id' %}".replace('task_id', task_id)
+      , interval = undefined
+
+      function stop_requester() {
+        clearInterval(interval)
+        frm.ladda.stop()
+      }
+
+      function request_sender() {
+        $.get(url
+          , function(response) {
+            if (response.status == 'success') {
+              if (response.ready) {
+                if (response.result == true) {
+                  var container = $frm.parent()
+                  $frm.remove()
+                  container.find('.alert-success').show()
+                } else {
+                  frm.show_error("{% trans %}Sorry, we failed to send an email to you. Please, try again a bit later.{% endtrans %}")
+                }
+                stop_requester()
+              }
+            } else {
+              frm.show_error(response.error.message)
+              stop_requester()
+            }
+          }
+          , "json"
+        ).fail(function() {
+          frm.show_request_execution_error()
+          stop_requester()
+        })
+      }
+
+      interval = setInterval(request_sender, 5000)
+    }
+
+    /* Send sign up request and get ID of async task ----------------------- */
+    var url = $frm.attr('action')
+
+    frm.hide_messages()
+    frm.ladda.start()
+    $.post(url
+      , $frm.serialize()
+      , function(response) {
+        if (response.status == 'success') {
+          wait_async_result(response.task_id)
+        } else {
+          if (typeof response.errors != 'undefined') {
+            for (var key in response.errors) {
+              if (response.errors.hasOwnProperty(key)) {
+                var container = $('#id_' + key).parent().parent()
+                frm.show_field_error(container, response.errors[key])
+              }
+            }
+          } else {
+            frm.show_error(response.error.message)
+          }
+          frm.ladda.stop()
+        }
+      }
+      , "json"
+    ).fail(function() {
+      frm.show_request_execution_error()
+      frm.ladda.stop()
+    })
+
+    return false
+  })
 </script>
 {% endblock %}

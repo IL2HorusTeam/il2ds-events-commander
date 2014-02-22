@@ -11,7 +11,7 @@ from django.utils.translation import ugettext as _
 LOG = logging.getLogger(__name__)
 
 
-class BaseContactForm(forms.Form):
+class ContactForm(forms.Form):
     """
     Base form for sending email messages to support team.
     """
@@ -33,7 +33,7 @@ class BaseContactForm(forms.Form):
         required=False)
 
 
-class AnonymousContactForm(BaseContactForm):
+class AnonymousContactForm(ContactForm):
     """
     Concact form for anonymous users.
     """
@@ -46,9 +46,3 @@ class AnonymousContactForm(BaseContactForm):
         label=_("Your email"),
         help_text=_("Where should we send our answer?"),
         required=True)
-
-
-class AuthenticatedContactForm(BaseContactForm):
-    """
-    Concact form for authenticated users.
-    """
