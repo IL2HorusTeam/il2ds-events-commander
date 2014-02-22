@@ -122,14 +122,11 @@ body {
 }
 
 /* Main menu --------------------------------------------------------------- */
-.dropdown-large {
-  position: static !important;
-}
 .dropdown-large > a {
   padding: 9px 15px !important;
 }
 .dropdown-menu-large {
-  margin-left: 16px;
+  width: 420px;
   margin-right: 16px;
   padding: 20px 0px;
 }
