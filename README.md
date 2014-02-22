@@ -28,7 +28,7 @@ The approach, described above, provides identical development environment for
 every developer. This environment is close to the real production server
 environment, so minimal amount of deployment issues is expected.
 
-## Creating new environment
+## Creating new local environment
 
 To start development on this project, you will need:
 
@@ -142,7 +142,7 @@ Execute next command to run commander as daemon:
 
     fab commander:run
 
-## Starting existing environment
+## Starting existing local environment
 
 To start existing provisioned environment, simply run:
 
