@@ -47,13 +47,13 @@ Web application is ran by [`Nginx`](http://wiki.nginx.org/Main) web server in
 a bunch with serveral `worker processes`. We use [uWSGI](http://uwsgi-docs.readthedocs.org/en/latest/)
 as worker. More workers - more power. One worker may be just enough for you.
 You may switch to any [other worker](http://nichol.as/benchmark-of-python-web-servers) or
-web server, but it this will not be covered here.
+web server, but this will not be covered here.
 
 Both web application and comander depend on a `database` with support of
 spatial data types, a quick `caching engine` and a background `tasks runner`.
 
 We use [PostgreSQL 9.1](http://www.postgresql.org/docs/9.1/static/intro-whatis.html)
-with [PostGIS 1.5](http://postgis.net/docs/manual-1.5/) as database, but in
+with [PostGIS 1.5](http://postgis.net/docs/manual-1.5/) as a database, but in
 general you may use any other (such as MySQL) as well. We use [Redis](http://redis.io/)
 as a caching engine and a shared storage between web application and commander.
 [Celery](http://www.celeryproject.org/) is used for running different
