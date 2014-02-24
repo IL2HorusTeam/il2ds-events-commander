@@ -22,7 +22,7 @@ except ImportError:
 try:
     from il2ec.settings.staging.private import SECRET_KEY
 except ImportError:
-    SECRET_KEY = 'AiK9ei3aisavi6woog3aini9aarei1RahJachekal4oghaifae'
+    SECRET_KEY = 'h7#gw(#))b@r8z)xcio_g*du&^pky_x0)atn&*naxf6nh0j8y#'
 try:
     from il2ec.settings.staging.private import DATABASE_CREDENTIALS
 except ImportError:
@@ -51,10 +51,6 @@ except OSError:
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-HOSTNAME = 'il2ec.staging'
-PROJECT_NAME = _("IL-2 events commander staging")
-GRAPPELLI_ADMIN_TITLE = _("{0} admin").format(PROJECT_NAME)
-
 DATABASES = {
     'default': dict(DATABASE_CREDENTIALS, **{
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
@@ -63,6 +59,10 @@ DATABASES = {
         'PORT': '', # use default
     }),
 }
+
+HOSTNAME = 'il2ec.staging'
+PROJECT_NAME = _("IL-2 events commander staging")
+GRAPPELLI_ADMIN_TITLE = _("{0} admin").format(PROJECT_NAME)
 
 #------------------------------------------------------------------------------
 # Email settings

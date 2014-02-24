@@ -127,13 +127,18 @@ Install Postgres with PostGIS, create user and database:
     sudo su - postgres
     pg_dropcluster 9.1 --stop main
     pg_createcluster --locale=en_US.UTF-8 9.1 --port=5432 --start main
-    createdb template_postgis
+
+    createdb -E UTF8 template_postgis
+    psql -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
+
     psql -q -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
     psql -q -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql
-    psql -q -d template_postgis
-    GRANT ALL ON geometry_columns TO public
-    GRANT SELECT ON spatial_ref_sys TO public
-    VACUUM FREEZE
+
+    psql -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;"
+    psql -d template_postgis -c "GRANT ALL ON geography_columns TO PUBLIC;"
+    psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
+
+    psql
     CREATE USER "YOUR_USERNAME" WITH password 'YOUR_PASSWORD' CREATEDB;
     CREATE DATABASE il2ec WITH OWNER "YOUR_USERNAME" TEMPLATE "template_postgis" ENCODING 'utf8';
     \q

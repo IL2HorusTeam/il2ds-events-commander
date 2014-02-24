@@ -30,12 +30,6 @@ except OSError:
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-HOSTNAME = 'il2ec.dev'
-PROJECT_NAME = _("YOUR PROJECT NAME")
-GRAPPELLI_ADMIN_TITLE = _("{0} admin").format(PROJECT_NAME)
-
-SECRET_KEY = 'YOUR_VERY_LONG_LONG_LONG_LONG_LONG_LONG_SECRET_KEY'
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
@@ -48,6 +42,12 @@ DATABASES = {
         'PORT': '', # use default
     }
 }
+
+HOSTNAME = 'il2ec.dev'
+PROJECT_NAME = _("YOUR PROJECT NAME")
+GRAPPELLI_ADMIN_TITLE = _("{0} admin").format(PROJECT_NAME)
+
+SECRET_KEY = 'YOUR_VERY_LONG_LONG_LONG_LONG_LONG_LONG_SECRET_KEY'
 
 #------------------------------------------------------------------------------
 # Media settings

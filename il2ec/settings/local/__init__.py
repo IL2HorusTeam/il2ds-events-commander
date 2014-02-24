@@ -42,10 +42,6 @@ except OSError:
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-HOSTNAME = 'il2ec.dev'
-PROJECT_NAME = _("Awesome IL-2 project")
-GRAPPELLI_ADMIN_TITLE = _("{0} admin").format(PROJECT_NAME)
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
@@ -56,6 +52,10 @@ DATABASES = {
         'PORT': '', # use default
     }
 }
+
+HOSTNAME = 'il2ec.dev'
+PROJECT_NAME = _("Awesome IL-2 project")
+GRAPPELLI_ADMIN_TITLE = _("{0} admin").format(PROJECT_NAME)
 
 #------------------------------------------------------------------------------
 # Media settings
