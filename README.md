@@ -3,6 +3,74 @@ IL-2 DS Events Commander
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/IL2HorusTeam/il2ds-events-commander/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
+Synopsis
+========
+
+IL-2 DS Events Commander is a software system for managing events on dedicated
+server of [IL-2 Sturmovik Forgotten Battles](http://en.wikipedia.org/wiki/IL-2_Sturmovik:_Forgotten_Battles) (IL-2 FB).
+It is written in Python language and it is free. The main purpose of this
+software is to organize different events in muptiplayer game mode and support
+new features of latest game patches.
+
+> **Note**: IL-2 FB and it's dedicated server (DS) are property of 1C and
+Ubisoft. Currently they are developed by [Daidalos Team](http://forum.1cpublishing.eu/forumdisplay.php?s=fd02a019a6ba60467820fa5c8118247d&f=202)
+and their updates are released and distributed as free patches. IL-2 Horus Team
+does not own or distribute neither IL-2 FB nor IL-2 FB DS. You need to buy IL-2 FB
+on your own to play it, however DS is distributed freely as a bunch of patches.
+
+For end-users
+=============
+
+## Project structure overview
+
+The project structure which used on development and staging platforms is
+depicted below.
+
+![Project structure](docs/images/structure.png)
+
+Here you can see the two parts of the entire system: server and client.
+
+Client part consists of an IL-2 FB `game client` and a `web browser` (note:
+Internet Explorer is not a browser). It's up to the user to get them both.
+
+Server part consists of different multiple parts. The core part includes
+`web application` and `commander`. They share same settings and sources and
+they are grouped by a rectangle on the picture.
+
+Commander communicates with `game server` (which is IL-2 FB DS itself) via
+three channels: TCP socket for managing game flow and interaction with players,
+UDP socket for getting coordinates of playesr and objects in real time and the
+last: events log reader which reads and parses mission log and takes proper
+actions.
+
+Web application is ran by [`Nginx`](http://wiki.nginx.org/Main) web server in
+a bunch with serveral `worker processes`. We use [uWSGI](http://uwsgi-docs.readthedocs.org/en/latest/)
+as worker. More workers - more power. One worker may be just enough for you.
+You may switch to any [other worker](http://nichol.as/benchmark-of-python-web-servers) or
+web server, but it this will not be covered here.
+
+Both web application and comander depend on a `database` with support of
+spatial data types, a quick `caching engine` and a background `tasks runner`.
+
+We use [PostgreSQL 9.1](http://www.postgresql.org/docs/9.1/static/intro-whatis.html)
+with [PostGIS 1.5](http://postgis.net/docs/manual-1.5/) as database, but in
+general you may use any other (such as MySQL) as well. We use [Redis](http://redis.io/)
+as a caching engine and a shared storage between web application and commander.
+[Celery](http://www.celeryproject.org/) is used for running different
+background tasks.
+
+So, the only firm project dependencies are:
+
+* Python
+* Redis
+* Celery
+* IL-2 DS
+
+Among soft dependencies we name:
+
+* PostgreSQL + PostGIS
+* Ngnix + uWSGI
+
 For developers
 ==============
 
