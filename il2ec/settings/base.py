@@ -23,16 +23,6 @@ PROJECT_DIR = os.path.dirname(os.path.realpath(project_module.__file__))
 
 PYTHON_BIN = os.path.dirname(sys.executable)
 APPS_ROOT = os.path.join(PROJECT_DIR, 'apps')
-VAR_ROOT = os.path.join('/var', 'virtualenvs', 'il2ec', 'var')
-LOG_ROOT = os.path.join(VAR_ROOT, 'log')
-
-try:
-    if not os.path.exists(VAR_ROOT):
-        os.mkdir(VAR_ROOT)
-    if not os.path.exists(LOG_ROOT):
-        os.mkdir(LOG_ROOT)
-except OSError:
-    pass
 
 LOCALE_PATHS = (
     os.path.join(PROJECT_DIR, 'locale'),
@@ -68,9 +58,6 @@ LANGUAGES_INFO = (
 LANGUAGES = tuple([(code, name) for (code, (name, native)) in LANGUAGES_INFO])
 LANGUAGE_CODE = 'en' # Main language code
 LANGUAGE_CODES = tuple([code for (code, name) in LANGUAGES])
-
-HOSTNAME = 'il2ec.dev'
-PROJECT_NAME = _("Awesome IL-2 Project")
 
 ADMINS = ()
 SUPPORTERS = ()
@@ -118,9 +105,6 @@ LOGIN_REDIRECT_URL = '/'
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/uploads/'
-
-STATIC_ROOT = os.path.join(VAR_ROOT, 'static')
-MEDIA_ROOT = os.path.join(VAR_ROOT, 'uploads')
 
 STATICFILES_DIRS = (
     os.path.join(PROJECT_DIR, 'static'),
@@ -246,7 +230,7 @@ CACHES = {
 }
 
 #------------------------------------------------------------------------------
-# Logging
+# Logging base
 #------------------------------------------------------------------------------
 
 LOGGING = {
@@ -256,16 +240,6 @@ LOGGING = {
         'logsna': {
             '()': 'logsna.Formatter',
         }
-    },
-    'handlers': {
-        'il2ec': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'maxBytes': 1024 * 1024 * 5, # 5 MiB
-            'backupCount': 20,
-            'filename': os.path.join(LOG_ROOT, 'il2ec-web.log'),
-            'formatter': 'logsna',
-        },
     },
     'loggers': {
         'django.request': {
@@ -362,7 +336,6 @@ COMPRESS_PRECOMPILERS = ()
 COMPRESS_CSS_FILTERS = ()
 
 # Grappelli ------------------------------------------------------------------
-GRAPPELLI_ADMIN_TITLE = _(u"IL-2 Events Commander")
 GRAPPELLI_INDEX_DASHBOARD = 'website.dashboard.CustomIndexDashboard'
 
 #------------------------------------------------------------------------------

@@ -71,6 +71,50 @@ Among soft dependencies we name:
 * PostgreSQL + PostGIS
 * Ngnix + uWSGI
 
+## Installation process
+
+Our goal is to make commander available both for Linux and Windows families.
+But currently we focus on Linux for development convenience. This section will
+cover installation process for Debian-based Linux distributives such as Ubuntu.
+
+Firstly, update your lists of available software:
+
+    sudo apt-get update
+
+Create postgres user:
+
+    sudo useradd postgres
+
+Install tools:
+
+    sudo apt-get install curl gcc gettext git make vim unzip wget
+
+Set your timezone (optionally):
+
+    sudo cp /usr/share/zoneinfo/Europe/Kiev /etc/localtime
+
+Install Python and create a virtual environment:
+
+    sudo apt-get install python2.7 python2.7-dev python-pip
+    sudo pip install virtualenv virtualenvwrapper
+    echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc
+    source ~/.bashrc
+    mkvirtualenv il2ec
+    workon il2ec
+
+*create project structure*
+
+*install services*
+
+*install pip dependencies*
+
+Get project sources and switch to its directory:
+
+    git clone https://github.com/IL2HorusTeam/il2ds-events-commander.git il2ec
+    cd il2ec
+
+*configure project settings*
+
 For developers
 ==============
 

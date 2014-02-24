@@ -4,6 +4,7 @@ class system::software {
             "curl",
             "gcc",
             "gettext",
+            "git",
             "make",
             "vim",
             "unzip",
