@@ -219,8 +219,41 @@ CACHES = {
 }
 
 #------------------------------------------------------------------------------
-# Logging base
+# Logging
 #------------------------------------------------------------------------------
+
+LOGGERS = {
+    'django.request': {
+        'handlers': ['il2ec'],
+        'level': 'INFO',
+        'propagate': True,
+    },
+    'auth_custom': {
+        'handlers': ['il2ec'],
+        'level': 'INFO',
+        'propagate': True,
+    },
+    'commander': {
+        'handlers': ['il2ec'],
+        'level': 'INFO',
+        'propagate': True,
+    },
+    'misc': {
+        'handlers': ['il2ec'],
+        'level': 'INFO',
+        'propagate': True,
+    },
+    'pilots': {
+        'handlers': ['il2ec'],
+        'level': 'INFO',
+        'propagate': True,
+    },
+    'website': {
+        'handlers': ['il2ec'],
+        'level': 'INFO',
+        'propagate': True,
+    },
+}
 
 LOGGING = {
     'version': 1,
@@ -229,38 +262,6 @@ LOGGING = {
         'logsna': {
             '()': 'logsna.Formatter',
         }
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['il2ec'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'auth_custom': {
-            'handlers': ['il2ec'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'commander': {
-            'handlers': ['il2ec'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'misc': {
-            'handlers': ['il2ec'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'pilots': {
-            'handlers': ['il2ec'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'website': {
-            'handlers': ['il2ec'],
-            'level': 'INFO',
-            'propagate': True,
-        },
     },
 }
 
