@@ -189,16 +189,6 @@ REDIS_PASSWORD = ''
 # Sessions / cookies
 #------------------------------------------------------------------------------
 
-from django.template.defaultfilters import slugify
-
-COOKIE_PREFIX = slugify(HOSTNAME)
-if COOKIE_PREFIX:
-    SESSION_COOKIE_NAME = '{0}-sessionid'.format(COOKIE_PREFIX)
-    CSRF_COOKIE_NAME = 'csrftoken'
-    LANGUAGE_SESSION_KEY = 'django_language'
-    LANGUAGE_COOKIE_NAME = '{0}-{1}'.format(COOKIE_PREFIX,
-                                            LANGUAGE_SESSION_KEY)
-
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_AGE = 1 * 60 * 60 # 1 hour
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
