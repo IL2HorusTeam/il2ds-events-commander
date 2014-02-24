@@ -48,3 +48,4 @@ celerybeat-schedule
 
 # Settings
 il2ec/settings/local/security.py
+il2ec/settings/prod.py

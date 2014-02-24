@@ -93,6 +93,11 @@ Set your timezone (optionally):
 
     sudo cp /usr/share/zoneinfo/Europe/Kiev /etc/localtime
 
+Get project sources and switch to its directory:
+
+    git clone https://github.com/IL2HorusTeam/il2ds-events-commander.git il2ec
+    cd il2ec
+
 Install Python and create a virtual environment:
 
     sudo apt-get install python2.7 python2.7-dev python-pip
@@ -102,18 +107,45 @@ Install Python and create a virtual environment:
     mkvirtualenv il2ec
     workon il2ec
 
-*create project structure*
+Create project structure:
 
-*install services*
+    VENV=$WORKON_HOME/il2ec
+    mkdir $VENV/var
+    mkdir $VENV/var/static
+    mkdir $VENV/var/uploads
+    mkdir $VENV/var/log
+    touch $VENV/var/log/il2ec-web.log
+    touch $VENV/var/log/il2ec-daemon.log
 
-*install pip dependencies*
+Install Redis:
 
-Get project sources and switch to its directory:
+    sudo apt-get install redis-server
 
-    git clone https://github.com/IL2HorusTeam/il2ds-events-commander.git il2ec
-    cd il2ec
+Install Postgres with PostGIS, create user and database:
+
+    sudo apt-get install postgresql-9.1 postgresql-server-dev-9.1 postgresql-9.1-postgis
+    sudo su - postgres
+    pg_dropcluster 9.1 --stop main
+    pg_createcluster --locale=en_US.UTF-8 9.1 --port=5432 --start main
+    createdb template_postgis
+    psql -q -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
+    psql -q -d template_postgis -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql
+    psql -q -d template_postgis
+    GRANT ALL ON geometry_columns TO public
+    GRANT SELECT ON spatial_ref_sys TO public
+    VACUUM FREEZE
+    CREATE USER "YOUR_USERNAME" WITH password 'YOUR_PASSWORD' CREATEDB;
+    CREATE DATABASE il2ec WITH OWNER "YOUR_USERNAME" TEMPLATE "template_postgis" ENCODING 'utf8';
+    \q
+    exit
+
+Install pip dependencies:
+
+    pip install -r requirements.pip
 
 *configure project settings*
+
+*install services*
 
 For developers
 ==============

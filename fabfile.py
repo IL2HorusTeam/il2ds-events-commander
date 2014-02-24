@@ -9,7 +9,7 @@ from fabric.contrib.console import confirm
 
 
 env.project_name = 'il2ec'
-env.repository = 'git@github.com:IL2HorusTeam/il2ds-events-commander.git'
+env.repository = 'https://github.com/IL2HorusTeam/il2ds-events-commander.git'
 env.local_branch = 'master'
 env.remote_ref = 'origin/master'
 env.requirements_file = 'requirements.pip'
