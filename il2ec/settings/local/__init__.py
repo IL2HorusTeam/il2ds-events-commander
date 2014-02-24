@@ -5,6 +5,7 @@ Settings for local development server.
 import os
 
 from il2ec.settings.base import * # pylint: disable=W0614,W0401
+from django.utils.translation import ugettext_lazy as _
 
 #------------------------------------------------------------------------------
 # Import personal data
