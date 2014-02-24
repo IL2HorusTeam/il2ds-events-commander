@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Settings for local development server.
+Example settings for production server.
 """
 import os
 
@@ -8,23 +8,11 @@ from il2ec.settings.base import * # pylint: disable=W0614,W0401
 from django.utils.translation import ugettext_lazy as _
 
 #------------------------------------------------------------------------------
-# Import personal data
-#------------------------------------------------------------------------------
-
-try:
-    from il2ec.settings.local.private import EMAIL_HOST_PASSWORD
-except ImportError:
-    EMAIL_HOST_PASSWORD = None
-try:
-    from il2ec.settings.local.private import SECRET_KEY
-except ImportError:
-    SECRET_KEY = '22mrx$5(7iik*hw!w-9x!7z78$f861**q#qv0bt7tewb1d-7+='
-
-#------------------------------------------------------------------------------
 # Calculation of directories relative to the project module location
 #------------------------------------------------------------------------------
 
-VAR_ROOT = os.path.join('/var', 'virtualenvs', 'il2ec', 'var')
+VAR_ROOT = os.path.join(
+    os.path.expanduser('~'), '.virtualenvs', 'il2ec', 'var')
 LOG_ROOT = os.path.join(VAR_ROOT, 'log')
 
 try:
@@ -39,19 +27,23 @@ except OSError:
 # Main project settings
 #------------------------------------------------------------------------------
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 HOSTNAME = 'il2ec.dev'
-PROJECT_NAME = _("Awesome IL-2 project")
+PROJECT_NAME = _("YOUR PROJECT NAME")
 GRAPPELLI_ADMIN_TITLE = _("{0} admin").format(PROJECT_NAME)
+
+SECRET_KEY = 'YOUR_VERY_LONG_LONG_LONG_LONG_LONG_LONG_SECRET_KEY'
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'il2ec',
-        'USER': 'vagrant',
-        'PASSWORD': 'qwerty',
+        'NAME': 'YOUR_DATABASE_NAME',
+
+        'USER': 'YOUR_DATABASE_USER',
+        'PASSWORD': 'YOUR_DATABASE_PASSWORD',
+
         'HOST': 'localhost',
         'PORT': '', # use default
     }
@@ -65,16 +57,18 @@ STATIC_ROOT = os.path.join(VAR_ROOT, 'static')
 MEDIA_ROOT = os.path.join(VAR_ROOT, 'uploads')
 
 #------------------------------------------------------------------------------
-# Email settings
+# Email settings (example for Gmail)
 #------------------------------------------------------------------------------
 
-EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'il2.horus.dev@gmail.com'
 EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'YOUR_ACCOUNT_NAME@gmail.com'
+EMAIL_HOST_PASSWORD = 'YOUR_GMAIL_PASSWORD'
 
 ADMINS = (
-    ("Developers", EMAIL_HOST_USER),
+    ("Ivanov", "ivanov@example.com"),
 )
 SUPPORTERS = ADMINS
 
@@ -99,7 +93,7 @@ if COOKIE_PREFIX:
 LOGGING.update({
     'handlers': {
         'il2ec': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
             'maxBytes': 1024 * 1024 * 5, # 5 MiB
             'backupCount': 20,
@@ -108,48 +102,6 @@ LOGGING.update({
         },
     },
 })
-
-#------------------------------------------------------------------------------
-# Third party app settings
-#------------------------------------------------------------------------------
-
-# Django Debug Toolbar --------------------------------------------------------
-
-if DEBUG:
-    INTERNAL_IPS = ('127.0.0.1', )
-    MIDDLEWARE_CLASSES += (
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    )
-
-    INSTALLED_APPS += (
-        'debug_toolbar',
-    )
-
-    def show_dj_toolbar_callback(*args):
-        return True
-
-    DEBUG_TOOLBAR_PATCH_SETTINGS = False
-    DEBUG_TOOLBAR_CONFIG = {
-        'INTERCEPT_REDIRECTS': False,
-        'ENABLE_STACKTRACES': True,
-        'SHOW_TOOLBAR_CALLBACK':
-            'il2ec.settings.local.show_dj_toolbar_callback',
-    }
-
-    DEBUG_TOOLBAR_PANELS = (
-        'debug_toolbar.panels.timer.TimerPanel',
-        'debug_toolbar.panels.settings.SettingsPanel',
-        'debug_toolbar.panels.headers.HeadersPanel',
-        'debug_toolbar.panels.request.RequestPanel',
-        'debug_toolbar.panels.sql.SQLPanel',
-        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-        'debug_toolbar.panels.templates.TemplatesPanel',
-        'debug_toolbar.panels.cache.CachePanel',
-        'debug_toolbar.panels.signals.SignalsPanel',
-        'debug_toolbar.panels.logging.LoggingPanel',
-        'debug_toolbar.panels.redirects.RedirectsPanel',
-        'debug_toolbar.panels.versions.VersionsPanel',
-    )
 
 #------------------------------------------------------------------------------
 # Miscellaneous project settings
@@ -165,13 +117,18 @@ IL2_CONNECTION = {
     'dl_port': 10000,
 }
 
-IL2_SERVER_PATH = os.path.join(
-    os.path.dirname(PROJECT_DIR), 'provision', 'files', 'il2ds')
+IL2_SERVER_PATH = "YOUR_IL2_SERVER_PATH"
 IL2_CONFIG_PATH = os.path.join(IL2_SERVER_PATH, 'confs.ini')
 IL2_EVENTS_LOG_PATH = os.path.join(IL2_SERVER_PATH, 'log', 'events.log')
 
+COMMANDER_API = {
+    'host': '127.0.0.1',
+    'port': 20001,
+}
 COMMANDER_PID_FILE = os.path.join(PROJECT_DIR, 'il2ec-daemon.pid')
 COMMANDER_LOG = {
     'filename': os.path.join(LOG_ROOT, 'il2ec-daemon.log'),
-    'level': 'DEBUG',
+    'level': 'ERROR',
+    'maxBytes': 1024 * 1024 * 10, # 10 MiB
+    'backupCount': 10,
 }

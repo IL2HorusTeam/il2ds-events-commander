@@ -1,10 +1,32 @@
 # -*- coding: utf-8 -*-
 """
-Example settings for production server.
+Settings for staging server.
 """
 import os
 
 from il2ec.settings.base import * # pylint: disable=W0614,W0401
+from django.utils.translation import ugettext_lazy as _
+
+#------------------------------------------------------------------------------
+# Import personal data
+#------------------------------------------------------------------------------
+
+try:
+    from il2ec.settings.staging.private import EMAIL_HOST_USER
+except ImportError:
+    EMAIL_HOST_USER = None
+try:
+    from il2ec.settings.staging.private import EMAIL_HOST_PASSWORD
+except ImportError:
+    EMAIL_HOST_PASSWORD = None
+try:
+    from il2ec.settings.staging.private import SECRET_KEY
+except ImportError:
+    SECRET_KEY = 'AiK9ei3aisavi6woog3aini9aarei1RahJachekal4oghaifae'
+try:
+    from il2ec.settings.staging.private import DATABASE_CREDENTIALS
+except ImportError:
+    DATABASE_CREDENTIALS = {}
 
 #------------------------------------------------------------------------------
 # Calculation of directories relative to the project module location
@@ -29,44 +51,29 @@ except OSError:
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-HOSTNAME = 'il2ec.dev'
-PROJECT_NAME = _("YOUR PROJECT NAME")
-GRAPPELLI_ADMIN_TITLE = _("YOUR ADMIN PANEL NAME")
-
-SECRET_KEY = 'YOUR_VERY_LONG_LONG_LONG_LONG_LONG_LONG_SECRET_KEY'
+HOSTNAME = 'il2ec.staging'
+PROJECT_NAME = _("IL-2 events commander staging")
+GRAPPELLI_ADMIN_TITLE = _("{0} admin").format(PROJECT_NAME)
 
 DATABASES = {
-    'default': {
+    'default': dict(**DATABASE_CREDENTIALS, {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'YOUR_DATABASE_NAME',
-
-        'USER': 'YOUR_DATABASE_USER',
-        'PASSWORD': 'YOUR_DATABASE_PASSWORD',
-
+        'NAME': 'il2ec',
         'HOST': 'localhost',
         'PORT': '', # use default
-    }
+    }),
 }
 
 #------------------------------------------------------------------------------
-# Media settings
+# Email settings
 #------------------------------------------------------------------------------
 
-STATIC_ROOT = os.path.join(VAR_ROOT, 'static')
-MEDIA_ROOT = os.path.join(VAR_ROOT, 'uploads')
-
-#------------------------------------------------------------------------------
-# Email settings example for Gmail
-#------------------------------------------------------------------------------
-
-EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'YOUR_ACCOUNT_NAME@gmail.com'
-EMAIL_HOST_PASSWORD = 'YOUR_GMAIL_PASSWORD'
 EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 ADMINS = (
-    ("Ivanov", "ivanov@example.com"),
+    ("Developers", EMAIL_HOST_USER),
 )
 SUPPORTERS = ADMINS
 
@@ -107,7 +114,7 @@ LOGGING.update({
 
 # Commander settitngs ---------------------------------------------------------
 IL2_VERSION = '4.12.2'
-IL2_EXTERNAL_ADDRESS = None
+IL2_EXTERNAL_ADDRESS = HOSTNAME
 
 IL2_CONNECTION = {
     'host': 'il2ds-host',

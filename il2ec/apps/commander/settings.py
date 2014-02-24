@@ -17,7 +17,8 @@ from il2ds_middleware.constants import REQUEST_TIMEOUT
 IL2_VERSION = getattr(settings, 'IL2_VERSION', '4.12.2')
 
 # External address for game clients (users) to connect to
-IL2_EXTERNAL_ADDRESS = getattr(settings, 'IL2_EXTERNAL_ADDRESS', None)
+IL2_EXTERNAL_ADDRESS = getattr(settings, 'IL2_EXTERNAL_ADDRESS',
+    settings.HOSTNAME)
 
 IL2_CONNECTION_DEFAULTS = {
     # Host name of interface for commander to connect to

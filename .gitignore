@@ -47,5 +47,5 @@ provision/files/il2ds
 celerybeat-schedule
 
 # Settings
-il2ec/settings/local/security.py
-il2ec/settings/prod.py
+il2ec/settings/*/private.py
+il2ec/settings/production.py

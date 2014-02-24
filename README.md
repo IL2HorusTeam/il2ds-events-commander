@@ -143,9 +143,48 @@ Install pip dependencies:
 
     pip install -r requirements.pip
 
-*configure project settings*
+Next step is to configure project settings. This is a really personal thing as
+it includes specifying paths to files and directories, secret keys and
+passwords, etc. To make things easier, we made a mockup for production settings
+which is called 'production.py.example' and can be found at
+'il2ec/settings/production.py.example'. THis file is based on
+'il2ec/settings/base.py' and it is splitted into logical sections.
 
-*set DJANGO_SETTINGS_MODULE*
+> **Note**: configuring project may seem a bit tricky for users not familiar
+with [Django](https://www.djangoproject.com/).
+
+So, bootstrap your production settings:
+
+    cp il2ec/settings/production.py.example il2ec/settings/production.py
+
+Now pay attention to `VAR_ROOT` variable. As you may guessed during creating
+projects structure, this variable tells where to store static files, logs and
+files uploaded by users. By default 'VAR_ROOT' points to a 'var' directory
+inside your virtualenv.
+
+Next variable is `HOSTNAME`. It is used as a prefix for cookies and usually
+contains a global address for your server, e.g. 'example.com'.
+
+Set project name in `PROJECT_NAME` variable. Note: by default this is a
+translatable variable, but you can change this.
+
+`GRAPPELLI_ADMIN_TITLE` specifies title for admin panel and by default adds
+translatable 'admin' suffix to your project name.
+
+Now it's time to set `SECRET_KEY` which is [a secret key for a particular Django installation](https://docs.djangoproject.com/en/1.6/ref/settings/#std:setting-SECRET_KEY).
+
+Go ahead and configure your `DATABASES` ([docs](https://docs.djangoproject.com/en/1.6/ref/settings/#databases)).
+Specify `NAME`, `USER` and `PASSWORD` for your Postgres database.
+
+Proceed to 'Email settings' section. It has an example for [SMTP backend](https://docs.djangoproject.com/en/1.6/topics/email/#smtp-backend)
+ for sending emails via Gmail account. You may set a number of `ADMINS` [who may receive emails](https://docs.djangoproject.com/en/1.6/ref/settings/#admins)
+ about errors and `SUPPORTERS` who may receive emails with support questions.
+
+If you wish, you may change [settings for logging](https://docs.djangoproject.com/en/1.6/topics/logging/#configuring-logging)
+handlers in `Logging` section.
+
+Now you need to set `IL2_SERVER_PATH` variable which will point to the
+directory, where your 'il2server.exe' lives.
 
 *install services*
 
@@ -208,12 +247,12 @@ Clone the whole project:
 
     git clone --recursive git@github.com:IL2HorusTeam/il2ds-events-commander.git
 
-### Setup security settings
+### Setup private settings
 
 You will need to use an existsing development email for different purposes:
 sending email confirmation requests, password resetting requests, etc. To make
-this possible, you need to copy `il2ec/settings/local/security.py.example`
-into `il2ec/settings/local/security.py` and set valid value for
+this possible, you need to copy `il2ec/settings/local/private.py.example`
+into `il2ec/settings/local/private.py` and set valid value for
 `EMAIL_HOST_PASSWORD`. Contact developers to get the real passsword value.
 
 ### Get IL-2 DS
