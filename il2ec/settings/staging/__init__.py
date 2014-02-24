@@ -56,7 +56,7 @@ PROJECT_NAME = _("IL-2 events commander staging")
 GRAPPELLI_ADMIN_TITLE = _("{0} admin").format(PROJECT_NAME)
 
 DATABASES = {
-    'default': dict(**DATABASE_CREDENTIALS, {
+    'default': dict(DATABASE_CREDENTIALS, **{
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'il2ec',
         'HOST': 'localhost',
