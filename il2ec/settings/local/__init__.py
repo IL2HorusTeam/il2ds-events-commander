@@ -99,7 +99,7 @@ if COOKIE_PREFIX:
 LOGGING.update({
     'handlers': {
         'il2ec': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'maxBytes': 1024 * 1024 * 5, # 5 MiB
             'backupCount': 20,
@@ -173,5 +173,5 @@ IL2_EVENTS_LOG_PATH = os.path.join(IL2_SERVER_PATH, 'log', 'events.log')
 COMMANDER_PID_FILE = os.path.join(PROJECT_DIR, 'il2ec-daemon.pid')
 COMMANDER_LOG = {
     'filename': os.path.join(LOG_ROOT, 'il2ec-daemon.log'),
-    'level': "DEBUG",
+    'level': 'DEBUG',
 }

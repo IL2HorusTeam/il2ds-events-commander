@@ -143,9 +143,9 @@ Install pip dependencies:
 
     pip install -r requirements.pip
 
-*set DJANGO_SETTINGS_MODULE*
-
 *configure project settings*
+
+*set DJANGO_SETTINGS_MODULE*
 
 *install services*
 
