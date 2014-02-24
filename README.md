@@ -167,6 +167,9 @@ projects structure, this variable tells where to store static files, logs and
 files uploaded by users. By default 'VAR_ROOT' points to a 'var' directory
 inside your virtualenv.
 
+Go ahead and configure your `DATABASES` ([docs](https://docs.djangoproject.com/en/1.6/ref/settings/#databases)).
+Specify `NAME`, `USER` and `PASSWORD` for your Postgres database.
+
 Next variable is `HOSTNAME`. It is used as a prefix for cookies and usually
 contains a global address for your server, e.g. 'example.com'.
 
@@ -177,9 +180,6 @@ translatable variable, but you can change this.
 translatable 'admin' suffix to your project name.
 
 Now it's time to set `SECRET_KEY` which is [a secret key for a particular Django installation](https://docs.djangoproject.com/en/1.6/ref/settings/#std:setting-SECRET_KEY).
-
-Go ahead and configure your `DATABASES` ([docs](https://docs.djangoproject.com/en/1.6/ref/settings/#databases)).
-Specify `NAME`, `USER` and `PASSWORD` for your Postgres database.
 
 Proceed to 'Email settings' section. It has an example for [SMTP backend](https://docs.djangoproject.com/en/1.6/topics/email/#smtp-backend)
  for sending emails via Gmail account. You may set a number of `ADMINS` [who may receive emails](https://docs.djangoproject.com/en/1.6/ref/settings/#admins)
