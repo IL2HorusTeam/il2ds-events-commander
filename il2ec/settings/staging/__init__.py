@@ -51,8 +51,6 @@ except OSError:
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = ['*', ]
-
 DATABASES = {
     'default': dict(DATABASE_CREDENTIALS, **{
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
@@ -63,6 +61,8 @@ DATABASES = {
 }
 
 HOSTNAME = 'il2ec.staging'
+ALLOWED_HOSTS = ['*', ]
+
 PROJECT_NAME = _("IL-2 events commander staging")
 GRAPPELLI_ADMIN_TITLE = _("{0} admin").format(PROJECT_NAME)
 
