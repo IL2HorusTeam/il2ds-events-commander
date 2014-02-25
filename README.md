@@ -191,9 +191,34 @@ handlers in `Logging` section.
 Now you need to set `IL2_SERVER_PATH` variable which will point to the
 **directory**, where your 'il2server.exe' lives.
 
-Install supervisor:
+Install [supervisor](http://supervisord.org/) and nginx:
 
-// TODO:
+    sudo apt-get install supervisor nginx
+
+Install uWSGI and Celery:
+
+    pip install uwsgi celery
+
+Now you need to create uWSGI configuration file in '/etc/uwsgi/conf.d/'
+directory. You may use our development file as example:
+
+    sudo mkdir -p /etc/uwsgi/conf.d/
+    sudo cp provision/files/conf/uwsgi/il2ec-local.ini /etc/uwsgi/conf.d/il2ec-production.ini
+
+> **Note**: do not forget to edit configuration file for your needs! Specify
+path to your `virtualenv`, `chdir` (path to sources), number of `workers`,
+`uid` (user identifier) and `gid` (group identifier).
+
+After that it's time to define a supervisor service for running uwsgi. Again,
+you can use our example file to bootstrap:
+
+    sudo mkdir /var/log/supervisor/uwsgi
+    sudo cp provision/files/conf/supervisor/uwsgi.ini /etc/supervisor/uwsgi.ini
+
+> **Note**: change path to **uwsgi** and to its **ini-config** file in
+`command` line. Also, change name of **DJANGO_SETTINGS_MODULE** in
+`environment` line (e.g., 'il2ec.settings.production').
+
 
 For developers
 ==============
