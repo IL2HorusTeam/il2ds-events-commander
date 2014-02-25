@@ -189,9 +189,11 @@ If you wish, you may change [settings for logging](https://docs.djangoproject.co
 handlers in `Logging` section.
 
 Now you need to set `IL2_SERVER_PATH` variable which will point to the
-directory, where your 'il2server.exe' lives.
+**directory**, where your 'il2server.exe' lives.
 
-*install services*
+Install supervisor:
+
+// TODO:
 
 For developers
 ==============

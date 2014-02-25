@@ -65,6 +65,13 @@ PROJECT_NAME = _("IL-2 events commander staging")
 GRAPPELLI_ADMIN_TITLE = _("{0} admin").format(PROJECT_NAME)
 
 #------------------------------------------------------------------------------
+# Media settings
+#------------------------------------------------------------------------------
+
+STATIC_ROOT = os.path.join(VAR_ROOT, 'static')
+MEDIA_ROOT = os.path.join(VAR_ROOT, 'uploads')
+
+#------------------------------------------------------------------------------
 # Email settings
 #------------------------------------------------------------------------------
 
