@@ -204,6 +204,7 @@ directory. You may use our development file as example:
 
     sudo mkdir -p /etc/uwsgi/conf.d/
     sudo cp provision/files/conf/uwsgi/il2ec-local.ini /etc/uwsgi/conf.d/il2ec-production.ini
+    sudo touch /tmp/uwsgi-touch-reload-il2ec
 
 > **Note**: do not forget to edit configuration file for your needs! Specify
 path to your `virtualenv`, `chdir` (path to sources), number of `workers`,
@@ -213,12 +214,11 @@ After that it's time to define a supervisor service for running uwsgi. Again,
 you can use our example file to bootstrap:
 
     sudo mkdir /var/log/supervisor/uwsgi
-    sudo cp provision/files/conf/supervisor/uwsgi.ini /etc/supervisor/uwsgi.ini
+    sudo cp provision/files/conf/supervisor/uwsgi.conf /etc/supervisor/conf.d/uwsgi.conf
 
-> **Note**: change path to **uwsgi** and to its **ini-config** file in
-`command` line. Also, change name of **DJANGO_SETTINGS_MODULE** in
-`environment` line (e.g., 'il2ec.settings.production').
-
+> **Note**: change path to **uwsgi** executable file and to its **ini-config**
+file (il2ec-production.ini) in `command` line. Also, change name of
+**DJANGO_SETTINGS_MODULE** in `environment` line (e.g., 'il2ec.settings.production').
 
 For developers
 ==============
