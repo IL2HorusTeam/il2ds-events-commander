@@ -51,6 +51,8 @@ except OSError:
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
+ALLOWED_HOSTS = ['*', ]
+
 DATABASES = {
     'default': dict(DATABASE_CREDENTIALS, **{
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
