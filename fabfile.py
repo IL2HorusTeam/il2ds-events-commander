@@ -62,7 +62,7 @@ def vagrant():
     env.system_users = {server: env.user}
     env.virtualenv_dir = '/var/virtualenvs/{project_name}'.format(**env)
     env.project_dir = '{virtualenv_dir}/src/{project_name}'.format(**env)
-    env.project_conf = '{project_name}.settings.local'.format(**env)
+    env.project_conf = '{project_name}.settings.vagrant'.format(**env)
     env.key_filename = '~/.vagrant.d/insecure_private_key'
 
     log_base = '{virtualenv_dir}/var/log/{project_name}'.format(**env)

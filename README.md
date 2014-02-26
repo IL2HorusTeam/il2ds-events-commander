@@ -203,7 +203,7 @@ Now you need to create uWSGI configuration file in '/etc/uwsgi/conf.d/'
 directory. You may use our development file as example:
 
     sudo mkdir -p /etc/uwsgi/conf.d/
-    sudo cp provision/files/conf/uwsgi/il2ec-local.ini /etc/uwsgi/conf.d/il2ec-production.ini
+    sudo cp provision/files/conf/uwsgi/il2ec-vagrant.ini /etc/uwsgi/conf.d/il2ec-production.ini
     sudo touch /tmp/uwsgi-touch-reload-il2ec
 
 > **Note**: do not forget to edit configuration file for your needs! Specify

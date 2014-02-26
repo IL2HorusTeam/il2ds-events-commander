@@ -9,10 +9,10 @@ class application (
 ){
     $virtualenv    = "${virtualenvs}/${project_name}"
     $project_base  = "${virtualenv}/src/${project_name}"
-    $django_config = "${project_name}.settings.local"
-    $uwsgi_config  = "${project_name}-local.ini"
-    $nginx_config  = "${project_name}-local.conf"
-    $nginx_certs   = "certificate-local"
+    $django_config = "${project_name}.settings.vagrant"
+    $uwsgi_config  = "${project_name}-vagrant.ini"
+    $nginx_config  = "${project_name}-vagrant.conf"
+    $nginx_certs   = "certificate-dev"
 
     # Ensure given users and groups exist -------------------------------------
     group { $group:
