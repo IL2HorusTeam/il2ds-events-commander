@@ -48,4 +48,5 @@ celerybeat-schedule
 
 # Settings
 *private.py
-il2ec/settings/production.py
+il2ec/settings/components/production/paths.py
+il2ec/settings/components/production/base.py

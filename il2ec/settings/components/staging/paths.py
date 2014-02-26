@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Path settings for local environment.
+Path settings for staging environment.
 """
 import os
 
 
-VAR_ROOT = os.path.join('/var', 'virtualenvs', 'il2ec', 'var')
+VAR_ROOT = os.path.join(
+    os.path.expanduser('~'), '.virtualenvs', 'il2ec', 'var')
 LOG_ROOT = os.path.join(VAR_ROOT, 'log')
 
 try:

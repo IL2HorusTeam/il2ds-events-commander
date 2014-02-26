@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Example private settings for local development platform.
+Example of private settings for local development platform.
 
 Use this file as a base for your local development private settings and copy
 it to il2ec/settings/components/vagrant/private.py.

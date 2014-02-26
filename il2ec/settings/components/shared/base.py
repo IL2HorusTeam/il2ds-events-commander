@@ -342,9 +342,12 @@ IL2_CONNECTION = {
     'dl_port': 10000,
 }
 
+COMMANDER_PID_FILE = os.path.join(PROJECT_DIR, 'il2ec-daemon.pid')
 COMMANDER_API = {
     'host': '127.0.0.1',
     'port': 20001,
 }
-
-COMMANDER_PID_FILE = os.path.join(PROJECT_DIR, 'il2ec-daemon.pid')
+COMMANDER_LOG = {
+    'filename': os.path.join(LOG_ROOT, 'il2ec-daemon.log'),
+    'level': "DEBUG",
+}

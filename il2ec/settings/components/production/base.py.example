@@ -1,0 +1,64 @@
+# -*- coding: utf-8 -*-
+"""
+Base settings for production environment.
+"""
+import os
+
+from django.utils.translation import ugettext_lazy as _
+
+#------------------------------------------------------------------------------
+# Generic project settings
+#------------------------------------------------------------------------------
+
+HOSTNAME = 'il2.project.example.com'
+ALLOWED_HOSTS = [HOSTNAME, 'localhost', '127.0.0.1', ]
+
+PROJECT_NAME = _("IL-2 example project")
+SECRET_KEY = '&0y*ng6_ypl9%e9by%ey2+)^l1ntv7!p8v@4f9$$jpwb1nhpdm'
+
+ADMINS = (
+    ("Jack", "jack@example.com"),
+)
+SUPPORTERS = (
+    ("Jill", "jill@example.com"),
+)
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'il2ec',
+        'USER': 'db_user',               # redefine later
+        'PASSWORD': 'db_user_password',  # redefine later
+        'HOST': 'localhost',
+        'PORT': '',                      # use default
+    }
+}
+
+LOGGING['handlers']['il2ec']['level'] = 'ERROR'
+
+#------------------------------------------------------------------------------
+# Email settings (example for Gmail)
+#------------------------------------------------------------------------------
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'gmail_user@gmail.com'
+EMAIL_HOST_PASSWORD = 'gmail_user_password'
+EMAIL_PORT = 587
+
+#------------------------------------------------------------------------------
+# Commander
+#------------------------------------------------------------------------------
+
+IL2_CONNECTION = dict(IL2_CONNECTION, **{
+    'host': 'your_local_address',
+})
+
+IL2_SERVER_PATH = 'path_to_server_directory'
+IL2_CONFIG_PATH = os.path.join(IL2_SERVER_PATH, 'confs.ini')
+IL2_EVENTS_LOG_PATH = os.path.join(IL2_SERVER_PATH, 'log', 'events.log')
+
+COMMANDER_LOG = {
+    'filename': os.path.join(LOG_ROOT, 'il2ec-daemon.log'),
+    'level': 'ERROR',
+}
