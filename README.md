@@ -202,11 +202,14 @@ Install uWSGI and Celery:
 
     pip install uwsgi celery
 
-Now you need to create uWSGI configuration file in '/etc/uwsgi/conf.d/'
-directory. You may use our development file as example:
+Now you need to create configuration files. You can use
+[some examples](https://gist.github.com/oblalex/9250092).
+
+Firstly, create uWSGI configuration file in '/etc/uwsgi/conf.d/'
+directory. You may use our staging file as example:
 
     sudo mkdir -p /etc/uwsgi/conf.d/
-    sudo cp provision/files/conf/uwsgi/il2ec-vagrant.ini /etc/uwsgi/conf.d/il2ec-production.ini
+    wget https://gist.githubusercontent.com/oblalex/9250092/raw/387320c1b7c338c342994e58db2650a73463ee30/il2ec-staging.ini -O /etc/uwsgi/conf.d/il2ec-production.ini
     sudo touch /tmp/uwsgi-touch-reload-il2ec
 
 > **Note**: do not forget to edit configuration file for your needs! Specify
@@ -219,11 +222,21 @@ After that it's time to define a supervisor service for running uwsgi. Again,
 you can use our example file to bootstrap:
 
     sudo mkdir /var/log/supervisor/uwsgi
-    sudo cp provision/files/conf/supervisor/uwsgi.conf /etc/supervisor/conf.d/uwsgi.conf
+    wget https://gist.githubusercontent.com/oblalex/9250092/raw/54f48dedec503a20d8eb7fd19fae7c830b7e9178/uwsgi.conf -O /etc/supervisor/conf.d/uwsgi.conf
 
 > **Note**: change path to **uwsgi** executable file and to its **ini-config**
 file (il2ec-production.ini) in `command` line. Also, change name of
 **DJANGO_SETTINGS_MODULE** in `environment` line (e.g., 'il2ec.settings.production').
+
+Create an NGINX config file for your domain to serve the web application. You
+can follow [this tutorial](https://liangsun.org/posts/django-plus-uwsgi-plus-nginx/)
+**or** use our example config files:
+
+    wget https://gist.githubusercontent.com/oblalex/9250092/raw/30f6601aea9ba59ca3a85153b232e626ebe60cd2/nginx.conf -O /etc/nginx/nginx.conf
+    wget https://gist.githubusercontent.com/oblalex/9250092/raw/0fa36fee9ee476ad5697099b30e86df6ecf00f9c/il2ec.conf -O /etc/nginx/conf.d/il2ec.conf
+
+Then change paths to `uploads`, `static`, `favicon.ico` and `access_log` in
+your `il2ec.conf`.
 
 For developers
 ==============
