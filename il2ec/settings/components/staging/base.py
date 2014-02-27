@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 #------------------------------------------------------------------------------
 
 HOSTNAME = 'il2ec-staging'
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*', ]
 
 PROJECT_NAME = _("Awesome IL-2 events")
 SECRET_KEY = 'h7#gw(#))b@r8z)xcio_g*du&^pky_x0)atn&*naxf6nh0j8y#'
