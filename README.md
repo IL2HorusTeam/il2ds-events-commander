@@ -151,42 +151,45 @@ Install pip dependencies:
 Next step is to configure project settings. This is a really personal thing as
 it includes specifying paths to files and directories, secret keys and
 passwords, etc. To make things easier, we made a mockup for production settings
-which is called 'production.py.example' and can be found at
-'il2ec/settings/production.py.example'. THis file is based on
-'il2ec/settings/base.py' and it is splitted into logical sections.
+which is called 'production.py' and can be found at
+'il2ec/settings/production.py'. This file includes components which are shared
+by all platforms and optional production componens, which you can redefine.
 
 > **Note**: configuring project may seem a bit tricky for users not familiar
 with [Django](https://www.djangoproject.com/).
 
 So, bootstrap your production settings:
 
-    cp il2ec/settings/production.py.example il2ec/settings/production.py
+    cd il2ec/settings/components/production
+    cp paths.py.example paths.py
+    cp base.py.example base.py
+    cd -
 
-Now pay attention to `VAR_ROOT` variable. As you may guessed during creating
-projects structure, this variable tells where to store static files, logs and
-files uploaded by users. By default 'VAR_ROOT' points to a 'var' directory
-inside your virtualenv.
+In `paths.py` you can define your own `VAR_ROOT` and `LOG_ROOT` variables.
+'VAR_ROOT' tells where your static files fill be stored and where user files
+will be uploaded. 'LOG_ROOT' tells where logs of web application and commander
+will be placed.
 
-Go ahead and configure your `DATABASES` ([docs](https://docs.djangoproject.com/en/1.6/ref/settings/#databases)).
-Specify `NAME`, `USER` and `PASSWORD` for your Postgres database.
+In `base.py` you can redefine any [base settings](il2ec/settings/components/shared/base.py)
+and define your own [Django settings](https://docs.djangoproject.com/en/1.6/ref/settings/).
 
-Next variable is `HOSTNAME`. It is used as a prefix for cookies and usually
-contains a global address for your server, e.g. 'example.com'.
+Set your `HOSTNAME`, `PROJECT_NAME` and `SECRET_KEY`. You may generate your own
+secret key by running:
 
-Set project name in `PROJECT_NAME` variable. Note: by default this is a
-translatable variable, but you can change this.
+    python manage.py generate_secret_key
 
-`GRAPPELLI_ADMIN_TITLE` specifies title for admin panel and by default adds
-translatable 'admin' suffix to your project name.
+You may define `ADMINS` and `SUPPORTERS`, who will receive emails with error
+reports and emails with support requests.
 
-Now it's time to set `SECRET_KEY` which is [a secret key for a particular Django installation](https://docs.djangoproject.com/en/1.6/ref/settings/#std:setting-SECRET_KEY).
+Now you need to configure `DATABASES` ([docs](https://docs.djangoproject.com/en/1.6/ref/settings/#databases)).
+There is an example for Postgres+PostGIS and you may just set your DB `NAME`,
+`USER` name, and user `PASSWORD`.
 
 Proceed to 'Email settings' section. It has an example for [SMTP backend](https://docs.djangoproject.com/en/1.6/topics/email/#smtp-backend)
- for sending emails via Gmail account. You may set a number of `ADMINS` [who may receive emails](https://docs.djangoproject.com/en/1.6/ref/settings/#admins)
- about errors and `SUPPORTERS` who may receive emails with support questions.
+for sending emails via Gmail account. You need to specify your onw settings.
 
-If you wish, you may change [settings for logging](https://docs.djangoproject.com/en/1.6/topics/logging/#configuring-logging)
-handlers in `Logging` section.
+Set your local `host` name for `IL2_CONNECTION`. This will tell commander the
+ander of your network interface used by IL-2 DS.
 
 Now you need to set `IL2_SERVER_PATH` variable which will point to the
 **directory**, where your 'il2server.exe' lives.
@@ -208,7 +211,9 @@ directory. You may use our development file as example:
 
 > **Note**: do not forget to edit configuration file for your needs! Specify
 path to your `virtualenv`, `chdir` (path to sources), number of `workers`,
-`uid` (user identifier) and `gid` (group identifier).
+`uid` (user identifier) and `gid` (group identifier). Refer to
+[the documentation](http://uwsgi-docs.readthedocs.org/en/latest/Options.html)
+to see other available options.
 
 After that it's time to define a supervisor service for running uwsgi. Again,
 you can use our example file to bootstrap:
