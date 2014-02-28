@@ -6,7 +6,13 @@ from django.conf.urls.static import static
 
 from django.contrib import admin
 
+from website.views import PageNotFoundView, ServerErrorView
+
+
 admin.autodiscover()
+
+handler404 = PageNotFoundView.as_view()
+handler500 = ServerErrorView.as_view()
 
 urlpatterns = patterns('',
     url(r'^i18n/', include('django.conf.urls.i18n')),

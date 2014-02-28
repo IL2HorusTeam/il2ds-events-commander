@@ -12,7 +12,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 HOSTNAME = 'il2ec-dev'
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*', ]
 
 PROJECT_NAME = _("Awesome IL-2 events")
 SECRET_KEY = '22mrx$5(7iik*hw!w-9x!7z78$f861**q#qv0bt7tewb1d-7+='

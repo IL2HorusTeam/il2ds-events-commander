@@ -49,6 +49,30 @@ class IndexView(BaseView):
     template_name = "website/pages/index.html"
 
 
+class PageNotFoundView(BaseView):
+    """
+    View for not existing page.
+    """
+    template_name = "404.html"
+
+    def get(self, request, *args, **kwargs):
+        response = super(PageNotFoundView, self).get(request, *args, **kwargs)
+        response.status_code = 404
+        return response
+
+
+class ServerErrorView(BaseView):
+    """
+    View for reporting about internal server error.
+    """
+    template_name = "500.html"
+
+    def get(self, request, *args, **kwargs):
+        response = super(ServerErrorView, self).get(request, *args, **kwargs)
+        response.status_code = 500
+        return response
+
+
 @ajax_api(method='GET')
 def api_task_result(request, task_id):
     """
