@@ -248,18 +248,21 @@ Get Celery configuration example:
 
     sudo wget https://gist.githubusercontent.com/oblalex/9250092/raw/e3b4169c3d1b5bcf5b44510794204341df05a218/celery-defaults -O /etc/default/celeryd
 
+Enable Celery to run at start up:
+
+    sudo chmod +x /etc/init.d/celeryd
+    sudo chown root:root /etc/init.d/celeryd
+
+    sudo update-rc.d celeryd defaults
+    sudo update-rc.d celeryd enable
+
 Change `ENV_PYTHON`, `CELERYD_CHDIR`, `CELERYD_USER`, `CELERYD_GROUP` and
 `DJANGO_SETTINGS_MODULE` for your needs.
 
 ## Starting system
 
-DB, supervisor and Nginix are start automatically when the system boots. You
-just need to restart uWSGI and start Celery:
-
-    sudo touch /tmp/uwsgi-touch-reload-il2ec
-    sudo /etc/init.d/celeryd start
-
-Then start your IL2 DS. To start commander, run:
+DB, uWSGI and Nginix will start automatically when the system boots. You just
+need to start your IL2 DS. To start commander, run:
 
     python manage.py run_commander
 
@@ -414,7 +417,10 @@ To start existing provisioned environment, simply run:
 Staging platform is a remote machine, where the project runs on the real
 hardware.
 
-Create `il2ec-dev` user and `il2ec-dev` group on your staging machine.
+Create `il2ec-dev` user and `il2ec-dev` group on your staging machine. To allow
+user to use 'sudo' without password:
+
+    sudo bash -c 'echo "il2ec-dev ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/il2ec'
 
 Install SSH server:
 
