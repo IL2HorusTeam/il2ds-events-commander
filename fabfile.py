@@ -7,6 +7,9 @@ from fabric.api import (task, env, run, local, roles, cd, execute, hide, puts,
     settings, sudo, )
 from fabric.contrib.console import confirm
 
+#------------------------------------------------------------------------------
+# Common settings
+#------------------------------------------------------------------------------
 
 env.project_name = 'il2ec'
 env.repository = 'https://github.com/IL2HorusTeam/il2ds-events-commander.git'
@@ -25,26 +28,34 @@ env.logs = {
     'daemon': None,
 }
 
-
 #------------------------------------------------------------------------------
-# Tasks which set up deployment environments
+# Tasks which set up deployment platforms
 #------------------------------------------------------------------------------
 
-# @task
-# def staging():
-#     """
-#     Use the staging deployment environment.
-#     """
-#     server = 'il2ec-staging'
-#     env.roledefs = {
-#         'commander': [server],
-#         'db': [server],
-#         'web': [server],
-#     }
-#     env.system_users = {server: 'www-data'}
-#     env.virtualenv_dir = '/srv/www/{project_name}'.format(**env)
-#     env.project_dir = '{virtualenv_dir}/src/{project_name}'.format(**env)
-#     env.project_conf = '{project_name}.settings.local'.format(**env)
+@task
+def staging():
+    """
+    Use the staging deployment environment.
+    """
+    server = 'il2ec-staging'
+    env.roledefs = {
+        'commander': [server],
+        'db': [server],
+        'web': [server],
+    }
+    env.user = 'il2ec-dev'
+    env.system_users = {server: env.user}
+    env.virtualenv_dir = \
+        '/home/{user}/.virtualenvs/{project_name}'.format(**env)
+    env.project_dir = '/home/{user}/projects/{project_name}'.format(**env)
+    env.project_conf = '{project_name}.settings.staging'.format(**env)
+    env.key_filename = 'ssh/staging_key'
+
+    log_base = '{virtualenv_dir}/var/log/{project_name}'.format(**env)
+    env.logs.update({
+        'web': '{0}-web.log'.format(log_base),
+        'daemon': '{0}-daemon.log'.format(log_base),
+    })
 
 
 @task
@@ -71,48 +82,9 @@ def vagrant():
         'daemon': '{0}-daemon.log'.format(log_base),
     })
 
-
-# Set the default environment.
-vagrant()
-
-
 #------------------------------------------------------------------------------
 # Publishing tasks
 #------------------------------------------------------------------------------
-
-@task
-@roles('web', 'db')
-def push():
-    """
-    Push branch to the repository.
-    """
-    remote, dest_branch = env.remote_ref.split('/', 1)
-    local('git push {remote} {local_branch}:{dest_branch}'.format(
-        remote=remote, dest_branch=dest_branch, **env))
-
-
-@task
-def deploy(verbosity='normal'):
-    """
-    Full server deploy.
-
-    Updates the repository (server-side), synchronizes the database, collects
-    static files and then restarts the web service.
-    """
-    if verbosity == 'noisy':
-        hide_args = []
-    else:
-        hide_args = ['running', 'stdout']
-    with hide(*hide_args):
-        puts('Updating repository...')
-        execute(update)
-        puts('Collecting static files...')
-        execute(collectstatic)
-        puts('Synchronizing database...')
-        execute(syncdb)
-        puts('Restarting web server...')
-        execute(restart)
-
 
 @task
 @roles('web', 'db')
@@ -148,6 +120,27 @@ def update(action='check'):
         # each role (since this task gets run per role).
         requirements()
 
+@task
+def reset(verbosity='normal'):
+    """
+    Resets server.
+
+    Updates the repository (server-side), synchronizes the database, collects
+    static files and then restarts the web service.
+    """
+    if verbosity == 'noisy':
+        hide_args = []
+    else:
+        hide_args = ['running', 'stdout']
+    with hide(*hide_args):
+        puts('Updating repository...')
+        execute(update)
+        puts('Collecting static files...')
+        execute(collectstatic)
+        puts('Synchronizing database...')
+        execute(syncdb)
+        puts('Restarting web server...')
+        execute(restart)
 
 #------------------------------------------------------------------------------
 # Actual tasks
@@ -356,7 +349,6 @@ def lint():
             run("{virtualenv_dir}/bin/pylint --rcfile=.pylintrc {project_name}/; echo".format(
                 **env))
 
-
 #------------------------------------------------------------------------------
 # Helper functions
 #------------------------------------------------------------------------------
@@ -403,3 +395,9 @@ def fix_permissions(path='.'):
             run('chgrp -R {0} -- {1}'.format(system_user, path))
         else:
             run('chmod -R go= -- {0}'.format(path))
+
+#------------------------------------------------------------------------------
+# Set the default environment.
+#------------------------------------------------------------------------------
+
+vagrant()

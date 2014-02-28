@@ -408,3 +408,39 @@ To start existing provisioned environment, simply run:
 
     vagrant up
     fab reload_all
+
+## Configuring staging environment
+
+Staging platform is a remote machine, where the project runs on the real
+hardware.
+
+Create `il2ec-dev` user and `il2ec-dev` group on your staging machine.
+
+Install SSH server:
+
+    sudo apt-get install openssh-server
+
+Now, follow installation process guide for end-users. Remember, your settings
+name is `staging`.
+
+After that you can come back to your local machine.
+
+To access remote machine without any authentication pain, you need to create an
+SSH key:
+
+    ssh-keygen -t rsa -b 4096
+
+Enter `./ssh/staging_key` as a file name, and then keep hitting return
+without input for passwords. Now, append the contents of local
+`./ssh/staging_key.pub` file to `~/.ssh/authorized_keys` on the remote machine.
+
+Add `il2ec-staging` address to `/etc/hosts` on your local machine.
+
+To totally reset project on remote machine with DB flush, run:
+
+    fab staging reset
+
+To update project on remote machine, run:
+
+    fab staging update
+

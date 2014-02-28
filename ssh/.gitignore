@@ -1,0 +1,4 @@
+# Ignore SSH keys
+
+staging_key
+staging_key.pub
