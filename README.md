@@ -264,7 +264,8 @@ Change `ENV_PYTHON`, `CELERYD_CHDIR`, `CELERYD_USER`, `CELERYD_GROUP` and
 DB, uWSGI and Nginix will start automatically when the system boots. You just
 need to start your IL2 DS. To start commander, run:
 
-    python manage.py run_commander
+    workon il2ec
+    python manage.py run_commander --settings=il2ec.settings.production
 
 For developers
 ==============
