@@ -53,9 +53,13 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
               task, so the ID of task may get change after save.
         """
         try:
-            return self.get(email=email)
+            request = self.get(email=email)
         except self.model.DoesNotExist:
             pass
+        else:
+            request.base_url = base_url
+            request.save()
+            return request
 
         language = language or settings.LANGUAGE_CODE
         result = self.model(email=email, language=language, base_url=base_url)
