@@ -259,6 +259,11 @@ Enable Celery to run at start up:
 Change `ENV_PYTHON`, `CELERYD_CHDIR`, `CELERYD_USER`, `CELERYD_GROUP` and
 `DJANGO_SETTINGS_MODULE` for your needs.
 
+Finally, init your system:
+
+    python manage.py syncdb --migrate --settings=il2ec.settings.production
+    python manage.py collectstatic --settings=il2ec.settings.production
+
 ## Starting system
 
 DB, uWSGI and Nginix will start automatically when the system boots. You just
