@@ -30,4 +30,8 @@ def current_path(request):
     Get path to current page without leading language code.
     """
     full_path = request.get_full_path()
-    return {'CURRENT_PATH': full_path[full_path.index('/', 1):]}
+    try:
+        path = full_path[full_path.index('/', 1):]
+    except ValueError:
+        path = full_path
+    return {'CURRENT_PATH': path}
