@@ -209,7 +209,7 @@ Firstly, create uWSGI configuration file in '/etc/uwsgi/conf.d/'
 directory. You may use our staging file as example:
 
     sudo mkdir -p /etc/uwsgi/conf.d/
-    wget https://gist.githubusercontent.com/oblalex/9250092/raw/387320c1b7c338c342994e58db2650a73463ee30/il2ec-staging.ini -O /etc/uwsgi/conf.d/il2ec-production.ini
+    sudo wget https://gist.githubusercontent.com/oblalex/9250092/raw/387320c1b7c338c342994e58db2650a73463ee30/il2ec-staging.ini -O /etc/uwsgi/conf.d/il2ec-production.ini
     sudo touch /tmp/uwsgi-touch-reload-il2ec
 
 > **Note**: do not forget to edit configuration file for your needs! Specify
@@ -222,7 +222,7 @@ After that it's time to define a supervisor service for running uwsgi. Again,
 you can use our example file to bootstrap:
 
     sudo mkdir /var/log/supervisor/uwsgi
-    wget https://gist.githubusercontent.com/oblalex/9250092/raw/54f48dedec503a20d8eb7fd19fae7c830b7e9178/uwsgi.conf -O /etc/supervisor/conf.d/uwsgi.conf
+    sudo wget https://gist.githubusercontent.com/oblalex/9250092/raw/54f48dedec503a20d8eb7fd19fae7c830b7e9178/uwsgi.conf -O /etc/supervisor/conf.d/uwsgi.conf
 
 > **Note**: change path to **uwsgi** executable file and to its **ini-config**
 file (il2ec-production.ini) in `command` line. Also, change name of
@@ -232,11 +232,36 @@ Create an NGINX config file for your domain to serve the web application. You
 can follow [this tutorial](https://liangsun.org/posts/django-plus-uwsgi-plus-nginx/)
 **or** use our example config files:
 
-    wget https://gist.githubusercontent.com/oblalex/9250092/raw/30f6601aea9ba59ca3a85153b232e626ebe60cd2/nginx.conf -O /etc/nginx/nginx.conf
-    wget https://gist.githubusercontent.com/oblalex/9250092/raw/0fa36fee9ee476ad5697099b30e86df6ecf00f9c/il2ec.conf -O /etc/nginx/conf.d/il2ec.conf
+    sudo wget https://gist.githubusercontent.com/oblalex/9250092/raw/30f6601aea9ba59ca3a85153b232e626ebe60cd2/nginx.conf -O /etc/nginx/nginx.conf
+    sudo wget https://gist.githubusercontent.com/oblalex/9250092/raw/0fa36fee9ee476ad5697099b30e86df6ecf00f9c/il2ec.conf -O /etc/nginx/conf.d/il2ec.conf
 
 Then change paths to `uploads`, `static`, `favicon.ico` and `access_log` in
 your `il2ec.conf`.
+
+Create a script for running Celery (you do not have to change it):
+
+    sudo mkdir /var/log/celery
+    sudo mkdir /var/run/celery
+    sudo wget https://gist.githubusercontent.com/oblalex/9250092/raw/3734861ca1c0ce06e6b2d49a7510b66def1d794f/celeryd -O /etc/init.d/celeryd
+
+Get Celery configuration example:
+
+    sudo wget https://gist.githubusercontent.com/oblalex/9250092/raw/e3b4169c3d1b5bcf5b44510794204341df05a218/celery-defaults -O /etc/default/celeryd
+
+Change `ENV_PYTHON`, `CELERYD_CHDIR`, `CELERYD_USER`, `CELERYD_GROUP` and
+`DJANGO_SETTINGS_MODULE` for your needs.
+
+## Starting system
+
+DB, supervisor and Nginix are start automatically when the system boots. You
+just need to restart uWSGI and start Celery:
+
+    sudo touch /tmp/uwsgi-touch-reload-il2ec
+    sudo /etc/init.d/celeryd start
+
+Then start your IL2 DS. To start commander, run:
+
+    python manage.py run_commander
 
 For developers
 ==============
@@ -314,7 +339,7 @@ not mind if you have no local copy of IL-2 DS: it will be obtained during
 provisioning and placed to the directory as mentioned just above.
 
 > **Note**: `confs.ini`, `gc.cmd` and `server.cmd` will be changed during
-development. Their content will be taken from `provision/files/conf/l2dsd`.
+development. Their content will be taken from `provision/files/conf/il2ds`.
 Place all your custom server commands to `user.cmd` inside server root
 directory.
 
