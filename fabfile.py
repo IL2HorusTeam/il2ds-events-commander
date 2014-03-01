@@ -32,7 +32,7 @@ def staging():
     """
     Use the staging deployment environment.
     """
-    server = 'il2ec-staging'
+    server = 'il2events.servegame.com'
     env.roledefs = {
         'commander': [server],
         'db': [server],
