@@ -15,6 +15,7 @@ include(
     'components/shared/base.py',
     optional('components/production/base.py'),
 
+    'components/shared/sessions.py',
     'components/shared/admin.py',
 
     scope=locals()

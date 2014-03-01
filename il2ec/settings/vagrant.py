@@ -14,8 +14,10 @@ include(
 
     'components/shared/base.py',
     'components/vagrant/base.py',
+
     optional('components/vagrant/private.py'),
 
+    'components/shared/sessions.py',
     'components/shared/admin.py',
 
     scope=locals()

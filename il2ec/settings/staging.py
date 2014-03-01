@@ -14,8 +14,10 @@ include(
 
     'components/shared/base.py',
     'components/staging/base.py',
+
     optional('components/staging/private.py'),
 
+    'components/shared/sessions.py',
     'components/shared/admin.py',
 
     scope=locals()
