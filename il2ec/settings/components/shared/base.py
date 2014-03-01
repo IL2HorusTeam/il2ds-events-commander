@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'auth_custom',
     'commander',
     'misc',
+    'pilots',
     'website',
 )
 
