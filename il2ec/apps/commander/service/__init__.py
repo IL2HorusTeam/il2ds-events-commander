@@ -67,17 +67,17 @@ class CommanderService(MultiService, CommanderServiceMixin):
         self.shared_storage = get_storage()
 
         # Init pilots service
-        from commander.service.pilots import PilotService
+        from commander.service.pilot import PilotService
         pilots = PilotService()
         pilots.setServiceParent(self)
 
         # Init objects service
-        from commander.service.objects import ObjectsService
-        objects = ObjectsService()
+        from commander.service.game_object import GameObjectService
+        objects = GameObjectService()
         objects.setServiceParent(self)
 
         # Init missions service with log watcher
-        from commander.service.missions import MissionService
+        from commander.service.mission import MissionService
         log_watcher = LogWatchingService(settings.IL2_EVENTS_LOG_PATH)
         missions = MissionService(log_watcher)
         log_parser = EventLogParser((pilots, objects, missions, ))

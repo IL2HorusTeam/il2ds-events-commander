@@ -112,7 +112,7 @@ class LevelFileLogObserver(tx_log.FileLogObserver):
             'text': text.replace("\n", "\n\t")
         }
         msg_str = tx_log._safeFormat( # pylint: disable=W0212
-            "%(level)s:[%(system)s]:%(text)s\n", fmt_dict)
+            "%(level)s:[%(system)s]: %(text)s\n", fmt_dict)
 
         tx_util.untilConcludes(self.write, time_str + " " + msg_str)
         tx_util.untilConcludes(self.flush)

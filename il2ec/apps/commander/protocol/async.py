@@ -131,6 +131,14 @@ class ConsoleClient(DefaultConsoleClient): # pylint: disable=R0904
         """
         return self._send_request(REQ_USERS_ALL)
 
+    def _chat(self, message, suffix):
+        """
+        Make sure all messages are in unicode.
+
+        FUTURE: merge into 'il2-ds-middleware' library.
+        """
+        DefaultConsoleClient._chat(self, unicode(message), suffix)
+
 
 class ConsoleClientFactory(ReconnectingClientFactory):
     """

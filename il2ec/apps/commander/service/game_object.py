@@ -11,7 +11,7 @@ from commander.service import CommanderServiceMixin
 LOG = log.get_logger(__name__)
 
 
-class ObjectsService(ObjectsBaseService, CommanderServiceMixin):
+class GameObjectService(ObjectsBaseService, CommanderServiceMixin):
     """
-    Custom service for map objects management.
+    Custom service for game objects management.
     """
