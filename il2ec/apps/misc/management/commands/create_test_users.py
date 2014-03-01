@@ -19,7 +19,7 @@ class Command(BaseCommand):
             name = "user{0}".format(i + 1)
             email = "{0}@example.com".format(name)
 
-            User.objects.create_superuser(
+            User.objects.create_user(
                 first_name=name.capitalize(),
                 username=name,
                 password=name,
