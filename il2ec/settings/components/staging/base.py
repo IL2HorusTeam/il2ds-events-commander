@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 # Generic project settings
 #------------------------------------------------------------------------------
 
-HOSTNAME = 'il2ec-staging'
+HOSTNAME = 'il2events.servegame.com'
 ALLOWED_HOSTS = ['*', ]
 
 PROJECT_NAME = _("Awesome IL-2 events")
