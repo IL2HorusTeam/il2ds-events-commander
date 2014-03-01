@@ -51,7 +51,7 @@ IL2_CONNECTION = dict(IL2_CONNECTION, **{
 })
 
 IL2_SERVER_PATH = os.path.join(
-    os.path.dirname(PROJECT_DIR), 'provision', 'files', 'il2ds')
+    os.path.expanduser('~'), 'games', 'il2ds')
 IL2_CONFIG_PATH = os.path.join(IL2_SERVER_PATH, 'confs.ini')
 IL2_EVENTS_LOG_PATH = os.path.join(IL2_SERVER_PATH, 'log', 'events.log')
 
