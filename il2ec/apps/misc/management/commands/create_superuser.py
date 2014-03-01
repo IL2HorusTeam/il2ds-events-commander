@@ -3,8 +3,9 @@
 Implement 'create_superuser' Django management command.
 """
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
+
+from auth_custom.models import User
 
 
 class Command(BaseCommand):
@@ -14,9 +15,9 @@ class Command(BaseCommand):
     help = "Create default superuser"
 
     def handle(self, *args, **kwargs): # pylint: disable=W0613
-        UserModel = get_user_model() # pylint: disable=C0103
-        UserModel.objects.create_superuser(
+        User.objects.create_superuser(
+            first_name="Admin",
             username="admin",
             password="admin",
-            email="admin@foo.bar",
+            email="admin@example.com",
             language=settings.LANGUAGE_CODE)

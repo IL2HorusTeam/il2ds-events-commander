@@ -456,3 +456,8 @@ To update project on remote machine, run:
 
     fab staging update
 
+### Default users
+
+Serveral test users are created for development. There this a superuser `admin`
+and there are 10 standard users `user1, user2, ..., user10`. Their passwords
+are equal to thier usernames.

@@ -153,6 +153,8 @@ def incarnate():
     execute(syncdb)
     puts('Creating default superuser...')
     execute(dj, "create_superuser")
+    puts('Creating test users...')
+    execute(dj, "create_test_users")
     puts('Restarting services...')
     execute(restart)
 
