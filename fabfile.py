@@ -12,12 +12,7 @@ from fabric.contrib.console import confirm
 #------------------------------------------------------------------------------
 
 env.project_name = 'il2ec'
-env.repository = 'https://github.com/IL2HorusTeam/il2ds-events-commander.git'
-env.local_branch = 'master'
-env.remote_ref = 'origin/master'
 env.requirements_file = 'requirements.pip'
-env.restart_command = 'supervisorctl restart {project_name}'.format(**env)
-env.restart_sudo = True
 env.logs = {
     'uwsgi' : "/var/log/supervisor/uwsgi/uwsgi.err",
     'nginx' : "/var/log/nginx/error.log",
@@ -90,57 +85,32 @@ def vagrant():
 @roles('web', 'db')
 def update(action='check'):
     """
-    Update the repository (server-side).
+    Update reload project on remote machine.
 
-    By default, if the requirements file changed in the repository then the
-    requirements will be updated. Use ``action='force'`` to force
-    updating requirements. Anything else other than ``'check'`` will avoid
-    updating requirements at all.
+    Set environment before running this command. Emample:
+        fab staging update
     """
-    with cd(env.project_dir):
-        remote, dest_branch = env.remote_ref.split('/', 1)
-        run('git fetch {remote}'.format(remote=remote,
-            dest_branch=dest_branch, **env))
-        with hide('running', 'stdout'):
-            changed_files = run('git diff-index --cached --name-only '
-                '{remote_ref}'.format(**env)).splitlines()
-        if not changed_files and action != 'force':
-            # No changes, we can exit now.
-            return
-        if action == 'check':
-            reqs_changed = env.requirements_file in changed_files
-        else:
-            reqs_changed = False
-        run('git merge {remote_ref}'.format(**env))
-        run('find -name "*.pyc" -delete')
-        run('git clean -df')
-        fix_permissions()
-    if action == 'force' or reqs_changed:
-        # Not using execute() because we don't want to run multiple times for
-        # each role (since this task gets run per role).
-        requirements()
+    pull_project()
+    execute(reload_all)
+
 
 @task
-def reset(verbosity='normal'):
+@roles('web', 'db')
+def build(force=False):
     """
-    Resets server.
+    IRREVESIBLY DESTROYS ALL DATA ON REMOTE MACHINE.
 
-    Updates the repository (server-side), synchronizes the database, collects
-    static files and then restarts the web service.
+    Update and recreate project on remote machine.
+
+    Set environment before running this command. Emample:
+        fab staging build
     """
-    if verbosity == 'noisy':
-        hide_args = []
-    else:
-        hide_args = ['running', 'stdout']
-    with hide(*hide_args):
-        puts('Updating repository...')
-        execute(update)
-        puts('Collecting static files...')
-        execute(collectstatic)
-        puts('Synchronizing database...')
-        execute(syncdb)
-        puts('Restarting web server...')
-        execute(restart)
+    if not (force or confirm("WARNING. This command will destroy all data on "
+                             "remote machine. Continue?")):
+        return
+    pull_project()
+    execute(reincarnate, force=True)
+
 
 #------------------------------------------------------------------------------
 # Actual tasks
@@ -163,8 +133,10 @@ def incarnate():
 @roles('web', 'db')
 def reincarnate(force=False):
     """
-    IRREVESIBLY DESTROYS ALL DATA. Recreates existing environment, resets
-    database, deletes uploaded content and clears compiled static.
+    IRREVESIBLY DESTROYS ALL DATA.
+
+    Recreates existing environment, resets database, deletes uploaded content
+    and clears compiled static.
     """
     if not (force or confirm("WARNING. This command will destroy all data. "
                              "Continue?")):
@@ -224,8 +196,7 @@ def purge_celery(force=False):
     Deletes all background tasks from the Celery task queue.
     """
     ensure_force = "-f" if force else ""
-    execute(dj, "celery purge {force}".format(force=ensure_force),
-                settings_arg="--config")
+    execute(dj, "celery purge {force}".format(force=ensure_force))
 
 
 @task
@@ -287,7 +258,7 @@ def requirements():
     """
     Update the requirements.
     """
-    run('{virtualenv_dir}/bin/pip install -r {project_dir}/requirements.pip'\
+    run('{virtualenv_dir}/bin/pip install -r {project_dir}/requirements.pip'
         .format(**env))
     with cd('{virtualenv_dir}/src'.format(**env)):
         with hide('running', 'stdout', 'stderr'):
@@ -348,23 +319,30 @@ def lint():
     """
     with cd(env.project_dir):
         with settings(hide('running', 'status'), warn_only=True):
-            run("{virtualenv_dir}/bin/pylint --rcfile=.pylintrc {project_name}/; echo".format(
-                **env))
+            run("{virtualenv_dir}/bin/pylint --rcfile=.pylintrc "
+                "{project_name}/; echo".format(**env))
 
 #------------------------------------------------------------------------------
 # Helper functions
 #------------------------------------------------------------------------------
 
-def dj(command, settings_arg=None):
+def dj(command):
     """
     Run a Django manage.py command on the server.
     """
-    settings_arg = settings_arg or "--settings"
     with cd(env.project_dir):
         run("{virtualenv_dir}/bin/python manage.py {dj_command} "
-            "{settings_arg} {project_conf}".format(dj_command=command,
-                                                   settings_arg=settings_arg,
-                                                   **env))
+            "--settings={project_conf}".format(dj_command=command, **env))
+
+
+def pull_project():
+    """
+    Update project to last version and update requirements.
+    """
+    with cd(env.project_dir):
+        run('git reset --hard')
+        run('git pull')
+    execute(requirements)
 
 
 def restart_uwsgi():

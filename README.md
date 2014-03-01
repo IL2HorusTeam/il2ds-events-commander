@@ -448,9 +448,9 @@ without input for passwords. Now, append the contents of local
 
 Add `il2ec-staging` address to `/etc/hosts` on your local machine.
 
-To totally reset project on remote machine with DB flush, run:
+To apply latest changes and rebuild project on remote machine, run:
 
-    fab staging reset
+    fab staging build
 
 To update project on remote machine, run:
 
