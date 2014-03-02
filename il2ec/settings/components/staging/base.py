@@ -16,6 +16,8 @@ ALLOWED_HOSTS = ['*', ]
 PROJECT_NAME = _("Awesome IL-2 events")
 SECRET_KEY = 'h7#gw(#))b@r8z)xcio_g*du&^pky_x0)atn&*naxf6nh0j8y#'
 
+TIME_ZONE = 'Europe/Moscow'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',

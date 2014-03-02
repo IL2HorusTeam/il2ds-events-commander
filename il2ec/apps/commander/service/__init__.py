@@ -6,7 +6,7 @@ import ConfigParser
 
 from collections import namedtuple
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from il2ds_middleware.parser import (ConsoleParser, DeviceLinkParser,
     EventLogParser, )
@@ -162,8 +162,7 @@ class CommanderService(MultiService, CommanderServiceMixin):
                      sec=seconds_left) if seconds_left else \
                    _("Everyone will be kicked NOW!")
             msg2 = _("Please, reconnect after kick.")
-            self.cl_client.chat_all("{0} {1}".format(unicode(msg1),
-                                                     unicode(msg2)))
+            self.cl_client.chat_all(u"{0} {1}".format(msg1, msg2))
 
         self.cl_client.chat_all(
             _("Hello everyone! This server is captured by {commander}.")

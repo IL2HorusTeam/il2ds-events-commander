@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Settings for commander app.
+Settings for commander application.
 """
 import os
 

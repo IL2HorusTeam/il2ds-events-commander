@@ -4,7 +4,6 @@ Helpers for authentication.
 """
 import hashlib
 import logging
-import random
 
 from coffin.shortcuts import resolve_url
 
@@ -15,7 +14,7 @@ from django.utils.translation import activate, deactivate, ugettext_lazy as _
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-
+from misc.helpers import random_string
 from misc.tasks import send_mail
 from misc.validators import SHA1Validator
 
@@ -34,7 +33,7 @@ class SignUpConfirmationHelper(object):
         """
         Generate confirmation key from salted input arguments.
         """
-        salt = hashlib.sha1(unicode(random.random())).hexdigest()[:5]
+        salt = random_string(5)
 
         chunks = map(unicode, args)
         chunks.append(salt)
