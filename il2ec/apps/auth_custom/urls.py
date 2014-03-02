@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from django.conf import settings
 from django.conf.urls import patterns, url
 
 from auth_custom.views import SignInView, SignUpRequestView

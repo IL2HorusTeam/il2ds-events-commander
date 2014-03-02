@@ -50,25 +50,29 @@ class Pilot(models.Model):
             self.__translator = Translator(self.user.language)
         return self.__translator
 
-    def create_password(self):
+    def create_password(self, update=False):
         """
         Sets and returns new password for connecting to game server.
         """
         password = random_string(PILOTS_PASSWORD_LENGTH)
-        self.set_password(password)
+        self.set_password(password, update)
         return password
 
-    def set_password(self, raw_password):
+    def set_password(self, raw_password, update=False):
         """
         Sets given password.
         """
         self.password = make_password(raw_password)
+        if update:
+            self.save()
 
-    def clear_password(self):
+    def clear_password(self, update=False):
         """
         Clear current password, so pilot can not use it again.
         """
         self.password = make_password(None)
+        if update:
+            self.save()
 
     def check_password(self, raw_password):
         """

@@ -20,6 +20,7 @@ urlpatterns = patterns('',
 
 urlpatterns += i18n_patterns('',
     url(r'', include('auth_custom.urls')),
+    url(r'', include('pilots.urls')),
     url(r'', include('website.urls')),
 
     url(r'^grappelli/', include('grappelli.urls')),

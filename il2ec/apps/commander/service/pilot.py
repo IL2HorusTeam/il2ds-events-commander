@@ -46,8 +46,6 @@ class PendingPilot(object):
             self.stop()
             LOG.info("{0} has not entered password and will be kicked"
                      .format(self.pilot.callsign))
-            self.pilot.clear_password()
-            self.pilot.save()
             self.client.kick_callsign(self.pilot.callsign)
 
 
@@ -120,7 +118,8 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
             LOG.debug("Removing pending pilot {0}".format(callsign))
             pending = self.pending[callsign]
             pending.stop()
-            del pending
+            pending.pilot.clear_password(update=True)
+            del self.pending[callsign]
 
     def stopService(self):
         # TODO: do all necessary clean up

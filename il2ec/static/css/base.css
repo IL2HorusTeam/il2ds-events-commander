@@ -194,6 +194,19 @@ body {
   font-size: 16px;
 }
 
+/* Connection request ------------------------------------------------------ */
+
+#id_modal_request_connection .modal-dialog {
+  width: 450px;
+}
+
+#id_modal_request_connection #id_connection_command {
+  padding: 10px;
+  margin-top: 40px;
+  margin-bottom: 5px;
+  font-size: 20px;
+}
+
 /* Form helpers ------------------------------------------------------------ */
 .alerts-placeholder {
   display: none;

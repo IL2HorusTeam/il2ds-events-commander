@@ -6,7 +6,7 @@ from django.conf import settings
 
 
 # Length of password for connecting to game server
-PILOTS_PASSWORD_LENGTH = getattr(settings, 'PILOTS_PASSWORD_LENGTH', 5)
+PILOTS_PASSWORD_LENGTH = getattr(settings, 'PILOTS_PASSWORD_LENGTH', 7)
 
 # Number of password requests to send to user before kick
 PILOTS_PASSWORD_REQUESTS_COUNT = getattr(settings,
