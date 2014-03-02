@@ -20,5 +20,5 @@ LOG = logging.getLogger(__name__)
 def api_request_connection(request):
     password = request.user.pilot.create_password(update=True)
     return JSONResponse.success(payload={
-        'command': UserCommand.CONNECTION_INSTRUCTIONS.render(password),
+        'command': UserCommand.CONNECTION_INSTRUCTIONS.compose(password),
     })

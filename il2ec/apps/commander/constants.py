@@ -36,7 +36,7 @@ class UserCommandValueConstant(ValueConstant):
     """
     Extends base class by providing support for creating a command for user.
     """
-    def render(self, *args):
+    def compose(self, *args):
         chunks = ['', self.value]
         chunks.extend([unicode(x) for x in args])
         return USER_COMMAND_DELIMITER.join(chunks)
@@ -47,3 +47,18 @@ class UserCommand(Values):
     Commands which can be sent by users to server from game chat.
     """
     CONNECTION_INSTRUCTIONS = UserCommandValueConstant('pass')
+
+    @classmethod
+    def decompose(cls, string):
+        if not string.startswith(USER_COMMAND_DELIMITER):
+            return (None, None)
+        components = string.lstrip(
+                        USER_COMMAND_DELIMITER).split(
+                        USER_COMMAND_DELIMITER)
+        command_value = components.pop(0)
+        try:
+            command = cls.lookupByValue(command_value)
+        except ValueError:
+            raise
+        else:
+            return (command, components)
