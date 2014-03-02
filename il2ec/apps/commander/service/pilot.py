@@ -107,7 +107,7 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
     def is_callsign_used(self, callsign):
         return callsign in self.active or callsign in self.pending
 
-    def _delayed_kick(self, callsign, delay=10):
+    def _delayed_kick(self, callsign, delay=5):
         from twisted.internet import reactor
         reactor.callLater(delay, self.cl_client.kick_callsign, callsign)
 
