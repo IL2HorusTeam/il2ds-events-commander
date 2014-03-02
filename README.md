@@ -1,8 +1,6 @@
 IL-2 DS Events Commander
 ========================
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/IL2HorusTeam/il2ds-events-commander/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
 Synopsis
 ========
 
