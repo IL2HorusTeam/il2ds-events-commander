@@ -38,10 +38,9 @@ class PendingPilot(object):
         if self.calls_left:
             LOG.debug("Ask {0} for password".format(self.pilot.callsign))
             with self.pilot.translator:
-                message = _("{callsign}, please enter your password or you "
-                            "will be kicked.").format(
-                            callsign=self.pilot.callsign)
-            self.client.chat_user(message, self.pilot.callsign)
+                msg = _("{callsign}, please enter your password or you will "
+                        "be kicked.").format(callsign=self.pilot.callsign)
+            self.client.chat_user(msg, self.pilot.callsign)
             self.calls_left -= 1
         else:
             self.stop()
@@ -87,6 +86,18 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
             self._delayed_kick(callsign)
             return
 
+        # Kick user if connection is not allowed ------------------------------
+        if not pilot.can_connect():
+            LOG.info("{0} hasn't requested connection and will be kicked"
+                    .format(callsign))
+            with pilot.translator:
+                msg = _("{callsign}, you are not allowed to connect. Please, "
+                        "request connection on the website.").format(
+                         callsign=callsign)
+                self.cl_client.chat_user(msg, callsign)
+            self._delayed_kick(callsign)
+            return
+
         # Create a pending pilot and kick user if no password was given during
         # certain period of time
         pending = PendingPilot(pilot, self.cl_client)
@@ -96,7 +107,7 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
     def is_callsign_used(self, callsign):
         return callsign in self.active or callsign in self.pending
 
-    def _delayed_kick(self, callsign, delay=5):
+    def _delayed_kick(self, callsign, delay=10):
         from twisted.internet import reactor
         reactor.callLater(delay, self.cl_client.kick_callsign, callsign)
 
