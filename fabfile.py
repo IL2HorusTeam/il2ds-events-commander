@@ -2,6 +2,7 @@
 
 import posixpath
 import re
+import os
 
 from fabric.api import (task, env, run, local, roles, cd, execute, hide, puts,
     settings, sudo, )
@@ -13,6 +14,7 @@ from fabric.contrib.console import confirm
 
 env.project_name = 'il2ec'
 env.requirements_file = 'requirements.pip'
+env.languages = ('en', 'ru', )
 env.logs = {
     'uwsgi' : "/var/log/supervisor/uwsgi/uwsgi.err",
     'nginx' : "/var/log/nginx/error.log",
@@ -45,12 +47,7 @@ def staging():
     env.project_dir = '/home/{user}/projects/{project_name}'.format(**env)
     env.project_conf = '{project_name}.settings.staging'.format(**env)
     env.key_filename = 'ssh/staging_key'
-
-    log_base = '{virtualenv_dir}/var/log/{project_name}'.format(**env)
-    env.logs.update({
-        'web': '{0}-web.log'.format(log_base),
-        'daemon': '{0}-daemon.log'.format(log_base),
-    })
+    calculate_paths()
 
 
 @task
@@ -70,6 +67,12 @@ def vagrant():
     env.project_dir = '{virtualenv_dir}/src/{project_name}'.format(**env)
     env.project_conf = '{project_name}.settings.vagrant'.format(**env)
     env.key_filename = '~/.vagrant.d/insecure_private_key'
+    calculate_paths()
+
+
+def calculate_paths():
+    env.project_root = os.path.join(env.project_dir, env.project_name)
+    env.apps_root = os.path.join(env.project_root, 'apps')
 
     log_base = '{virtualenv_dir}/var/log/{project_name}'.format(**env)
     env.logs.update({
@@ -121,6 +124,8 @@ def build(force=False):
 def incarnate():
     puts('Initializing database...')
     execute(syncdb)
+    puts('Compiling translations...')
+    execute(messages_compile)
     puts('Creating default superuser...')
     execute(dj, "create_superuser")
     puts('Creating test users...')
@@ -322,16 +327,62 @@ def lint():
             run("{virtualenv_dir}/bin/pylint --rcfile=.pylintrc "
                 "{project_name}/; echo".format(**env))
 
+
+@task
+@roles('web', 'db', 'commander')
+def messages_make(app=None):
+    """
+    Create or update translations for an application or project base.
+    """
+    puts("Making translation files for {0}".format(app or "project base"))
+
+    if app:
+        chdir = os.path.join(env.apps_root, app)
+        ignore = ''
+    else:
+        chdir = env.project_root
+        ignore = '--ignore=apps/*'
+
+    for language in env.languages:
+        command = "makemessages -l {language} {ignore}".format(
+                   language=language, ignore=ignore)
+        dj(command, chdir=chdir)
+
+
+@task
+@roles('web', 'db', 'commander')
+def messages_make_all():
+    """
+    Create or update translations for the whole project.
+    """
+    execute(make_messages)
+    for app in get_applications():
+        execute(make_messages, app=app)
+
+
+@task
+@roles('web', 'db', 'commander')
+def messages_compile():
+    """
+    Compile translations for the whole project.
+    """
+    dirs = [env.project_root, ]
+    dirs.extend([
+        os.path.join(env.apps_root, app) for app in get_applications()
+    ])
+    for chdir in dirs:
+        dj("compilemessages", chdir=chdir)
+
 #------------------------------------------------------------------------------
 # Helper functions
 #------------------------------------------------------------------------------
 
-def dj(command):
+def dj(command, chdir=None):
     """
     Run a Django manage.py command on the server.
     """
-    with cd(env.project_dir):
-        run("{virtualenv_dir}/bin/python manage.py {dj_command} "
+    with cd(chdir or env.project_dir):
+        run("{virtualenv_dir}/bin/python {project_dir}/manage.py {dj_command} "
             "--settings={project_conf}".format(dj_command=command, **env))
 
 
@@ -375,6 +426,12 @@ def fix_permissions(path='.'):
             run('chgrp -R {0} -- {1}'.format(system_user, path))
         else:
             run('chmod -R go= -- {0}'.format(path))
+
+def get_applications():
+    apps_path = "{project_name}/apps".format(**env)
+    root, app_dirs, files = os.walk(apps_path).next()
+    app_dirs.sort()
+    return app_dirs
 
 #------------------------------------------------------------------------------
 # Set the default environment.

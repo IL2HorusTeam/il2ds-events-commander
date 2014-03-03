@@ -1,0 +1,130 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-03-03 11:21+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: dashboard.py:16
+msgid "Applications"
+msgstr ""
+
+#: dashboard.py:24
+msgid "Users"
+msgstr ""
+
+#: dashboard.py:36
+msgid "Recent Actions"
+msgstr ""
+
+#: forms.py:19
+msgid "Subject"
+msgstr ""
+
+#: forms.py:20
+msgid "What is your message about?"
+msgstr ""
+
+#: forms.py:24
+msgid "Message body"
+msgstr ""
+
+#: forms.py:25
+msgid "Write your message here. Be succinct, we'll ask if we need more info."
+msgstr ""
+
+#: forms.py:31
+msgid "Send me a copy"
+msgstr ""
+
+#: forms.py:41 templates/website/pages/contact.html:60
+msgid "Your name"
+msgstr ""
+
+#: forms.py:42
+msgid "How should we appeal to you?"
+msgstr ""
+
+#: forms.py:46 templates/website/pages/contact.html:66
+msgid "Your email"
+msgstr ""
+
+#: forms.py:47
+msgid "Where should we send our answer?"
+msgstr ""
+
+#: responses.py:32
+msgid "Success"
+msgstr ""
+
+#: responses.py:47
+msgid "Failure"
+msgstr ""
+
+#: views.py:83
+msgid "Unknown task ID."
+msgstr ""
+
+#: views.py:123
+msgid "support"
+msgstr ""
+
+#: templates/website/emails/contact.html:3
+msgid "Support request from"
+msgstr ""
+
+#: templates/website/emails/contact.html:5
+msgid "at"
+msgstr ""
+
+#: templates/website/pages/contact.html:4
+#: templates/website/pages/contact.html:19
+msgid "Contact support"
+msgstr ""
+
+#: templates/website/pages/contact.html:22
+msgid ""
+"We are here to help with any questions or comments. If you just want to say "
+"hello, that's nice too."
+msgstr ""
+
+#: templates/website/pages/contact.html:26
+msgid "Feel free to email us at"
+msgstr ""
+
+#: templates/website/pages/contact.html:90
+msgid "Send request"
+msgstr ""
+
+#: templates/website/pages/contact.html:93
+msgid "Thank you for your participation"
+msgstr ""
+
+#: templates/website/pages/contact.html:95
+msgid "We'll try to answer as soon as possible"
+msgstr ""
+
+#: templates/website/pages/contact.html:99
+msgid "Sorry, support is not configured yet"
+msgstr ""
+
+#: templates/website/pages/contact.html:134
+msgid ""
+"Sorry, we failed to send an email to you. Please, try again a bit later."
+msgstr ""
+
+#: templates/website/pages/index.html:4
+msgid "Home"
+msgstr ""

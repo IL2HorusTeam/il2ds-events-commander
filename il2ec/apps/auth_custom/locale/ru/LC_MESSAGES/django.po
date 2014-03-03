@@ -1,0 +1,567 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-03-03 11:21+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: admin.py:33
+msgid "Emails queued: {count}."
+msgstr ""
+
+#: admin.py:35
+msgid "Resend confirmation email"
+msgstr ""
+
+#: admin.py:49
+msgid "Personal info"
+msgstr ""
+
+#: admin.py:52
+msgid "Permissions"
+msgstr ""
+
+#: admin.py:56
+msgid "Important dates"
+msgstr ""
+
+#: forms.py:27 forms.py:235 templates/auth_custom/blocks/sign-in.html:18
+#: templates/auth_custom/blocks/sign-in.html:52
+msgid "Username or email"
+msgstr ""
+
+#: forms.py:28
+msgid "Data to identify account"
+msgstr ""
+
+#: forms.py:32 forms.py:191 templates/auth_custom/blocks/sign-in.html:24
+msgid "Password"
+msgstr ""
+
+#: forms.py:35 forms.py:203 templates/auth_custom/blocks/sign-in.html:30
+msgid "Remember me"
+msgstr ""
+
+#: forms.py:40
+msgid "Invalid credentials."
+msgstr ""
+
+#: forms.py:41 forms.py:231
+msgid "Account is blocked."
+msgstr ""
+
+#: forms.py:81 forms.py:157 forms.py:272
+msgid "This email is already used."
+msgstr ""
+
+#: forms.py:85 forms.py:124 forms.py:182 forms.py:328
+msgid "Username"
+msgstr ""
+
+#: forms.py:86 forms.py:125 forms.py:183 forms.py:329
+msgid "Name which is used in game"
+msgstr ""
+
+#: forms.py:94 forms.py:143 forms.py:286
+#: templates/auth_custom/pages/sign-up.html:51
+msgid "Email"
+msgstr ""
+
+#: forms.py:144
+msgid "Email to send your sign up instructions to"
+msgstr ""
+
+#: forms.py:158 forms.py:324
+msgid "A user with that username already exists."
+msgstr ""
+
+#: forms.py:172 forms.py:276
+msgid "First name"
+msgstr ""
+
+#: forms.py:173 forms.py:277
+msgid "Your first name"
+msgstr ""
+
+#: forms.py:177 forms.py:281
+msgid "Last name"
+msgstr ""
+
+#: forms.py:178 forms.py:282
+msgid "Your last name (optional)"
+msgstr ""
+
+#: forms.py:192
+msgid "Password for website"
+msgstr ""
+
+#: forms.py:197 forms.py:290
+msgid "Language"
+msgstr ""
+
+#: forms.py:198 forms.py:291
+msgid "Language to use on website and in game chat"
+msgstr ""
+
+#: forms.py:205
+msgid "Stay signed in on website"
+msgstr ""
+
+#: forms.py:229 models.py:208
+msgid "Invalid username or email."
+msgstr ""
+
+#: forms.py:230
+msgid "User not found."
+msgstr ""
+
+#: forms.py:236
+msgid "Data for identifying your account"
+msgstr ""
+
+#: forms.py:287
+msgid "Email for contacting you"
+msgstr ""
+
+#: helpers.py:30
+msgid "Enter a valid email confirmation key."
+msgstr ""
+
+#: helpers.py:74
+msgid "Remind data"
+msgstr ""
+
+#: models.py:85
+msgid "Invalid parameters."
+msgstr ""
+
+#: models.py:93
+msgid "Sign up request does not exist."
+msgstr ""
+
+#: models.py:95
+msgid "Confirmation key does not match."
+msgstr ""
+
+#: models.py:97
+msgid "Sign up request has expired. Please, create another one."
+msgstr ""
+
+#: models.py:110
+msgid "email"
+msgstr ""
+
+#: models.py:113 models.py:259
+msgid "preferred language"
+msgstr ""
+
+#: models.py:119
+msgid "confirmation key"
+msgstr ""
+
+#: models.py:123
+msgid "base URL"
+msgstr ""
+
+#: models.py:124
+msgid "URL to website base for particular user. Can have name or IP, etc."
+msgstr ""
+
+#: models.py:128
+msgid "expiration date"
+msgstr ""
+
+#: models.py:134
+msgid "sign up request"
+msgstr ""
+
+#: models.py:135
+msgid "sign up requests"
+msgstr ""
+
+#: models.py:174
+msgid "Confirmation instructions"
+msgstr ""
+
+#: models.py:189
+msgid "Sign up request for {email}"
+msgstr ""
+
+#: models.py:219
+msgid "username"
+msgstr ""
+
+#: models.py:227
+msgid "first name"
+msgstr ""
+
+#: models.py:231
+msgid "last name"
+msgstr ""
+
+#: models.py:235
+msgid "email address"
+msgstr ""
+
+#: models.py:239
+msgid "staff status"
+msgstr ""
+
+#: models.py:241
+msgid "Designates whether the user can sign into this admin site."
+msgstr ""
+
+#: models.py:244
+msgid "active"
+msgstr ""
+
+#: models.py:246
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts. Inactive users can sign in to reactivate their "
+"accounts."
+msgstr ""
+
+#: models.py:251
+msgid "blocked"
+msgstr ""
+
+#: models.py:253
+msgid ""
+"Designates whether this user is blocked. Blocked users can not sign in "
+"without intervention of administration."
+msgstr ""
+
+#: models.py:256
+msgid "date joined"
+msgstr ""
+
+#: models.py:264
+msgid ""
+"Language in which messages will be shown to user in gamechat and at this "
+"website."
+msgstr ""
+
+#: models.py:273
+msgid "user"
+msgstr ""
+
+#: models.py:274
+msgid "users"
+msgstr ""
+
+#: validators.py:16
+msgid ""
+"Username may contain only 2 to 30 letters, numbers and @/./+/-/=/_/(/)/[/]/"
+"{/} characters."
+msgstr ""
+
+#: views.py:86
+msgid "Your account was reactivated. Welcome back!"
+msgstr ""
+
+#: views.py:144
+msgid "Specified email is already in use."
+msgstr ""
+
+#: views.py:220
+msgid "Security error."
+msgstr ""
+
+#: views.py:303
+msgid "Your password was successfully updated."
+msgstr ""
+
+#: views.py:306
+msgid "You can use it to sign in right now!"
+msgstr ""
+
+#: views.py:375
+msgid "New settings were successfully applied."
+msgstr ""
+
+#: views.py:394
+msgid "Your username was successfully changed."
+msgstr ""
+
+#: views.py:412
+msgid "Your account was successfully deactivated. Goobye!"
+msgstr ""
+
+#: templates/auth_custom/blocks/remind-data-success.html:2
+msgid "Data and instructions were sent to"
+msgstr ""
+
+#: templates/auth_custom/blocks/sign-in.html:7
+#: templates/auth_custom/pages/sign-in.html:4
+msgid "Sign in"
+msgstr ""
+
+#: templates/auth_custom/blocks/sign-in.html:27
+msgid "Forgot something?"
+msgstr ""
+
+#: templates/auth_custom/blocks/sign-in.html:32
+msgid "Sign In"
+msgstr ""
+
+#: templates/auth_custom/blocks/sign-in.html:39
+msgid "Remind me"
+msgstr ""
+
+#: templates/auth_custom/blocks/sign-in.html:40
+msgid ""
+"Give us your email or username and get your username with instructions for "
+"resetting password"
+msgstr ""
+
+#: templates/auth_custom/blocks/sign-in.html:55
+msgid "Submit"
+msgstr ""
+
+#: templates/auth_custom/blocks/sign-in.html:56
+msgid "Wait, I remember"
+msgstr ""
+
+#: templates/auth_custom/blocks/sign-in.html:63
+msgid "Create an account"
+msgstr ""
+
+#: templates/auth_custom/emails/confirm-sign-up.html:3
+#: templates/auth_custom/emails/remind-me.html:3
+msgid "Hello"
+msgstr ""
+
+#: templates/auth_custom/emails/confirm-sign-up.html:5
+#, python-format
+msgid ""
+"\n"
+"You've just sent sign up request at <a href='%(host_address)s' "
+"target='blank'>%(host_name)s</a>, haven't you? If so, follow this link to "
+"confirm your email:\n"
+msgstr ""
+
+#: templates/auth_custom/emails/confirm-sign-up.html:9
+msgid "Click here to confirm your email"
+msgstr ""
+
+#: templates/auth_custom/emails/confirm-sign-up.html:11
+msgid "Thank you"
+msgstr ""
+
+#: templates/auth_custom/emails/confirm-sign-up.html:13
+#: templates/auth_custom/emails/remind-me.html:17
+msgid "If you do not know, why you have got this email, please, ignore it."
+msgstr ""
+
+#: templates/auth_custom/emails/remind-me.html:5
+#, python-format
+msgid ""
+"\n"
+"You've just asked to remind data for signing in at <a "
+"href='%(host_address)s' target='blank'>%(host_name)s</a>, haven't you?\n"
+msgstr ""
+
+#: templates/auth_custom/emails/remind-me.html:9
+msgid "Your username is"
+msgstr ""
+
+#: templates/auth_custom/emails/remind-me.html:11
+msgid "Follow next link if you would like to change your password"
+msgstr ""
+
+#: templates/auth_custom/emails/remind-me.html:13
+msgid "Click here to change your password"
+msgstr ""
+
+#: templates/auth_custom/emails/remind-me.html:15
+msgid "Good luck"
+msgstr ""
+
+#: templates/auth_custom/pages/password-reset.html:4
+msgid "Setting new password"
+msgstr ""
+
+#: templates/auth_custom/pages/password-reset.html:11
+msgid "Set new password"
+msgstr ""
+
+#: templates/auth_custom/pages/password-reset.html:12
+msgid ""
+"Please, enter your new password twice, so we can verify you typed it in "
+"correctly"
+msgstr ""
+
+#: templates/auth_custom/pages/password-reset.html:14
+msgid "New password cannot be set"
+msgstr ""
+
+#: templates/auth_custom/pages/password-reset.html:15
+msgid ""
+"The password reset link is invalid, possibly because it has already been "
+"used. Please, request a new password reset."
+msgstr ""
+
+#: templates/auth_custom/pages/password-reset.html:42
+msgid "Set password"
+msgstr ""
+
+#: templates/auth_custom/pages/sign-up-request.html:4
+#: templates/auth_custom/pages/sign-up-request.html:19
+msgid "Sign up request"
+msgstr ""
+
+#: templates/auth_custom/pages/sign-up-request.html:20
+msgid ""
+"Before you join, we need to check your email. Give us your email and further "
+"instructions will be sent to you."
+msgstr ""
+
+#: templates/auth_custom/pages/sign-up-request.html:23
+#, python-format
+msgid ""
+"\n"
+"        Instructions for email confirmation were sent to %(email)s. Check "
+"out your inbox!\n"
+"      "
+msgstr ""
+
+#: templates/auth_custom/pages/sign-up-request.html:42
+msgid "Go!"
+msgstr ""
+
+#: templates/auth_custom/pages/sign-up-request.html:84
+#: templates/auth_custom/pages/user-settings.html:422
+msgid ""
+"Sorry, we failed to send an email to you. Please, try again a bit later."
+msgstr ""
+
+#: templates/auth_custom/pages/sign-up.html:4
+msgid "Sign up"
+msgstr ""
+
+#: templates/auth_custom/pages/sign-up.html:12
+msgid "Finish sign up"
+msgstr ""
+
+#: templates/auth_custom/pages/sign-up.html:13
+msgid "Just one step to create your account"
+msgstr ""
+
+#: templates/auth_custom/pages/sign-up.html:75
+msgid "Join right now"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:4
+#: templates/auth_custom/pages/user-settings.html:38
+msgid "Account settings"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:42
+msgid "General settings"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:98
+msgid "Apply settings"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:106
+msgid "Change password"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:116
+msgid "Password was successfully updated"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:150
+msgid "Update"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:152
+msgid "Forgot password"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:160
+#: templates/auth_custom/pages/user-settings.html:166
+msgid "Change username"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:164
+msgid "Changing your username can have unintended side effects"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:173
+msgid "Deactivate account"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:177
+msgid "Tired of this service? Deactivate your account and forget about it."
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:178
+msgid "Deactivate"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:193
+msgid "Password reset request"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:226
+msgid "Really change your username"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:231
+msgid "Unexpected bad things may happen if you don't read this"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:234
+msgid "Links to your profile from external sources will be broken"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:235
+msgid "Your username in texts will not be replaced"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:238
+msgid "Okay, let's change my username"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:245
+msgid "Enter new username"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:263
+msgid "Change my username"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:280
+msgid "Are you sure you want to leave us"
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:284
+msgid ""
+"Deactivation means that no one will see your profile and you will be signed "
+"out immediately."
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:285
+msgid "We'll miss you, but you are welcome back any time."
+msgstr ""
+
+#: templates/auth_custom/pages/user-settings.html:295
+msgid "Yes, I'm totally sure"
+msgstr ""
