@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-03 11:21+0200\n"
+"POT-Creation-Date: 2014-03-03 13:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,10 +18,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-
-#: settings.py:48
-msgid "IL-2 Horus Events Commander"
-msgstr ""
 
 #: service/__init__.py:161
 msgid "Everyone will be kicked in {sec}..."
@@ -35,12 +31,12 @@ msgstr ""
 msgid "Please, reconnect after kick."
 msgstr ""
 
-#: service/__init__.py:168
-msgid "Hello everyone! This server is captured by {commander}."
+#: service/__init__.py:167
+msgid "Hello everyone! This server is captured by IL-2 events commander."
 msgstr ""
 
-#: service/__init__.py:195
-msgid "{commander} is quitting. Goodbye everyone!"
+#: service/__init__.py:194
+msgid "Commander is quitting. Goodbye everyone!"
 msgstr ""
 
 #: service/pilot.py:53

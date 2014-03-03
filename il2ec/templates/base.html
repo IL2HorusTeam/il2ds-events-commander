@@ -38,20 +38,6 @@
               <ul class="dropdown-menu dropdown-menu-large row">
                 <li class="col-sm-6">
                   <ul>
-                    <li class="dropdown-header">Glyphicons</li>
-                    <li><a href="#">Available glyphs</a></li>
-                    <li class="disabled"><a href="#">How to use</a></li>
-                    <li><a href="#">Examples</a></li>
-                    <li class="divider"></li>
-                    <li class="dropdown-header">Dropdowns</li>
-                    <li><a href="#">Example</a></li>
-                    <li><a href="#">Aligninment options</a></li>
-                    <li><a href="#">Headers</a></li>
-                    <li><a href="#">Disabled menu items</a></li>
-                  </ul>
-                </li>
-                <li class="col-sm-6">
-                  <ul>
                     <li class="dropdown-header">{% trans %}Help center{% endtrans %}</li>
                     <li><a href="{% url website-contact %}">{% trans %}Contact support{% endtrans %}</a></li>
                   </ul>
@@ -142,7 +128,11 @@
 
 <div id="footer">
   <div class="container">
-    <p class="text-muted">Place sticky footer content here.</p>
+    <p class="text-center text-muted">
+      {% with anchor_attr="href='https://github.com/IL2HorusTeam/il2ds-events-commander'"|safe %}
+      {% trans %}Powered by <a {{ anchor_attr }}>IL-2 events commander</a>{% endtrans %}
+      {% endwith %}
+    </p>
   </div>
 </div>
 

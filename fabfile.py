@@ -355,9 +355,9 @@ def messages_make_all():
     """
     Create or update translations for the whole project.
     """
-    execute(make_messages)
+    execute(messages_make)
     for app in get_applications():
-        execute(make_messages, app=app)
+        execute(messages_make, app=app)
 
 
 @task

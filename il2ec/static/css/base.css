@@ -197,7 +197,7 @@ body {
 /* Connection request ------------------------------------------------------ */
 
 #id_modal_request_connection .modal-dialog {
-  width: 450px;
+  width: 470px;
 }
 
 #id_modal_request_connection #id_connection_command {

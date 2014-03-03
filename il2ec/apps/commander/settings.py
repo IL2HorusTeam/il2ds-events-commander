@@ -44,9 +44,6 @@ IL2_EVENTS_LOG_PATH = getattr(settings, 'IL2_EVENTS_LOG_PATH',
 # Commander settings
 #------------------------------------------------------------------------------
 
-COMMANDER_NAME = getattr(settings, 'COMMANDER_NAME',
-                        _("IL-2 Horus Events Commander"))
-
 # API listener settings
 COMMANDER_API_DEFAULTS = {
     'host': '127.0.0.1',

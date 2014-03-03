@@ -164,9 +164,8 @@ class CommanderService(MultiService, CommanderServiceMixin):
             msg2 = _("Please, reconnect after kick.")
             self.cl_client.chat_all(u"{0} {1}".format(msg1, msg2))
 
-        self.cl_client.chat_all(
-            _("Hello everyone! This server is captured by {commander}.")
-            .format(commander=unicode(settings.COMMANDER_NAME)))
+        self.cl_client.chat_all(_("Hello everyone! This server is captured by "
+                                  "IL-2 events commander."))
 
         LOG.debug("Greeting users with notification about kick")
         from twisted.internet import reactor
@@ -192,8 +191,7 @@ class CommanderService(MultiService, CommanderServiceMixin):
             if count:
                 LOG.debug("Notifying users about quitting")
                 self.cl_client.chat_all(
-                    _("{commander} is quitting. Goodbye everyone!").format(
-                      commander=unicode(settings.COMMANDER_NAME)))
+                    _("Commander is quitting. Goodbye everyone!"))
 
         yield MultiService.stopService(self)
         self.confs.clear()

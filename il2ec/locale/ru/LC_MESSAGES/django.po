@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-03 11:21+0200\n"
+"POT-Creation-Date: 2014-03-03 13:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,81 +19,82 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: settings/components/shared/admin.py:8
-msgid "{0} admin"
-msgstr ""
-
 #: settings/components/shared/base.py:19
 msgid "Your project name"
-msgstr ""
+msgstr "Название вашего проекта"
 
 #: settings/components/shared/base.py:37
 msgid "English"
-msgstr ""
+msgstr "Английский"
 
 #: settings/components/shared/base.py:38
 msgid "Russian"
-msgstr ""
+msgstr "Русский"
 
 #: settings/components/staging/base.py:16
 #: settings/components/vagrant/base.py:17
 msgid "Awesome IL-2 events"
-msgstr ""
+msgstr "Потрясающие Ил-2 события"
 
-#: templates/base.html:55
+#: templates/base.html:41
 msgid "Help center"
-msgstr ""
+msgstr "Помощь"
 
-#: templates/base.html:56
+#: templates/base.html:42
 msgid "Contact support"
-msgstr ""
+msgstr "Написать в поддержку"
 
-#: templates/base.html:64
+#: templates/base.html:50
 msgid "Go to home page"
-msgstr ""
+msgstr "Перейти на главную"
 
-#: templates/base.html:74
+#: templates/base.html:60
 msgid "Language"
-msgstr ""
+msgstr "Язык"
 
-#: templates/base.html:90
+#: templates/base.html:76
 msgid "Sign in"
-msgstr ""
+msgstr "Войти"
 
-#: templates/base.html:110
+#: templates/base.html:96
 msgid "Request connection"
-msgstr ""
+msgstr "Запрос подключения"
 
-#: templates/base.html:112
+#: templates/base.html:98
 msgid "Admin panel"
-msgstr ""
+msgstr "Панель управления"
 
-#: templates/base.html:114
+#: templates/base.html:100
 msgid "Settings"
-msgstr ""
+msgstr "Настройки"
 
-#: templates/base.html:116
+#: templates/base.html:102
 msgid "Sign out"
-msgstr ""
+msgstr "Выйти"
+
+#: templates/base.html:133
+#, python-format
+msgid "Powered by <a %(anchor_attr)s>IL-2 events commander</a>"
+msgstr "Управляется с помощью <a %(anchor_attr)s>коммандера Ил-2 событий</a>"
+
+#: templates/base.html:147
+msgid "Request connection to game server"
+msgstr "Запросить подключение к серверу"
 
 #: templates/base.html:157
-msgid "Request connection to game server"
-msgstr ""
-
-#: templates/base.html:167
 #, python-format
 msgid "Copy instruction below and send it to %(addressee)s in game chat."
-msgstr ""
+msgstr "Скопируйте команду ниже и отправьте на %(addressee)s в чате игры."
 
-#: templates/base.html:170
+#: templates/base.html:160
 msgid "Press CTRL-C to copy"
-msgstr ""
+msgstr "Нажмите CTRL-C, чтобы скопировать"
 
-#: templates/base.html:237 templates/base.html.py:440
+#: templates/base.html:227 templates/base.html.py:430
 msgid "Request execution error"
-msgstr ""
+msgstr "Ошибка выполнения запроса"
 
-#: templates/base.html:361
+#: templates/base.html:351
 msgid ""
 "Sorry, we failed to send an email to you. Please, try again a bit later."
-msgstr ""
+msgstr "Извините, нам не удалось вам письмо. Пожалуйста, попробуйте позже."
