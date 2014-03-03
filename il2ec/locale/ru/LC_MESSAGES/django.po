@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-03 13:33+0200\n"
+"POT-Creation-Date: 2014-03-03 18:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: settings/components/shared/base.py:19
 msgid "Your project name"
-msgstr "Название вашего проекта"
+msgstr "Название Вашего проекта"
 
 #: settings/components/shared/base.py:37
 msgid "English"
@@ -54,7 +54,7 @@ msgstr "Язык"
 
 #: templates/base.html:76
 msgid "Sign in"
-msgstr "Войти"
+msgstr "Вход"
 
 #: templates/base.html:96
 msgid "Request connection"
@@ -79,7 +79,7 @@ msgstr "Управляется с помощью <a %(anchor_attr)s>комман
 
 #: templates/base.html:147
 msgid "Request connection to game server"
-msgstr "Запросить подключение к серверу"
+msgstr "Запрос подключения к серверу"
 
 #: templates/base.html:157
 #, python-format

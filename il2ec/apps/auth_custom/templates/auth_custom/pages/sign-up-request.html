@@ -18,11 +18,8 @@
   <div class="col-md-8 col-md-offset-2">
     <legend>{% trans %}Sign up request{% endtrans %}</legend>
     <span class="help-block">{% trans %}Before you join, we need to check your email. Give us your email and further instructions will be sent to you.{% endtrans %}</span>
-
     <div id="success_block" class="alert alert-success alerts-placeholder">
-      {% trans email="<b id='target_email'></b>"|safe %}
-        Instructions for email confirmation were sent to {{ email }}. Check out your inbox!
-      {% endtrans %}
+      {% trans email="<b id='target_email'></b>"|safe %}Instructions for email confirmation were sent to {{ email }}. Check out your inbox!{% endtrans %}
     </div>
   </div>
 </div>

@@ -59,6 +59,7 @@ def send_remind_me_email(http_request, user,
     token = token_generator.make_token(user)
 
     activate(user.language)
+    subject = unicode(_("Remind data"))
     home_url = http_request.build_absolute_uri(resolve_url(
         'website-index'))
     reset_password_url = http_request.build_absolute_uri(resolve_url(
@@ -71,7 +72,6 @@ def send_remind_me_email(http_request, user,
         'reset_password_url': reset_password_url,
         'user': user,
     }
-    subject = unicode(_("Remind data"))
     to_emails = [user.email, ]
 
     return send_mail.delay(subject, template_name, context,

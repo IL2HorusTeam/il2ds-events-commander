@@ -52,16 +52,18 @@ class SignUpRequestManager(models.Manager): # pylint: disable=R0904
         NOTE: if existing request has expired, it may be deleted by Celery
               task, so the ID of task may get change after save.
         """
+        language = language or settings.LANGUAGE_CODE
+
         try:
             request = self.get(email=email)
         except self.model.DoesNotExist:
             pass
         else:
             request.base_url = base_url
+            request.language = language
             request.save()
             return request
 
-        language = language or settings.LANGUAGE_CODE
         result = self.model(email=email, language=language, base_url=base_url)
         result.reset(commit=True)
         return result
@@ -160,6 +162,7 @@ class SignUpRequest(models.Model):
         rid = urlsafe_base64_encode(force_bytes(self.pk))
 
         activate(self.language)
+        subject = unicode(_("Confirmation instructions"))
         home_url = urljoin(self.base_url, resolve_url(
             'website-index'))
         confirmation_url = urljoin(self.base_url, resolve_url(
@@ -171,7 +174,6 @@ class SignUpRequest(models.Model):
             'host_name': settings.PROJECT_NAME,
             'confirmation_url': confirmation_url,
         }
-        subject = unicode(_("Confirmation instructions"))
         to_emails = [self.email, ]
 
         return send_mail.delay(subject, self.email_template, context,

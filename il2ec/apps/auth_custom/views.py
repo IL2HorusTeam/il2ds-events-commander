@@ -410,5 +410,5 @@ def api_deactivate_account(request):
 
     logout(request)
     messages.success(request, _("Your account was successfully deactivated. "
-                                "Goobye!"))
+                                "Goodbye!"))
     return JSONResponse.success()

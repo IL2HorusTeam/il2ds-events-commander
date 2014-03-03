@@ -29,7 +29,7 @@
             <input type="checkbox" name="remember_me" />
             {% trans %}Remember me{% endtrans %}
           </label>
-          <button type="submit" id="id_submit_sign_in" class="btn btn-lg btn-block btn-primary ladda-button" data-style="zoom-out">{% trans %}Sign In{% endtrans %}</button>
+          <button type="submit" id="id_submit_sign_in" class="btn btn-lg btn-block btn-primary ladda-button" data-style="zoom-out">{% trans %}DO_SIGN_IN{% endtrans %}</button>
         </form>
       </div>
       <!-- Sign in tab END -->
@@ -59,7 +59,7 @@
     </div>
     <!-- Remember password tab END -->
     <div class="or-box">
-      <span class="or">OR</span>
+      <span class="or">{% trans %}OR{% endtrans %}</span>
       <a href="{% url auth-custom-sign-up-request %}" role="button" class="btn btn-default btn-sm btn-block">{% trans %}Create an account{% endtrans %}</a>
     </div>
   </div>
