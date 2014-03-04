@@ -24,7 +24,7 @@ class CustomModelBackend(ModelBackend):
             username = kwargs.get(User.USERNAME_FIELD)
 
         try:
-            user = User.objects.get_by_username_or_email(username)
+            user = User.objects.get_by_callsign_or_email(username)
             if user.check_password(password):
                 return user
         except ValueError:

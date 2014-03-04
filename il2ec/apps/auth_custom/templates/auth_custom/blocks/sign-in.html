@@ -15,7 +15,7 @@
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-              <input type="text" class="form-control" name="email_username" id="id_email_username" data-toggle="tooltip" title="{% trans %}Username or email{% endtrans %}" placeholder="{% trans %}Username or email{% endtrans %}" required>
+              <input type="text" class="form-control" name="callsign_email" id="id_callsign_email" data-toggle="tooltip" title="{% trans %}Callsign or email{% endtrans %}" placeholder="{% trans %}Callsign or email{% endtrans %}" required>
             </div>
           </div>
           <div class="form-group">
@@ -37,7 +37,7 @@
       <div class="tab-pane fade" id="id_tab_remind_me">
         <form class="form form-ajax" role="form" id="id_form_remind_me" action="{% url api-auth-custom-remind-me %}" method="post">
           <legend>{% trans %}Remind me{% endtrans %}</legend>
-          <span class="help-block">{% trans %}Give us your email or username and get your username with instructions for resetting password{% endtrans %}.</span>
+          <span class="help-block">{% trans %}Give us email or callsign and get instructions for resetting password{% endtrans %}.</span>
           {% csrf_token %}
           <!-- Form messages START -->
           {% include "auth_custom/blocks/remind-data-success.html" %}
@@ -49,7 +49,7 @@
           <div class="form-group">
             <div class="input-group">
               <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-              <input type="text" class="form-control" name="email_username" id="id_email_username" data-toggle="tooltip" title="{% trans %}Username or email{% endtrans %}" placeholder="{% trans %}Username or email{% endtrans %}" required>
+              <input type="text" class="form-control" name="callsign_email" id="id_callsign_email" data-toggle="tooltip" title="{% trans %}Callsign or email{% endtrans %}" placeholder="{% trans %}Callsign or email{% endtrans %}" required>
             </div>
           </div>
           <button id="id_submit_remind_me" type="submit" class="btn btn-primary ladda-button" data-style="zoom-out">{% trans %}Submit{% endtrans %}</button>

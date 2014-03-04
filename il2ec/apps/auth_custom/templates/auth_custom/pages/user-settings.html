@@ -9,10 +9,10 @@
   #id_modal_password .modal-dialog {
     width: 630px;
   }
-  #id_modal_username .modal-dialog {
+  #id_modal_callsign .modal-dialog {
     width: 480px;
   }
-  #id_modal_username .bg-warning {
+  #id_modal_callsign .bg-warning {
     margin: -21px -20px 15px -20px;
     padding: 5px 20px;
     border-bottom: 1px solid #F6DBA1;
@@ -20,14 +20,14 @@
     font-size: 12px;
     color: #9C7231;
   }
-  #id_modal_username ul {
+  #id_modal_callsign ul {
     padding-left: 20px;
   }
   #id_tab_confirm_change a.btn {
     color: #940404;
   }
   #id_deactivate_account {
-    color: #B65656;
+    color: #940404;
   }
 </style>
 {% endblock %}
@@ -156,14 +156,14 @@
     </div>
 
     <div class="panel panel-warning">
-      <div class="panel-heading" data-toggle="collapse" data-target="#collapse_username">
-        <h3 class="panel-title">{% trans %}Change username{% endtrans %}</h3>
+      <div class="panel-heading" data-toggle="collapse" data-target="#collapse_callsign">
+        <h3 class="panel-title">{% trans %}Change callsign{% endtrans %}</h3>
       </div>
-      <div id="collapse_username" class="panel-collapse collapse">
+      <div id="collapse_callsign" class="panel-collapse collapse">
         <div class="panel-body">
-          <p>{% trans %}Changing your username can have unintended side effects{% endtrans %}.</p>
-          <button id="id_change_username" type="button"
-                  class="btn btn-default">{% trans %}Change username{% endtrans %}</button>
+          <p>{% trans %}Changing your callsign can have side effects{% endtrans %}.</p>
+          <button id="id_change_callsign" type="button"
+                  class="btn btn-default">{% trans %}Change callsign{% endtrans %}</button>
         </div>
       </div>
     </div>
@@ -213,17 +213,17 @@
   </div>
 </div>
 
-<!-- Modal change username -->
-<div class="modal fade" id="id_modal_username" tabindex="-1" role="dialog"
-     aria-labelledby="id_modal_username_label" aria-hidden="true">
+<!-- Modal change callsign -->
+<div class="modal fade" id="id_modal_callsign" tabindex="-1" role="dialog"
+     aria-labelledby="id_modal_callsign_label" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="tab-content">
         <div class="tab-pane" id="id_tab_confirm_change">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="id_modal_username_label">
-              {% trans %}Really change your username{% endtrans %}?
+            <h4 class="modal-title" id="id_modal_callsign_label">
+              {% trans %}Really change your callsign{% endtrans %}?
             </h4>
           </div>
           <div class="modal-body">
@@ -232,21 +232,21 @@
             </p>
             <ul>
               <li>{% trans %}Links to your profile from external sources will be broken{% endtrans %}.</li>
-              <li>{% trans %}Your username in texts will not be replaced{% endtrans %}.</li>
+              <li>{% trans %}Your callsign in texts will not be replaced{% endtrans %}.</li>
             </ul>
-            <a href="#id_tab_change_username" class="btn btn-default btn-block" data-toggle="tab">
-              {% trans %}Okay, let's change my username{% endtrans %}
+            <a href="#id_tab_change_callsign" class="btn btn-default btn-block" data-toggle="tab">
+              {% trans %}Okay, let's change my callsign{% endtrans %}
             </a>
           </div>
         </div>
-        <div class="tab-pane fade" id="id_tab_change_username">
+        <div class="tab-pane fade" id="id_tab_change_callsign">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="id_modal_username_label">{% trans %}Enter new username{% endtrans %}  </h4>
+            <h4 class="modal-title" id="id_modal_callsign_label">{% trans %}Enter new callsign{% endtrans %}  </h4>
           </div>
           <div class="modal-body">
-            <form class="form-horizontal form-ajax" role="form" id="id_form_change_username"
-                  action="{% url api-auth-custom-change-username %}" method="post">
+            <form class="form-horizontal form-ajax" role="form" id="id_form_change_callsign"
+                  action="{% url api-auth-custom-change-callsign %}" method="post">
               {% csrf_token %}
               <!-- Form errors START -->
               <div class="alert alert-danger alert-dismissable alerts-placeholder">
@@ -257,10 +257,10 @@
               <div class="offset-bottom">
                 <div class="input-group">
                   <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                  <input type="text" class="form-control" id="id_username" name="username" data-toggle="tooltip" title="{{ form_username.username.help_text }}" placeholder="{{ form_username.username.label }}" value="{{ user.username }}" required>
+                  <input type="text" class="form-control" id="id_callsign" name="callsign" data-toggle="tooltip" title="{{ form_callsign.callsign.help_text }}" placeholder="{{ form_callsign.callsign.label }}" value="{{ user.callsign }}" required>
                 </div>
               </div>
-              <button id="id_submit_change_username" type="submit" class="btn btn-success btn-block ladda-button" data-style="zoom-out">{% trans %}Change my username{% endtrans %}!</button>
+              <button id="id_submit_change_callsign" type="submit" class="btn btn-success btn-block ladda-button" data-style="zoom-out">{% trans %}Change my callsign{% endtrans %}!</button>
             </form>
           </div>
         </div>
@@ -466,14 +466,14 @@
     return false
   })
 
-  /* Submit change username ------------------------------------------------ */
-  $('#id_change_username').click(function() {
-    var dialog = $('#id_modal_username')
-    dialog.find('#id_tab_change_username').removeClass('active').addClass('fade')
+  /* Submit change callsign ------------------------------------------------ */
+  $('#id_change_callsign').click(function() {
+    var dialog = $('#id_modal_callsign')
+    dialog.find('#id_tab_change_callsign').removeClass('active').addClass('fade')
     dialog.find('#id_tab_confirm_change').addClass('active')
     dialog.modal('show')
   })
-  $('#id_form_change_username').submit(function(e) {
+  $('#id_form_change_callsign').submit(function(e) {
     e.preventDefault()
 
     var frm = this

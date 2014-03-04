@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from auth_custom.helpers import sign_up_confirmation
 from auth_custom.models import User
-from auth_custom.validators import validate_username
+from auth_custom.validators import validate_callsign
 
 
 LOG = logging.getLogger(__name__)
@@ -23,8 +23,8 @@ class SignInForm(forms.Form):
     """
     Form class for authenticating users.
     """
-    email_username = forms.CharField(
-        label=_("Username or email"),
+    callsign_email = forms.CharField(
+        label=_("Callsign or email"),
         help_text=_("Data to identify account"),
         max_length=254,
         required=True)
@@ -46,14 +46,14 @@ class SignInForm(forms.Form):
         The form data comes in via the standard 'data' kwarg.
         """
         self.user_cache = None
-        super(SignInForm, self).__init__(*args, **kwargs)
+        super(SignInForm, self).__init__(request, *args, **kwargs)
 
     def clean(self):
-        email_username = self.cleaned_data.get('email_username')
+        callsign_email = self.cleaned_data.get('callsign_email')
         password = self.cleaned_data.get('password')
 
-        if email_username and password:
-            self.user_cache = authenticate(username=email_username,
+        if callsign_email and password:
+            self.user_cache = authenticate(username=callsign_email,
                                            password=password)
             if self.user_cache is None:
                 raise forms.ValidationError(
@@ -74,21 +74,23 @@ class SignInForm(forms.Form):
 
 class UserCreationForm(BaseUserCreationForm):
     """
-    A form that creates a user, with no privileges, from the given username,
+    A form that creates a user, with no privileges, from the given callsign,
     email and password. Used in admin.
     """
-    error_messages = dict(BaseUserCreationForm.error_messages, **{
+    error_messages = {
         'duplicate_email': _("This email is already used."),
-    })
+        'duplicate_callsign': _("This callsign is already used."),
+        'password_mismatch': _("The two password fields didn't match."),
+    }
 
-    username = forms.RegexField(
-        label=_("Username"),
+    callsign = forms.RegexField(
+        label=_("Callsign"),
         help_text=_("Name which is used in game"),
         max_length=30,
-        regex=validate_username.regex.pattern,
+        regex=validate_callsign.regex.pattern,
         required=True,
         error_messages={
-            'invalid': validate_username.message,
+            'invalid': validate_callsign.message,
         })
     email = forms.EmailField(
         label=_("Email"),
@@ -96,15 +98,19 @@ class UserCreationForm(BaseUserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', )
+        fields = ('callsign', 'email', )
 
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        if User.objects.filter(username=username).exists():
+    def __init__(self, *args, **kwargs):
+        super(UserCreationForm, self).__init__(*args, **kwargs)
+        del self.fields['username']
+
+    def clean_callsign(self):
+        callsign = self.cleaned_data['callsign']
+        if User.objects.filter(callsign=callsign).exists():
             raise forms.ValidationError(
-                self.error_messages['duplicate_username'],
-                code='duplicate_username')
-        return username
+                self.error_messages['duplicate_callsign'],
+                code='duplicate_callsign')
+        return callsign
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -120,19 +126,23 @@ class UserChangeForm(BaseUserChangeForm):
     replaces the password field with admin's password hash display field.
     Used in admin.
     """
-    username = forms.RegexField(
-        label=_("Username"),
+    callsign = forms.RegexField(
+        label=_("Callsign"),
         help_text=_("Name which is used in game"),
         max_length=30,
-        regex=validate_username.regex.pattern,
+        regex=validate_callsign.regex.pattern,
         required=True,
         error_messages={
-            'invalid': validate_username.message,
+            'invalid': validate_callsign.message,
         })
 
     class Meta:
         model = User
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(UserChangeForm, self).__init__(*args, **kwargs)
+        del self.fields['username']
 
 
 class SignUpRequestForm(forms.Form):
@@ -148,14 +158,14 @@ class SignUpRequestForm(forms.Form):
 class SignUpForm(forms.Form):
     """
     A form that creates a user with no privileges from the given first name,
-    last name, username, password, language. Sign up request data (email and
+    last name, callsign, password, language. Sign up request data (email and
     confirmation_key) must be provided.
     """
     FATAL_ERROR_CODE = 1
 
     error_messages = {
         'duplicate_email': _("This email is already used."),
-        'duplicate_username': _("A user with that username already exists."),
+        'duplicate_callsign': _("This callsign is already used."),
     }
 
     ridb64 = forms.CharField(
@@ -178,14 +188,14 @@ class SignUpForm(forms.Form):
         help_text=_("Your last name (optional)"),
         max_length=30,
         required=False)
-    username = forms.RegexField(
-        label=_("Username"),
+    callsign = forms.RegexField(
+        label=_("Callsign"),
         help_text=_("Name which is used in game"),
         max_length=30,
-        regex=validate_username.regex.pattern,
+        regex=validate_callsign.regex.pattern,
         required=True,
         error_messages={
-            'invalid': validate_username.message,
+            'invalid': validate_callsign.message,
         })
     password = forms.CharField(
         label=_("Password"),
@@ -204,13 +214,13 @@ class SignUpForm(forms.Form):
         required=False,
         help_text=_("Stay signed in on website"))
 
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        if User.objects.filter(username=username).exists():
+    def clean_callsign(self):
+        callsign = self.cleaned_data['callsign']
+        if User.objects.filter(callsign=callsign).exists():
             raise forms.ValidationError(
-                self.error_messages['duplicate_username'],
-                code='duplicate_username')
-        return username
+                self.error_messages['duplicate_callsign'],
+                code='duplicate_callsign')
+        return callsign
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -222,22 +232,22 @@ class SignUpForm(forms.Form):
 
 class RemindMeForm(forms.Form):
     """
-    Form for getting data to create a request for reminding username and
+    Form for getting data to create a request for reminding callsign and
     resetting password.
     """
     error_messages = {
-        'invalid_data': _("Invalid username or email."),
+        'invalid_data': _("Invalid callsign or email."),
         'not_found': _("User not found."),
         'blocked': _("Account is blocked."),
     }
 
-    email_username = forms.CharField(
-        label=_("Username or email"),
-        help_text=_("Data for identifying your account"),
+    callsign_email = forms.CharField(
+        label=_("Callsign or email"),
+        help_text=_("Data to identify account"),
         max_length=254,
         required=True)
 
-    def __init__(self, request=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
         Add 'user_cache' attribute for storing user, obtained from form data.
         """
@@ -245,10 +255,10 @@ class RemindMeForm(forms.Form):
         super(RemindMeForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        value = self.cleaned_data.get('email_username')
+        value = self.cleaned_data.get('callsign_email')
         if value:
             try:
-                self.user_cache = User.objects.get_by_username_or_email(value)
+                self.user_cache = User.objects.get_by_callsign_or_email(value)
             except ValueError:
                 raise forms.ValidationError(
                     self.error_messages['invalid_data'], code='invalid_data')
@@ -316,39 +326,39 @@ class GeneralSettingsForm(forms.Form):
         return self.user
 
 
-class ChangeUsernameForm(forms.Form):
+class ChangeCallsignForm(forms.Form):
     """
-    Form for changing current username.
+    Form for changing current callsign.
     """
     error_messages = {
-        'duplicate_username': _("A user with that username already exists."),
+        'duplicate_callsign': _("This callsign is already used."),
     }
 
-    username = forms.RegexField(
-        label=_("Username"),
+    callsign = forms.RegexField(
+        label=_("Callsign"),
         help_text=_("Name which is used in game"),
         max_length=30,
-        regex=validate_username.regex.pattern,
+        regex=validate_callsign.regex.pattern,
         required=True,
         error_messages={
-            'invalid': validate_username.message,
+            'invalid': validate_callsign.message,
         })
 
     def __init__(self, user, *args, **kwargs):
         self.user = user
-        super(ChangeUsernameForm, self).__init__(*args, **kwargs)
+        super(ChangeCallsignForm, self).__init__(*args, **kwargs)
 
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        if (username != self.user.username
-            and User.objects.filter(username=username).exists()):
+    def clean_callsign(self):
+        callsign = self.cleaned_data['callsign']
+        if (callsign != self.user.callsign
+            and User.objects.filter(callsign=callsign).exists()):
             raise forms.ValidationError(
-                self.error_messages['duplicate_username'],
-                code='duplicate_username')
-        return username
+                self.error_messages['duplicate_callsign'],
+                code='duplicate_callsign')
+        return callsign
 
     def save(self, commit=True):
-        self.user.username = self.cleaned_data['username']
+        self.user.callsign = self.cleaned_data['callsign']
         if commit:
             self.user.save()
         return self.user

@@ -50,7 +50,7 @@ def send_remind_me_email(http_request, user,
                          template_name='auth_custom/emails/remind-me.html',
                          token_generator=default_token_generator):
     """
-    Send username reminding email message with instructions for pasword
+    Send callsign reminding email message with instructions for pasword
     resetting.
 
     Return Celery's 'AsyncResult'.

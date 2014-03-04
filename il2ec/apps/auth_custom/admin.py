@@ -44,7 +44,7 @@ class UserAdmin(BaseUserAdmin):
     """
     fieldsets = (
         (None, {'fields': (
-            'username', 'email', 'password',
+            'callsign', 'email', 'password',
         )}),
         (_('Personal info'), {'fields': (
             'first_name', 'last_name', 'language',
@@ -60,9 +60,13 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide', ),
-            'fields': ('username', 'email', 'password1', 'password2')}
-        ),
+            'fields': ('callsign', 'email', 'password1', 'password2', ),
+        }),
     )
+    list_display = ('callsign', 'email', 'first_name', 'last_name', 'is_staff')
+    search_fields = ('callsign', 'first_name', 'last_name', 'email', )
+    ordering = ('callsign', )
+
     form = UserChangeForm
     add_form = UserCreationForm
 

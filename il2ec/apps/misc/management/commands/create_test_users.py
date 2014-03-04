@@ -16,12 +16,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs): # pylint: disable=W0613
         for i in range(10):
-            name = "user{0}".format(i + 1)
-            email = "{0}@example.com".format(name)
+            callsign = "user{0}".format(i + 1)
+            email = "{0}@example.com".format(callsign)
 
             User.objects.create_user(
-                first_name=name.capitalize(),
-                username=name,
-                password=name,
+                first_name=callsign.capitalize(),
+                callsign=callsign,
+                password=callsign,
                 email=email,
                 language=settings.LANGUAGE_CODE)

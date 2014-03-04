@@ -34,7 +34,7 @@ from auth_custom.helpers import (sign_up_confirmation, send_remind_me_email,
     update_current_language, )
 from auth_custom.decorators import anonymous_required
 from auth_custom.forms import (SignInForm, SignUpForm, SignUpRequestForm,
-    RemindMeForm, GeneralSettingsForm, ChangeUsernameForm, )
+    RemindMeForm, GeneralSettingsForm, ChangeCallsignForm, )
 from auth_custom.models import SignUpRequest, User
 
 from commander.constants import UserCommand
@@ -76,7 +76,7 @@ class SignInView(FormView):
         POST variables and then checking it for validity.
         """
         form_class = self.get_form_class()
-        form = form_class(data=request.POST)
+        form = form_class(request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
@@ -222,20 +222,20 @@ def api_sign_up(request, form_class=SignUpForm):
                                       message=_("Security error."))
 
         # Fulfil registration -------------------------------------------------
-        username = form.cleaned_data['username']
+        callsign = form.cleaned_data['callsign']
         password = form.cleaned_data['password']
 
         user = User.objects.create_user(
             email=sign_up_request.email,
             password=password,
-            username=username,
+            callsign=callsign,
             first_name=form.cleaned_data['first_name'],
             last_name=form.cleaned_data['last_name'],
             language=form.cleaned_data['language'])
         sign_up_request.delete()
 
         # Sign in user --------------------------------------------------------
-        user = authenticate(username=username, password=password)
+        user = authenticate(username=callsign, password=password)
         login(request, user)
         _remember_me(request, form)
 
@@ -255,8 +255,8 @@ def api_sign_up(request, form_class=SignUpForm):
 @sensitive_post_parameters()
 def api_remind_me(request, form_class=RemindMeForm):
     """
-    Handles AJAX POST requests for reminding username and resetting password.
-    Username and link for password resetting will be sent to user by email.
+    Handles AJAX POST requests for reminding callsign and resetting password.
+    Callsign and link for password resetting will be sent to user by email.
     """
     user = request.user
 
@@ -345,7 +345,7 @@ def api_password_change(request, form_class=PasswordChangeForm):
 def user_settings(request,
                   general_settings_form_class=GeneralSettingsForm,
                   password_change_form_class=PasswordChangeForm,
-                  change_username_form_class=ChangeUsernameForm,
+                  change_callsign_form_class=ChangeCallsignForm,
                   template_name='auth_custom/pages/user-settings.html'):
     """
     Display user settings and apply changes.
@@ -355,7 +355,7 @@ def user_settings(request,
     context = {
         'form_general': general_settings_form_class(request.user),
         'form_password': password_change_form_class(request.user),
-        'form_username': change_username_form_class(request.user),
+        'form_callsign': change_callsign_form_class(request.user),
     }
     return render(request, template_name, context)
 
@@ -383,9 +383,9 @@ def api_general_settings(request, form_class=GeneralSettingsForm):
 @ajax_api()
 @csrf_protect
 @login_required
-def api_change_username(request, form_class=ChangeUsernameForm):
+def api_change_callsign(request, form_class=ChangeCallsignForm):
     """
-    Process AJAX request for changing username.
+    Process AJAX request for changing callsign.
     """
     user = request.user
     form = form_class(user, data=request.POST)
@@ -393,7 +393,7 @@ def api_change_username(request, form_class=ChangeUsernameForm):
     if form.is_valid():
         form.save()
 
-        messages.success(request, _("Your username was successfully changed."))
+        messages.success(request, _("Your callsign was successfully changed."))
         return JSONResponse.success()
     else:
         return JSONResponse.form_field_errors(form)

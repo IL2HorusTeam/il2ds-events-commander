@@ -104,7 +104,7 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
 
         # Check whether user is registered ------------------------------------
         try:
-            user = User.objects.get(user__username=callsign)
+            user = User.objects.get(callsign=callsign)
         except User.DoesNotExist:
             LOG.debug(
                 "{0} is not registered and will be kicked".format(callsign))

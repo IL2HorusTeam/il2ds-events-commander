@@ -12,7 +12,7 @@ from django.conf import settings
 from django.contrib.auth.hashers import (check_password, make_password,
     is_password_usable, )
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
-    UserManager as BaseUserManager, )
+    BaseUserManager, )
 from django.contrib.auth.signals import user_logged_in
 
 from django.core.exceptions import ValidationError
@@ -35,7 +35,7 @@ except ImportError:
 from auth_custom.helpers import sign_up_confirmation, update_current_language
 from auth_custom.settings import (EMAIL_CONFIRMATION_DAYS,
     CONNECTION_PASSWORD_LENGTH, )
-from auth_custom.validators import validate_username
+from auth_custom.validators import validate_callsign
 
 from misc.helpers import Translator, random_string
 from misc.tasks import send_mail
@@ -198,35 +198,60 @@ class UserManager(BaseUserManager):
     """
     Custom menager for User model.
     """
-    def get_by_username_or_email(self, username_email):
+    def _create_user(self, callsign, email, password,
+                     is_staff, is_superuser, **extra_fields):
         """
-        Try to get user instance by username or email.
+        Creates and saves a User with the given callsign, email and password.
+        """
+        now = timezone.now()
+        if not callsign:
+            raise ValueError('The given callsign must be set')
+        email = self.normalize_email(email)
+        user = self.model(callsign=callsign, email=email,
+                          is_staff=is_staff, is_active=True,
+                          is_superuser=is_superuser, last_login=now,
+                          date_joined=now, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, callsign, email=None, password=None, **extra_fields):
+        return self._create_user(callsign, email, password, False, False,
+                                 **extra_fields)
+
+    def create_superuser(self, callsign, email, password, **extra_fields):
+        return self._create_user(callsign, email, password, True, True,
+                                 **extra_fields)
+
+    def get_by_callsign_or_email(self, callsign_email):
+        """
+        Try to get user instance by callsign or email.
         """
         try:
-            validate_email(username_email)
-            kwargs = {'email': username_email}
+            validate_email(callsign_email)
+            kwargs = {'email': callsign_email}
         except ValidationError:
             try:
-                validate_username(username_email)
-                kwargs = {'username': username_email}
+                validate_callsign(callsign_email)
+                kwargs = {'callsign': callsign_email}
             except ValidationError:
-                raise ValueError(_("Invalid username or email."))
+                raise ValueError(_("Invalid callsign or email."))
 
         return self.get(**kwargs)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     """
-    Custom users model. Username, password and email are required.
+    Custom users model. Callsign, password and email are required.
     Other fields are optional.
     """
-    username = models.CharField(
-        verbose_name=_("username"),
+    callsign = models.CharField(
+        verbose_name=_("callsign"),
         max_length=30,
         unique=True,
-        help_text=validate_username.message,
+        help_text=validate_callsign.message,
         validators=[
-            validate_username,
+            validate_callsign,
         ])
     first_name = models.CharField(
         verbose_name=_("first name"),
@@ -275,7 +300,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'callsign'
     REQUIRED_FIELDS = ['email']
 
     class Meta:
@@ -295,10 +320,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         if not hasattr(self, '__translator'):
             self.__translator = Translator(self.user.language)
         return self.__translator
-
-    @property
-    def callsign(self):
-        return self.username
 
     def create_connection_password(self, update=False):
         """
@@ -335,7 +356,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         return is_password_usable(self.connection_password)
 
     def get_absolute_url(self):
-        return "/users/%s/" % urlquote(self.username)
+        return "/users/%s/" % urlquote(self.callsign)
+
+    def get_short_name(self):
+        return self.first_name or self.callsign
 
     def get_full_name(self):
         """
