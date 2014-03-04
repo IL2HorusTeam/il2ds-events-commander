@@ -36,11 +36,11 @@ class PendingPilot(Pilot):
     """
     def __init__(self, user, client):
         super(PendingPilot, self).__init__(user, client)
-        self.calls_left = PILOTS_PASSWORD_REQUESTS_COUNT
+        self.calls_left = CONNECTION_PASSWORD_REQUESTS_COUNT
         self.caller = LoopingCall(self.callback)
 
     def start(self):
-        self.caller.start(PILOTS_PASSWORD_REQUESTS_PERIOD)
+        self.caller.start(CONNECTION_PASSWORD_REQUESTS_PERIOD)
 
     def stop(self):
         if self.caller.running:
@@ -128,14 +128,14 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
 
         # Create a pending pilot and kick user if no password was given during
         # certain period of time
-        pilot = PendingPilot(user, self.cl_client)
-        self.pending[callsign] = pilot
+        pending = PendingPilot(user, self.cl_client)
+        self.pending[callsign] = pending
         pending.start()
 
     def is_callsign_used(self, callsign):
         return callsign in self.active or callsign in self.pending
 
-    def _delayed_kick(self, callsign, delay=5):
+    def _delayed_kick(self, callsign, delay=10):
         from twisted.internet import reactor
         reactor.callLater(delay, self.cl_client.kick_callsign, callsign)
 
@@ -147,13 +147,13 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
             LOG.debug("Removing pending pilot {0}".format(callsign))
             pending = self.pending[callsign]
             pending.stop()
-            pending.user.clear_password(update=True)
+            pending.user.clear_connection_password(update=True)
             del self.pending[callsign]
 
         elif callsign in self.active:
             LOG.debug("Removing active pilot {0}".format(callsign))
             # TODO: do all necessary clean up
-            self.active[callsign].user.clear_password(update=True)
+            self.active[callsign].user.clear_connection_password(update=True)
             del self.active[callsign]
 
     def user_chat(self, (callsign, message)):
@@ -208,7 +208,7 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
     def _process_password(self, pilot, password):
         user = pilot.user
 
-        if user.check_password(password):
+        if user.check_connection_password(password):
             LOG.debug("Activate {0}".format(user.callsign))
 
             self.pending[user.callsign].stop()

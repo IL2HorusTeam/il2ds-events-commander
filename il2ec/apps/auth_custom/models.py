@@ -318,7 +318,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 s = ugettext("some string")
         """
         if not hasattr(self, '__translator'):
-            self.__translator = Translator(self.user.language)
+            self.__translator = Translator(self.language)
         return self.__translator
 
     def create_connection_password(self, update=False):
