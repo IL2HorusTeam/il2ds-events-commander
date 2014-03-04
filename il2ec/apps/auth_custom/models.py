@@ -37,7 +37,7 @@ from auth_custom.settings import (EMAIL_CONFIRMATION_DAYS,
     CONNECTION_PASSWORD_LENGTH, )
 from auth_custom.validators import validate_callsign
 
-from misc.helpers import Translator, random_string
+from misc.helpers import random_string
 from misc.tasks import send_mail
 
 
@@ -307,19 +307,22 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = _("user")
         verbose_name_plural = _("users")
 
-    @property
-    def translator(self):
+    class Translator(object):
         """
-        Return an object which can be used to set current language for
-        translation of strings in language, preferred by user.
+        Helps getting strings in language preferred by user.
+        """
+        def __init__(self, user):
+            self.user = user
 
-        Usage example:
-            with user.translator:
-                s = ugettext("some string")
-        """
-        if not hasattr(self, '__translator'):
-            self.__translator = Translator(self.language)
-        return self.__translator
+        def __enter__(self):
+            activate(self.user.language)
+
+        def __exit__(self, *args):
+            deactivate()
+
+    def __init__(self, *args, **kwargs):
+        super(User, self).__init__(*args, **kwargs)
+        self.translator = User.Translator(self)
 
     def create_connection_password(self, update=False):
         """
