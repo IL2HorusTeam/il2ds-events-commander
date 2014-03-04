@@ -68,7 +68,6 @@ INSTALLED_APPS = (
     'auth_custom',
     'commander',
     'misc',
-    'pilots',
     'website',
 )
 
@@ -223,11 +222,6 @@ LOGGING = {
             'propagate': True,
         },
         'misc': {
-            'handlers': ['il2ec'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'pilots': {
             'handlers': ['il2ec'],
             'level': 'INFO',
             'propagate': True,

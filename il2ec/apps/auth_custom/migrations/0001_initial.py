@@ -34,6 +34,7 @@ class Migration(SchemaMigration):
             ('is_blocked', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('date_joined', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
             ('language', self.gf('django.db.models.fields.CharField')(default='en', max_length=5)),
+            ('connection_password', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
         db.send_create_signal(u'auth_custom', ['User'])
 
@@ -93,6 +94,7 @@ class Migration(SchemaMigration):
         },
         u'auth_custom.user': {
             'Meta': {'object_name': 'User'},
+            'connection_password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'unique': 'True', 'max_length': '75'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),

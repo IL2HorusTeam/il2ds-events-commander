@@ -37,6 +37,8 @@ from auth_custom.forms import (SignInForm, SignUpForm, SignUpRequestForm,
     RemindMeForm, GeneralSettingsForm, ChangeUsernameForm, )
 from auth_custom.models import SignUpRequest, User
 
+from commander.constants import UserCommand
+
 from website.decorators import ajax_api
 from website.responses import JSONResponse
 
@@ -412,3 +414,12 @@ def api_deactivate_account(request):
     messages.success(request, _("Your account was successfully deactivated. "
                                 "Goodbye!"))
     return JSONResponse.success()
+
+
+@ajax_api(method='GET')
+@login_required
+def api_request_connection(request):
+    password = request.user.create_connection_password(update=True)
+    return JSONResponse.success(payload={
+        'command': UserCommand.CONNECTION_INSTRUCTIONS.compose(password),
+    })

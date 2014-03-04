@@ -4,12 +4,13 @@ Authentication models.
 """
 import datetime
 import logging
-import warnings
 
 from coffin.shortcuts import resolve_url
 
 from django.conf import settings
 
+from django.contrib.auth.hashers import (check_password, make_password,
+    is_password_usable, )
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
     UserManager as BaseUserManager, )
 from django.contrib.auth.signals import user_logged_in
@@ -32,9 +33,11 @@ except ImportError:
     from urlparse import urljoin
 
 from auth_custom.helpers import sign_up_confirmation, update_current_language
-from auth_custom.settings import EMAIL_CONFIRMATION_DAYS
+from auth_custom.settings import (EMAIL_CONFIRMATION_DAYS,
+    CONNECTION_PASSWORD_LENGTH, )
 from auth_custom.validators import validate_username
 
+from misc.helpers import Translator, random_string
 from misc.tasks import send_mail
 
 
@@ -265,6 +268,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=settings.LANGUAGE_CODE,
         help_text=_("Language in which messages will be shown to user in game"
                     "chat and at this website."))
+    connection_password = models.CharField(
+        verbose_name=_("connection password"),
+        max_length=128,
+        help_text=_("One time password for connecting to game server"))
 
     objects = UserManager()
 
@@ -274,6 +281,58 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _("user")
         verbose_name_plural = _("users")
+
+    @property
+    def translator(self):
+        """
+        Return an object which can be used to set current language for
+        translation of strings in language, preferred by user.
+
+        Usage example:
+            with user.translator:
+                s = ugettext("some string")
+        """
+        if not hasattr(self, '__translator'):
+            self.__translator = Translator(self.user.language)
+        return self.__translator
+
+    @property
+    def callsign(self):
+        return self.username
+
+    def create_connection_password(self, update=False):
+        """
+        Sets and returns new password for connecting to game server.
+        """
+        password = random_string(CONNECTION_PASSWORD_LENGTH)
+        self.set_connection_password(password, update)
+        return password
+
+    def clear_connection_password(self, update=False):
+        """
+        Clear current connection password, so user can not use it again.
+        """
+        self.set_connection_password(None, update)
+
+    def set_connection_password(self, raw_password, update=False):
+        """
+        Set connection password from war string, save model if needed.
+        """
+        self.connection_password = make_password(raw_password)
+        if update:
+            self.save()
+
+    def check_connection_password(self, raw_password):
+        """
+        Tells whether given password matches real connection password.
+        """
+        return check_password(raw_password, self.connection_password)
+
+    def can_connect(self):
+        """
+        Tells whether user has permision to connect to game server.
+        """
+        return is_password_usable(self.connection_password)
 
     def get_absolute_url(self):
         return "/users/%s/" % urlquote(self.username)
@@ -287,50 +346,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             return full_name.strip()
         else:
             return self.first_name.strip()
-
-    def get_short_name(self):
-        """
-        Returns the short name for the user.
-        """
-        return self.first_name
-
-    def email_user(self, subject, message, from_email=None):
-        """
-        Sends an email to this User.
-        """
-        send_mail(subject, message, from_email, [self.email])
-
-    def get_profile(self):
-        """
-        Returns site-specific profile for this user. Raises
-        SiteProfileNotAvailable if this site does not allow profiles.
-        """
-        warnings.warn("The use of AUTH_PROFILE_MODULE to define user profiles "
-                      "has been deprecated.", DeprecationWarning, stacklevel=2)
-        if not hasattr(self, '_profile_cache'):
-            from django.conf import settings
-            if not getattr(settings, 'AUTH_PROFILE_MODULE', False):
-                raise SiteProfileNotAvailable(
-                    "You need to set AUTH_PROFILE_MODULE in your project "
-                    "settings")
-            try:
-                app_label, model_name = settings.AUTH_PROFILE_MODULE.split('.')
-            except ValueError:
-                raise SiteProfileNotAvailable(
-                    "app_label and model_name should be separated by a dot in "
-                    "the AUTH_PROFILE_MODULE setting")
-            try:
-                model = models.get_model(app_label, model_name)
-                if model is None:
-                    raise SiteProfileNotAvailable(
-                        "Unable to load the profile model, check"
-                        "AUTH_PROFILE_MODULE in your project settings")
-                self._profile_cache = model._default_manager.using(
-                                   self._state.db).get(user__id__exact=self.id)
-                self._profile_cache.user = self
-            except (ImportError, ImproperlyConfigured):
-                raise SiteProfileNotAvailable
-        return self._profile_cache
 
 
 @receiver(user_logged_in)

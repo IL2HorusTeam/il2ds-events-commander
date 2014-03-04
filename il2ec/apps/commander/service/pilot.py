@@ -12,30 +12,30 @@ from commander import log
 from commander.constants import UserCommand as Commands
 from commander.service import CommanderServiceMixin
 
-from pilots.models import Pilot
-from pilots.settings import (PILOTS_PASSWORD_REQUESTS_COUNT,
-    PILOTS_PASSWORD_REQUESTS_PERIOD, )
+from auth_custom.models import User
+from auth_custom.settings import (CONNECTION_PASSWORD_REQUESTS_COUNT,
+    CONNECTION_PASSWORD_REQUESTS_PERIOD, )
 
 
 LOG = log.get_logger(__name__)
 
 
-class OnlinePilot(object):
+class Pilot(object):
     """
     Base class for online pilots.
     """
-    def __init__(self, pilot, client):
-        self.pilot = pilot
+    def __init__(self, user, client):
+        self.user = user
         self.client = client
 
 
-class PendingPilot(OnlinePilot):
+class PendingPilot(Pilot):
     """
     Represents a pilot who still need to confirm connection password and will
     be kicked from the server after certain timeout.
     """
-    def __init__(self, pilot, client):
-        super(PendingPilot, self).__init__(pilot, client)
+    def __init__(self, user, client):
+        super(PendingPilot, self).__init__(user, client)
         self.calls_left = PILOTS_PASSWORD_REQUESTS_COUNT
         self.caller = LoopingCall(self.callback)
 
@@ -48,29 +48,29 @@ class PendingPilot(OnlinePilot):
 
     def callback(self):
         if self.calls_left:
-            LOG.debug("Ask {0} for password".format(self.pilot.callsign))
-            with self.pilot.translator:
+            LOG.debug("Ask {0} for password".format(self.user.callsign))
+            with self.user.translator:
                 msg = _("{callsign}, please enter your password or you will "
-                        "be kicked.").format(callsign=self.pilot.callsign)
-            self.client.chat_user(msg, self.pilot.callsign)
+                        "be kicked.").format(callsign=self.user.callsign)
+            self.client.chat_user(msg, self.user.callsign)
             self.calls_left -= 1
         else:
             self.stop()
             LOG.debug("{0} has not entered password and will be kicked"
-                     .format(self.pilot.callsign))
-            self.client.kick_callsign(self.pilot.callsign)
+                     .format(self.user.callsign))
+            self.client.kick_callsign(self.user.callsign)
 
 
-class ActivePilot(OnlinePilot):
+class ActivePilot(Pilot):
     """
     Represents a pilot who has successfully confirmed connection password.
     """
-    def __init__(self, pilot, client):
-        super(ActivePilot, self).__init__(pilot, client)
+    def __init__(self, user, client):
+        super(ActivePilot, self).__init__(user, client)
 
     @classmethod
-    def from_online_pilot(cls, instance):
-        return cls(instance.pilot, instance.client)
+    def from_pilot(cls, instance):
+        return cls(instance.user, instance.client)
 
 
 class PilotService(PilotBaseService, CommanderServiceMixin):
@@ -102,10 +102,10 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
             self.cl_client.kick_callsign(callsign)
             return
 
-        # Check user is registered --------------------------------------------
+        # Check whether user is registered ------------------------------------
         try:
-            pilot = Pilot.objects.get(user__username=callsign)
-        except Pilot.DoesNotExist:
+            user = User.objects.get(user__username=callsign)
+        except User.DoesNotExist:
             LOG.debug(
                 "{0} is not registered and will be kicked".format(callsign))
             self.cl_client.chat_user(
@@ -115,10 +115,10 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
             return
 
         # Kick user if connection is not allowed ------------------------------
-        if not pilot.can_connect():
+        if not user.can_connect():
             LOG.debug("{0} hasn't requested connection and will be kicked"
                     .format(callsign))
-            with pilot.translator:
+            with user.translator:
                 msg = _("{callsign}, you are not allowed to connect. Please, "
                         "request connection on the website.").format(
                          callsign=callsign)
@@ -128,8 +128,8 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
 
         # Create a pending pilot and kick user if no password was given during
         # certain period of time
-        pending = PendingPilot(pilot, self.cl_client)
-        self.pending[callsign] = pending
+        pilot = PendingPilot(user, self.cl_client)
+        self.pending[callsign] = pilot
         pending.start()
 
     def is_callsign_used(self, callsign):
@@ -147,23 +147,19 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
             LOG.debug("Removing pending pilot {0}".format(callsign))
             pending = self.pending[callsign]
             pending.stop()
-            pilot = pending.pilot
+            pending.user.clear_password(update=True)
             del self.pending[callsign]
+
         elif callsign in self.active:
             LOG.debug("Removing active pilot {0}".format(callsign))
             # TODO: do all necessary clean up
-            pilot = self.active[callsign].pilot
+            self.active[callsign].user.clear_password(update=True)
             del self.active[callsign]
-        else:
-            pilot = None
-
-        if pilot:
-            pilot.clear_password(update=True)
 
     def user_chat(self, (callsign, message)):
-        online_pilot = self.get_online_pilot(callsign)
+        pilot = self.get_pilot(callsign)
 
-        if online_pilot is None:
+        if pilot is None:
             LOG.debug("Chat message from anonymous {0}: '{1}'".format(
                       callsign, message))
             self.cl_client.chat_user(
@@ -176,23 +172,23 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
         except ValueError:
             LOG.debug(
                 "Unknown command from {0}: '{1}'".format(callsign, message))
-            with online_pilot.pilot.translator:
+            with pilot.user.translator:
                 self.cl_client.chat_user(_("Unknown command."), callsign)
             return
 
         if command:
             try:
-                self.command_handlers[command](online_pilot, *args)
+                self.command_handlers[command](pilot, *args)
             except TypeError:
                 LOG.debug("Invalid arguments for command '{0}' from {1}: '{2}'"
                           .format(command.value, callsign, ', '.join(args)))
-                with online_pilot.pilot.translator:
+                with online_pilot.user.translator:
                     self.cl_client.chat_user(
                         _("Invalid arguments for command '{command}'.").format(
                           command=command.value), callsign)
                 return
 
-    def get_online_pilot(self, callsign):
+    def get_pilot(self, callsign):
         if callsign in self.active:
             return self.active[callsign]
         elif callsign in self.pending:
@@ -200,41 +196,36 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
         else:
             return None
 
-    def on_connection_instructions(self, online_pilot, password):
-        if isinstance(online_pilot, PendingPilot):
-            self._process_password(online_pilot, password)
-        elif isinstance(online_pilot, ActivePilot):
-            pilot = online_pilot.pilot
-            with pilot.translator:
+    def on_connection_instructions(self, pilot, password):
+        if isinstance(pilot, PendingPilot):
+            self._process_password(pilot, password)
+        elif isinstance(pilot, ActivePilot):
+            with pilot.user.translator:
                 self.cl_client.chat_user(
                     _("Your password was already accepted. Happy flying!"),
-                    pilot.callsign)
-        else:
-            LOG.error("Unknown instance of online pilot: {0}".format(
-                       type(online_pilot)))
+                    pilot.user.callsign)
 
-    def _process_password(self, online_pilot, password):
-        pilot = online_pilot.pilot
+    def _process_password(self, pilot, password):
+        user = pilot.user
 
-        if online_pilot.pilot.check_password(password):
-            LOG.debug("Activate {0}".format(pilot.callsign))
+        if user.check_password(password):
+            LOG.debug("Activate {0}".format(user.callsign))
 
-            self.pending[pilot.callsign].stop()
-            del self.pending[pilot.callsign]
+            self.pending[user.callsign].stop()
+            del self.pending[user.callsign]
 
-            active = ActivePilot.from_online_pilot(online_pilot)
-            self.active[pilot.callsign] = active
+            active = ActivePilot.from_pilot(pilot)
+            self.active[user.callsign] = active
 
-            with pilot.translator:
+            with user.translator:
                 self.cl_client.chat_user(
-                    _("Password accepted. Welcome to server!"), pilot.callsign)
+                    _("Password accepted. Welcome to server!"), user.callsign)
 
-            # TODO: process active pilot
+            # TODO: process active pilot, e.g. start something
         else:
-            with pilot.translator:
+            with user.translator:
                 self.cl_client.chat_user(
-                    _("Password does not match. Try again please."),
-                    pilot.callsign)
+                    _("Wrong password. Try again please."), user.callsign)
 
     def stopService(self):
         # TODO: do all necessary clean up

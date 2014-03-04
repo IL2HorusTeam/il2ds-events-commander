@@ -444,8 +444,6 @@ Enter `./ssh/staging_key` as a file name, and then keep hitting return
 without input for passwords. Now, append the contents of local
 `./ssh/staging_key.pub` file to `~/.ssh/authorized_keys` on the remote machine.
 
-Add `il2ec-staging` address to `/etc/hosts` on your local machine.
-
 To apply latest changes and rebuild project on remote machine, run:
 
     fab staging build

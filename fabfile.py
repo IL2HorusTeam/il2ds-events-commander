@@ -22,7 +22,7 @@ env.logs = {
 
     # Platform-dependent, must be redefined
     'web': None,
-    'daemon': None,
+    'commander': None,
 }
 
 #------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ def calculate_paths():
     log_base = '{virtualenv_dir}/var/log/{project_name}'.format(**env)
     env.logs.update({
         'web': '{0}-web.log'.format(log_base),
-        'daemon': '{0}-daemon.log'.format(log_base),
+        'commander': '{0}-daemon.log'.format(log_base),
     })
 
 #------------------------------------------------------------------------------
