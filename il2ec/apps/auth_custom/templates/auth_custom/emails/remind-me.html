@@ -1,6 +1,6 @@
 <html>
 <body>
-{% trans %}Hello{% endtrans %}, {{ user.first_name }}!
+{% trans %}Hello{% endtrans %}, {{ user.get_short_name() }}!
 <br/><br/>
 {% trans %}You've just asked to remind data for signing in at <a href='{{ host_address }}' target='blank'>{{ host_name }}</a>, haven't you?{% endtrans %}
 <br/><br/>

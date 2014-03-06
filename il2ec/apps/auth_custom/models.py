@@ -253,14 +253,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         validators=[
             validate_callsign,
         ])
-    first_name = models.CharField(
-        verbose_name=_("first name"),
-        max_length=30,
-        blank=True)
-    last_name = models.CharField(
-        verbose_name=_("last name"),
-        max_length=30,
-        blank=True)
+    name = models.CharField(
+        verbose_name=_("name"),
+        max_length=50,
+        blank=True,
+        help_text=_("Any name to address user."))
     email = models.EmailField(
         verbose_name=_("email address"),
         unique=True,
@@ -362,17 +359,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         return "/users/%s/" % urlquote(self.callsign)
 
     def get_short_name(self):
-        return self.first_name or self.callsign
+        return self.name or self.callsign
 
     def get_full_name(self):
-        """
-        Returns the first_name plus the last_name (if present).
-        """
-        if self.last_name:
-            full_name = '%s %s' % (self.first_name, self.last_name)
-            return full_name.strip()
-        else:
-            return self.first_name.strip()
+        return self.get_short_name()
 
 
 @receiver(user_logged_in)

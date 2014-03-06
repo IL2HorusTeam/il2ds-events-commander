@@ -229,8 +229,7 @@ def api_sign_up(request, form_class=SignUpForm):
             email=sign_up_request.email,
             password=password,
             callsign=callsign,
-            first_name=form.cleaned_data['first_name'],
-            last_name=form.cleaned_data['last_name'],
+            name=form.cleaned_data['name'],
             language=form.cleaned_data['language'])
         sign_up_request.delete()
 

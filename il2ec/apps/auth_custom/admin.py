@@ -47,7 +47,7 @@ class UserAdmin(BaseUserAdmin):
             'callsign', 'email', 'password',
         )}),
         (_('Personal info'), {'fields': (
-            'first_name', 'last_name', 'language',
+            'name', 'language',
         )}),
         (_('Permissions'), {'fields': (
             'is_active', 'is_blocked', 'is_staff', 'is_superuser', 'groups',
@@ -63,8 +63,8 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('callsign', 'email', 'password1', 'password2', ),
         }),
     )
-    list_display = ('callsign', 'email', 'first_name', 'last_name', 'is_staff')
-    search_fields = ('callsign', 'first_name', 'last_name', 'email', )
+    list_display = ('callsign', 'email', 'name', 'is_staff')
+    search_fields = ('callsign', 'name', 'email', )
     ordering = ('callsign', )
 
     form = UserChangeForm

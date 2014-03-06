@@ -20,7 +20,7 @@ class Command(BaseCommand):
             email = "{0}@example.com".format(callsign)
 
             User.objects.create_user(
-                first_name=callsign.capitalize(),
+                name=callsign.capitalize(),
                 callsign=callsign,
                 password=callsign,
                 email=email,

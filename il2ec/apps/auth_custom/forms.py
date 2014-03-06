@@ -178,16 +178,6 @@ class SignUpForm(forms.Form):
         ],
         widget=forms.HiddenInput)
 
-    first_name = forms.CharField(
-        label=_("First name"),
-        help_text=_("Your first name"),
-        max_length=30,
-        required=True)
-    last_name = forms.CharField(
-        label=_("Last name"),
-        help_text=_("Your last name (optional)"),
-        max_length=30,
-        required=False)
     callsign = forms.RegexField(
         label=_("Callsign"),
         help_text=_("Name which is used in game"),
@@ -197,6 +187,11 @@ class SignUpForm(forms.Form):
         error_messages={
             'invalid': validate_callsign.message,
         })
+    name = forms.CharField(
+        label=_("Name"),
+        help_text=_("Optional, but we won't have to say, \"Hey you!\""),
+        max_length=50,
+        required=False)
     password = forms.CharField(
         label=_("Password"),
         help_text=_("Password for website"),
@@ -282,15 +277,10 @@ class GeneralSettingsForm(forms.Form):
         'duplicate_email': _("This email is already used."),
     }
 
-    first_name = forms.CharField(
-        label=_("First name"),
-        help_text=_("Your first name"),
-        max_length=30,
-        required=True)
-    last_name = forms.CharField(
-        label=_("Last name"),
-        help_text=_("Your last name (optional)"),
-        max_length=30,
+    name = forms.CharField(
+        label=_("Name"),
+        help_text=_("Optional, but we won't have to say, \"Hey you!\""),
+        max_length=50,
         required=False)
     email = forms.EmailField(
         label=_("Email"),
@@ -316,8 +306,7 @@ class GeneralSettingsForm(forms.Form):
         return email
 
     def save(self, commit=True):
-        self.user.first_name = self.cleaned_data['first_name']
-        self.user.last_name = self.cleaned_data['last_name']
+        self.user.name = self.cleaned_data['name']
         self.user.email = self.cleaned_data['email']
         self.user.language = self.cleaned_data['language']
 

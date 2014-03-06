@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs): # pylint: disable=W0613
         User.objects.create_superuser(
-            first_name="Admin",
+            name="Admin",
             callsign="admin",
             password="admin",
             email="admin@example.com",
