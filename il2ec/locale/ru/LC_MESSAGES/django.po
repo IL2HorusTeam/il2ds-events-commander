@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-03 18:28+0200\n"
+"POT-Creation-Date: 2014-03-06 13:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgstr "Русский"
 #: settings/components/staging/base.py:16
 #: settings/components/vagrant/base.py:17
 msgid "Awesome IL-2 events"
-msgstr "Потрясающие Ил-2 события"
+msgstr "Потрясающие события Ил-2"
 
 #: templates/base.html:41
 msgid "Help center"
@@ -56,45 +56,45 @@ msgstr "Язык"
 msgid "Sign in"
 msgstr "Вход"
 
-#: templates/base.html:96
+#: templates/base.html:95
 msgid "Request connection"
 msgstr "Запрос подключения"
 
-#: templates/base.html:98
+#: templates/base.html:97
 msgid "Admin panel"
 msgstr "Панель управления"
 
-#: templates/base.html:100
+#: templates/base.html:99
 msgid "Settings"
 msgstr "Настройки"
 
-#: templates/base.html:102
+#: templates/base.html:101
 msgid "Sign out"
 msgstr "Выйти"
 
-#: templates/base.html:133
+#: templates/base.html:132
 #, python-format
 msgid "Powered by <a %(anchor_attr)s>IL-2 events commander</a>"
 msgstr "Управляется с помощью <a %(anchor_attr)s>коммандера Ил-2 событий</a>"
 
-#: templates/base.html:147
+#: templates/base.html:146
 msgid "Request connection to game server"
 msgstr "Запрос подключения к серверу"
 
-#: templates/base.html:157
+#: templates/base.html:156
 #, python-format
 msgid "Copy instruction below and send it to %(addressee)s in game chat."
 msgstr "Скопируйте команду ниже и отправьте на %(addressee)s в чате игры."
 
-#: templates/base.html:160
+#: templates/base.html:159
 msgid "Press CTRL-C to copy"
 msgstr "Нажмите CTRL-C, чтобы скопировать"
 
-#: templates/base.html:227 templates/base.html.py:430
+#: templates/base.html:226 templates/base.html.py:429
 msgid "Request execution error"
 msgstr "Ошибка выполнения запроса"
 
-#: templates/base.html:351
+#: templates/base.html:350
 msgid ""
 "Sorry, we failed to send an email to you. Please, try again a bit later."
 msgstr "Извините, нам не удалось вам письмо. Пожалуйста, попробуйте позже."

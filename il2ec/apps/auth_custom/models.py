@@ -164,13 +164,12 @@ class SignUpRequest(models.Model):
 
         rid = urlsafe_base64_encode(force_bytes(self.pk))
 
-        activate(self.language)
-        subject = unicode(_("Confirmation instructions"))
-        home_url = urljoin(self.base_url, resolve_url(
-            'website-index'))
-        confirmation_url = urljoin(self.base_url, resolve_url(
-            'auth-custom-sign-up', rid, self.confirmation_key))
-        deactivate()
+        with self.translator:
+            subject = unicode(_("Confirmation instructions"))
+            home_url = urljoin(self.base_url, resolve_url(
+                'website-index'))
+            confirmation_url = urljoin(self.base_url, resolve_url(
+                'auth-custom-sign-up', rid, self.confirmation_key))
 
         context = {
             'host_address': home_url,
@@ -240,6 +239,20 @@ class UserManager(BaseUserManager):
         return self.get(**kwargs)
 
 
+class Translator(object):
+    """
+    Helps getting strings in language preferred by user.
+    """
+    def __init__(self, user):
+        self.user = user
+
+    def __enter__(self):
+        activate(self.user.language)
+
+    def __exit__(self, *args):
+        deactivate()
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     """
     Custom users model. Callsign, password and email are required.
@@ -304,22 +317,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = _("user")
         verbose_name_plural = _("users")
 
-    class Translator(object):
-        """
-        Helps getting strings in language preferred by user.
-        """
-        def __init__(self, user):
-            self.user = user
-
-        def __enter__(self):
-            activate(self.user.language)
-
-        def __exit__(self, *args):
-            deactivate()
-
     def __init__(self, *args, **kwargs):
         super(User, self).__init__(*args, **kwargs)
-        self.translator = User.Translator(self)
+        self.translator = Translator(self)
 
     def create_connection_password(self, update=False):
         """

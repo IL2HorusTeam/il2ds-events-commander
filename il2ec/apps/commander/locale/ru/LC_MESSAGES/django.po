@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-03 18:28+0200\n"
+"POT-Creation-Date: 2014-03-06 13:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,26 +57,26 @@ msgid ""
 "the website."
 msgstr ""
 
-#: service/pilot.py:170
+#: service/pilot.py:166
 msgid "Sorry, anonymous users are not allowed to use chat."
 msgstr ""
 
-#: service/pilot.py:180
+#: service/pilot.py:176
 msgid "Unknown command."
 msgstr ""
 
-#: service/pilot.py:191
+#: service/pilot.py:187
 msgid "Invalid arguments for command '{command}'."
 msgstr ""
 
-#: service/pilot.py:210
+#: service/pilot.py:205
 msgid "Your password was already accepted. Happy flying!"
 msgstr ""
 
-#: service/pilot.py:230
+#: service/pilot.py:222
 msgid "Password accepted. Welcome to server!"
 msgstr ""
 
-#: service/pilot.py:236
-msgid "Password does not match. Try again please."
+#: service/pilot.py:228
+msgid "Wrong password. Try again please."
 msgstr ""

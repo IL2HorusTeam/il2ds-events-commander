@@ -10,7 +10,7 @@ from coffin.shortcuts import resolve_url
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 
-from django.utils.translation import activate, deactivate, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
@@ -58,13 +58,12 @@ def send_remind_me_email(http_request, user,
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = token_generator.make_token(user)
 
-    activate(user.language)
-    subject = unicode(_("Remind data"))
-    home_url = http_request.build_absolute_uri(resolve_url(
-        'website-index'))
-    reset_password_url = http_request.build_absolute_uri(resolve_url(
-        'auth-custom-password-reset', uid, token))
-    deactivate()
+    with user.translator:
+        subject = unicode(_("Remind data"))
+        home_url = http_request.build_absolute_uri(
+            resolve_url('website-index'))
+        reset_password_url = http_request.build_absolute_uri(
+            resolve_url('auth-custom-password-reset', uid, token))
 
     context = {
         'host_address': home_url,

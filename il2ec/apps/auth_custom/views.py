@@ -27,7 +27,7 @@ from django.views.decorators.csrf import csrf_protect
 
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url, urlsafe_base64_decode
-from django.utils.translation import activate, deactivate, ugettext as _
+from django.utils.translation import ugettext as _
 
 from auth_custom import settings
 from auth_custom.helpers import (sign_up_confirmation, send_remind_me_email,
@@ -238,9 +238,8 @@ def api_sign_up(request, form_class=SignUpForm):
         login(request, user)
         _remember_me(request, form)
 
-        activate(user.language)
-        redirect_url = resolve_url('website-index')
-        deactivate()
+        with user.translator:
+            redirect_url = resolve_url('website-index')
 
         return JSONResponse.success(payload={
             'redirect_url': redirect_url,
