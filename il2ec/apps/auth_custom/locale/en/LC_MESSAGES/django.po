@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-06 13:57+0200\n"
+"POT-Creation-Date: 2014-03-06 16:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Stay signed in on website"
 msgstr ""
 
-#: forms.py:234 models.py:238
+#: forms.py:234 models.py:237
 msgid "Invalid callsign or email."
 msgstr ""
 
@@ -154,7 +154,7 @@ msgstr ""
 msgid "email"
 msgstr ""
 
-#: models.py:118 models.py:286
+#: models.py:118 models.py:299
 msgid "preferred language"
 msgstr ""
 
@@ -186,78 +186,78 @@ msgstr ""
 msgid "Confirmation instructions"
 msgstr ""
 
-#: models.py:194
+#: models.py:193
 msgid "Sign up request for {email}"
 msgstr ""
 
-#: models.py:249
+#: models.py:262
 msgid "callsign"
 msgstr ""
 
-#: models.py:257
+#: models.py:270
 msgid "name"
 msgstr ""
 
-#: models.py:260
+#: models.py:273
 msgid "Any name to address user."
 msgstr ""
 
-#: models.py:262
+#: models.py:275
 msgid "email address"
 msgstr ""
 
-#: models.py:266
+#: models.py:279
 msgid "staff status"
 msgstr ""
 
-#: models.py:268
+#: models.py:281
 msgid "Designates whether the user can sign into this admin site."
 msgstr ""
 
-#: models.py:271
+#: models.py:284
 msgid "active"
 msgstr ""
 
-#: models.py:273
+#: models.py:286
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts. Inactive users can sign in to reactivate their "
 "accounts."
 msgstr ""
 
-#: models.py:278
+#: models.py:291
 msgid "blocked"
 msgstr ""
 
-#: models.py:280
+#: models.py:293
 msgid ""
 "Designates whether this user is blocked. Blocked users can not sign in "
 "without intervention of administration."
 msgstr ""
 
-#: models.py:283
+#: models.py:296
 msgid "date joined"
 msgstr ""
 
-#: models.py:291
+#: models.py:304
 msgid ""
 "Language in which messages will be shown to user in gamechat and at this "
 "website."
 msgstr ""
 
-#: models.py:294
+#: models.py:307
 msgid "connection password"
 msgstr ""
 
-#: models.py:296
+#: models.py:309
 msgid "One time password for connecting to game server"
 msgstr ""
 
-#: models.py:304
+#: models.py:317
 msgid "user"
 msgstr ""
 
-#: models.py:305
+#: models.py:318
 msgid "users"
 msgstr ""
 
@@ -279,23 +279,23 @@ msgstr ""
 msgid "Security error."
 msgstr ""
 
-#: views.py:304
+#: views.py:303
 msgid "Your password was successfully updated."
 msgstr ""
 
-#: views.py:307
+#: views.py:306
 msgid "You can use it to sign in right now!"
 msgstr ""
 
-#: views.py:376
+#: views.py:375
 msgid "New settings were successfully applied."
 msgstr ""
 
-#: views.py:395
+#: views.py:394
 msgid "Your callsign was successfully changed."
 msgstr ""
 
-#: views.py:413
+#: views.py:412
 msgid "Your account was successfully deactivated. Goodbye!"
 msgstr ""
 

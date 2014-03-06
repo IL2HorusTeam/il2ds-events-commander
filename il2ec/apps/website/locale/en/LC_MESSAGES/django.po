@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-06 13:54+0200\n"
+"POT-Creation-Date: 2014-03-06 16:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgid "Your name"
 msgstr ""
 
 #: forms.py:42
-msgid "How should we appeal to you?"
+msgid "How should we address to you?"
 msgstr ""
 
 #: forms.py:46 templates/website/pages/contact.html:66
@@ -82,11 +82,8 @@ msgid "support"
 msgstr ""
 
 #: templates/website/emails/contact.html:3
-msgid "Support request from"
-msgstr ""
-
-#: templates/website/emails/contact.html:5
-msgid "at"
+#, python-format
+msgid "Support request from %(name)s (<a %(anchor_attrs)s>%(email)s</a>) at"
 msgstr ""
 
 #: templates/website/pages/contact.html:4
@@ -126,5 +123,5 @@ msgid ""
 msgstr ""
 
 #: templates/website/pages/index.html:4
-msgid "Home"
-msgstr ""
+msgid "HOME"
+msgstr "Home"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-06 13:54+0200\n"
+"POT-Creation-Date: 2014-03-06 16:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,62 +21,64 @@ msgstr ""
 
 #: service/__init__.py:161
 msgid "Everyone will be kicked in {sec}..."
-msgstr ""
+msgstr "Все будут выгнаны через {sec}..."
 
 #: service/__init__.py:163
 msgid "Everyone will be kicked NOW!"
-msgstr ""
+msgstr "Все будут выгнаны СЕЙЧАС!"
 
 #: service/__init__.py:164
 msgid "Please, reconnect after kick."
-msgstr ""
+msgstr "Пожалуйста, пересоединитесь после отключения."
 
 #: service/__init__.py:167
 msgid "Hello everyone! This server is captured by IL-2 events commander."
-msgstr ""
+msgstr "Здравствуйте! Этот сервер захвачен коммандером событий Ил-2."
 
 #: service/__init__.py:194
 msgid "Commander is quitting. Goodbye everyone!"
-msgstr ""
+msgstr "Коммандер уходит. Всем до свидания!"
 
 #: service/pilot.py:53
 msgid "{callsign}, please enter your password or you will be kicked."
-msgstr ""
+msgstr "{callsign}, пожалуйста, введите Ваш пароль или Вы будете выгнаны."
 
 #: service/pilot.py:100
 msgid "{callsign}, your callsign is already used."
-msgstr ""
+msgstr "{callsign}, Ваш позывной уже используется."
 
 #: service/pilot.py:112
 msgid "You are not registered. Please, create an account first."
-msgstr ""
+msgstr "Вы не зарегистрированы. Пожалуйста, сначала создайте учетную запись."
 
 #: service/pilot.py:122
 msgid ""
 "{callsign}, you are not allowed to connect. Please, request connection on "
 "the website."
 msgstr ""
+"{callsign}, Вам не разрешено соединение. Пожалуйста, запросите соединение на "
+"сайте."
 
 #: service/pilot.py:166
 msgid "Sorry, anonymous users are not allowed to use chat."
-msgstr ""
+msgstr "Извините, анонимным пользователям нельзя использовать чат."
 
 #: service/pilot.py:176
 msgid "Unknown command."
-msgstr ""
+msgstr "Неизвестная команда."
 
 #: service/pilot.py:187
 msgid "Invalid arguments for command '{command}'."
-msgstr ""
+msgstr "Неверные аргументы команды '{command}'."
 
 #: service/pilot.py:205
 msgid "Your password was already accepted. Happy flying!"
-msgstr ""
+msgstr "Ваш пароль уже был принят. Счастливых полетов!"
 
 #: service/pilot.py:222
 msgid "Password accepted. Welcome to server!"
-msgstr ""
+msgstr "Пароль принят. Добро пожаловать на сервер!"
 
 #: service/pilot.py:228
 msgid "Wrong password. Try again please."
-msgstr ""
+msgstr "Неверный пароль. Пожалуйста, попробуйте ещё раз."

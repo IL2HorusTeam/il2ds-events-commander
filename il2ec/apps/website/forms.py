@@ -5,7 +5,7 @@ Common forms.
 import logging
 
 from django import forms
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 
 LOG = logging.getLogger(__name__)
@@ -39,7 +39,7 @@ class AnonymousContactForm(ContactForm):
     """
     name = forms.CharField(
         label=_("Your name"),
-        help_text=_("How should we appeal to you?"),
+        help_text=_("How should we address to you?"),
         max_length=50,
         required=True)
     email = forms.EmailField(

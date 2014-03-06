@@ -1,8 +1,6 @@
 <html>
 <body>
-{% trans %}Support request from{% endtrans %}
-{{ name }} (<a href='mailto:{{ email }}' target='blank'>{{ email }}</a>)
-{% trans %}at{% endtrans %}
+{% trans anchor_attrs=("href='mailto:" + email + "' target='blank'")|safe %}Support request from {{ name }} (<a {{ anchor_attrs }}>{{ email }}</a>) at{% endtrans %}
 <a href='{{ host_address }}' target='blank'>{{ host_name }}</a>:
 <br/>
 <br/>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-06 13:54+0200\n"
+"POT-Creation-Date: 2014-03-06 16:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,112 +21,115 @@ msgstr ""
 
 #: dashboard.py:16
 msgid "Applications"
-msgstr ""
+msgstr "Приложения"
 
 #: dashboard.py:24
 msgid "Users"
-msgstr ""
+msgstr "Пользователи"
 
 #: dashboard.py:36
 msgid "Recent Actions"
-msgstr ""
+msgstr "Последние Действия"
 
 #: forms.py:19
 msgid "Subject"
-msgstr ""
+msgstr "Тема"
 
 #: forms.py:20
 msgid "What is your message about?"
-msgstr ""
+msgstr "О чем Ваше сообщение?"
 
 #: forms.py:24
 msgid "Message body"
-msgstr ""
+msgstr "Тело сообщения"
 
 #: forms.py:25
 msgid "Write your message here. Be succinct, we'll ask if we need more info."
 msgstr ""
+"Пишите своё сообщение здесь. Будьте кратки, при необходимости мы обратимся "
+"за дополнительной информацией."
 
 #: forms.py:31
 msgid "Send me a copy"
-msgstr ""
+msgstr "Отправить мне копию"
 
 #: forms.py:41 templates/website/pages/contact.html:60
 msgid "Your name"
-msgstr ""
+msgstr "Ваше имя"
 
 #: forms.py:42
-msgid "How should we appeal to you?"
-msgstr ""
+msgid "How should we address to you?"
+msgstr "Как нам обращаться к Вам?"
 
 #: forms.py:46 templates/website/pages/contact.html:66
 msgid "Your email"
-msgstr ""
+msgstr "Ваша почта"
 
 #: forms.py:47
 msgid "Where should we send our answer?"
-msgstr ""
+msgstr "Куда мы должны отправить свой ответ?"
 
 #: responses.py:32
 msgid "Success"
-msgstr ""
+msgstr "Успех"
 
 #: responses.py:47
 msgid "Failure"
-msgstr ""
+msgstr "Сбой"
 
 #: views.py:83
 msgid "Unknown task ID."
-msgstr ""
+msgstr "Неизвестный ID задачи."
 
 #: views.py:123
 msgid "support"
-msgstr ""
+msgstr "поддержка"
 
 #: templates/website/emails/contact.html:3
-msgid "Support request from"
-msgstr ""
-
-#: templates/website/emails/contact.html:5
-msgid "at"
-msgstr ""
+#, python-format
+msgid "Support request from %(name)s (<a %(anchor_attrs)s>%(email)s</a>) at"
+msgstr "Запрос поддержки от %(name)s (<a %(anchor_attrs)s>%(email)s</a>) на"
 
 #: templates/website/pages/contact.html:4
 #: templates/website/pages/contact.html:19
 msgid "Contact support"
-msgstr ""
+msgstr "Написать в поддержку"
 
 #: templates/website/pages/contact.html:22
 msgid ""
 "We are here to help with any questions or comments. If you just want to say "
 "hello, that's nice too."
 msgstr ""
+"Мы здесь для того, чтобы ответить на любые вопросы или комментарии. Если Вы "
+"хотите просто поздороваться, то это тоже хорошо."
 
 #: templates/website/pages/contact.html:26
 msgid "Feel free to email us at"
-msgstr ""
+msgstr "Не стесняйтесь писать нам на"
 
 #: templates/website/pages/contact.html:90
 msgid "Send request"
-msgstr ""
+msgstr "Отправить запрос"
 
 #: templates/website/pages/contact.html:93
 msgid "Thank you for your participation"
-msgstr ""
+msgstr "Спасибо за Ваше участие"
 
 #: templates/website/pages/contact.html:95
 msgid "We'll try to answer as soon as possible"
-msgstr ""
+msgstr "Мы постараемся ответить как можно быстрее"
 
 #: templates/website/pages/contact.html:99
 msgid "Sorry, support is not configured yet"
-msgstr ""
+msgstr "Извините, поддержка ещё не настроена"
 
 #: templates/website/pages/contact.html:134
 msgid ""
 "Sorry, we failed to send an email to you. Please, try again a bit later."
 msgstr ""
+"Извините, нам не удалось отправить Вам письмо. Пожалуйста, попробуйте "
+"немного позже."
 
 #: templates/website/pages/index.html:4
-msgid "Home"
-msgstr ""
+msgid "HOME"
+msgstr "Главная"
