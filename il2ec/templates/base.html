@@ -185,12 +185,10 @@
         <div class="server-on">
           <ul class="nav nav-tabs" id="id_server_info_tabs">
             <li class="active"><a href="#id_tab_server_info_general" data-toggle="tab">{% trans %}General info{% endtrans %}</a></li>
-            <li><a href="#id_tab_server_info_connection" data-toggle="tab">{% trans %}Connection{% endtrans %}</a></li>
             <li><a href="#id_tab_server_info_difficulty" data-toggle="tab">{% trans %}Difficulty{% endtrans %}</a></li>
           </ul>
           <div class="tab-content">
             <div class="tab-pane active" id="id_tab_server_info_general">
-
               <div class="row">
                 <label class="col-sm-3 control-label" style='padding-top: 6px;'>{% trans %}Server name{% endtrans %}</label>
                 <div class="col-sm-9">
@@ -201,16 +199,30 @@
                 <label class="col-sm-3 control-label">{% trans %}Server version{% endtrans %}</label>
                 <div class="col-sm-9">
                   <span class="label label-primary" id="id_server_version"></span>
+                  <span id="id_server_mods"></span>
+                </div>
+              </div>
+              <hr/>
+              <div class="row" id="id_row_external_address">
+                <label class="col-sm-3 control-label well-label">{% trans %}External address{% endtrans %}</label>
+                <div class="col-sm-9">
+                  <div class="well well-sm" id="id_external_address" data-toggle="tooltip"
+               title="{% trans %}Press CTRL-C to copy{% endtrans %}"></div>
                 </div>
               </div>
               <div class="row">
-                <label class="col-sm-3 control-label">{% trans %}MODs{% endtrans %}</label>
-                <div class="col-sm-9" id="id_server_mods"></div>
+                <label class="col-sm-3 control-label well-label">{% trans %}Local address{% endtrans %}</label>
+                <div class="col-sm-9">
+                  <div class="well well-sm" id="id_local_address" data-toggle="tooltip"
+               title="{% trans %}Press CTRL-C to copy{% endtrans %}"></div>
+                </div>
               </div>
-
-            </div>
-            <div class="tab-pane fade" id="id_tab_server_info_connection">
-              connection
+              <div class="row">
+                <label class="col-sm-3 control-label">{% trans %}Channels{% endtrans %}</label>
+                <div class="col-sm-9">
+                  <p class="form-control-static" id="id_channels"></p>
+                </div>
+              </div>
             </div>
             <div class="tab-pane fade" id="id_tab_server_info_difficulty">
               difficulty
@@ -318,6 +330,12 @@
     e.preventDefault()
     $('#id_modal_server_info').modal('show')
   })
+  $('#id_external_address').click(function() {
+    select_text(this.id)
+  })
+  $('#id_local_address').click(function() {
+    select_text(this.id)
+  })
 
   function show_server_info(info) {
     console.log(info)
@@ -340,6 +358,17 @@
     } else {
       add_mod("{% trans %}No MODs{% endtrans %}")
     }
+
+    if (info.address.external == null) {
+      $('#id_row_external_address').hide()
+    } else {
+      $('#id_external_address').text(info.address.external + ":" +
+                                     info.address.port)
+      $('#id_row_external_address').show()
+    }
+
+    $('#id_local_address').text(info.address.local + ":" + info.address.port)
+    $('#id_channels').text(info.channels)
 
     $('.server-on').show()
     $('.server-off').hide()
@@ -558,7 +587,7 @@
     })
   })
   $('#id_connection_command').click(function() {
-    select_text('id_connection_command')
+    select_text(this.id)
   })
 </script>
 <!-- Authenticated section END -->

@@ -234,11 +234,21 @@ body {
 #id_server_name {
   font-size: 22px;
 }
-
-#id_server_mods .label {
+#id_server_version.label,
+#id_server_mods .label
+{
   display: inline-block;
   padding-top: 4px;
   margin: 0 1px;
+}
+#id_tab_server_info_general .well {
+  margin-bottom: 3px;
+}
+#id_tab_server_info_general .well-label {
+  padding-top: 11px;
+}
+#id_channels {
+  padding-left: 10px;
 }
 
 /* Other ------------------------------------------------------------------- */
