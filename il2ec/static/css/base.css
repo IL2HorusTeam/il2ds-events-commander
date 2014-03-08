@@ -218,7 +218,43 @@ body {
   background-position: 0 0 !important;
 }
 
+/* Server info ------------------------------------------------------------- */
+
+#id_server_info_tabs {
+  margin-bottom: 15px;
+}
+#id_tab_server_info_general .row {
+  margin-top: 5px;
+}
+#id_tab_server_info_general .control-label {
+  font-weight: normal;
+  color: #8D8A8A;
+  text-align: right;
+}
+#id_server_name {
+  font-size: 22px;
+}
+
+#id_server_mods .label {
+  display: inline-block;
+  padding-top: 4px;
+  margin: 0 1px;
+}
+
 /* Other ------------------------------------------------------------------- */
 div.panel-heading[data-toggle="collapse"]:hover {
   cursor: pointer;
+}
+
+.bg-warning {
+  margin: -21px -20px 15px -20px;
+  padding: 5px 20px;
+  border-bottom: 1px solid #F6DBA1;
+  border-top: 1px solid #F6DBA1;
+  font-size: 12px;
+  color: #9C7231;
+}
+
+.server-on, .server-off {
+  display: none;
 }

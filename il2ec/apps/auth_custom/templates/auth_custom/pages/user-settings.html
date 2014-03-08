@@ -12,14 +12,6 @@
   #id_modal_callsign .modal-dialog {
     width: 480px;
   }
-  #id_modal_callsign .bg-warning {
-    margin: -21px -20px 15px -20px;
-    padding: 5px 20px;
-    border-bottom: 1px solid #F6DBA1;
-    border-top: 1px solid #F6DBA1;
-    font-size: 12px;
-    color: #9C7231;
-  }
   #id_modal_callsign ul {
     padding-left: 20px;
   }
@@ -195,10 +187,7 @@
           </div>
           <!-- Form messages END -->
         </form>
-        <div class="progress progress-striped active">
-          <div class="progress-bar" role="progressbar" style="width: 100%"
-               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
+        {% include "blocks/progress-bar-full.html" %}
       </div>
     </div>
   </div>
@@ -391,7 +380,8 @@
 
     /* Periodically submit requests to check status of email sending ------- */
     function wait_async_result(task_id, email) {
-      var url = "{% url api-website-task-result task_id='task_id' %}".replace('task_id', task_id)
+      var url = "{% url api-website-task-result task_id='task_id' %}".replace(
+                'task_id', task_id)
       , interval = undefined
 
       function stop_requester() {

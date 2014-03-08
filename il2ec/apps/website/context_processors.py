@@ -10,19 +10,23 @@ from django.conf import settings as dj_settings
 LOG = logging.getLogger(__name__)
 
 
-def settings(request): # pylint: disable=W0613
+def settings(request):
     """
     Inject application settings to template context.
     """
-    return {'settings': dj_settings}
+    return {
+        'settings': dj_settings,
+    }
 
 
 def language_name(request):
     """
     Inject current language name.
     """
-    return {'LANGUAGE_NAME': dict(dj_settings.LANGUAGES).get(
-                             request.LANGUAGE_CODE, request.LANGUAGE_CODE)}
+    return {
+        'LANGUAGE_NAME': dict(dj_settings.LANGUAGES).get(request.LANGUAGE_CODE,
+                                                         request.LANGUAGE_CODE)
+    }
 
 
 def current_path(request):
@@ -34,4 +38,6 @@ def current_path(request):
         path = full_path[full_path.index('/', 1):]
     except ValueError:
         path = full_path
-    return {'CURRENT_PATH': path}
+    return {
+        'CURRENT_PATH': path,
+    }

@@ -63,6 +63,7 @@ INSTALLED_APPS = (
     'redis_sessions',
     'south',
     'transmeta',
+    'il2ds_difficulty',
 
     # Project applications
     'auth_custom',

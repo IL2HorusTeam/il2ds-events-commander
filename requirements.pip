@@ -25,6 +25,7 @@ django-transmeta==0.7.3
 
 hiredis==0.1.2
 il2ds-middleware>=0.9.1
+il2ds-difficulty>=1.0.0
 Jinja2==2.7.2
 logsna==1.2
 psycopg2==2.5.2

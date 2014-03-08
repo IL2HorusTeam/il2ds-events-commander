@@ -14,6 +14,9 @@ from django.http import HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_protect
 from django.utils.translation import ugettext as _
 
+from commander.helpers import (server_info_was_updated,
+    get_server_update_token, get_server_info, )
+
 from misc.tasks import send_mail
 
 from website.forms import AnonymousContactForm, ContactForm
@@ -144,3 +147,17 @@ def api_contact(request, template_name='website/emails/contact.html'):
         })
     else:
         return JSONResponse.form_field_errors(form)
+
+
+@ajax_api(method='GET')
+def api_server_info(request, update_token=None):
+    changed = server_info_was_updated(update_token)
+    payload = {
+        'changed': changed,
+    }
+    if changed:
+        payload.update({
+            'server_info': get_server_info(),
+            'server_info_update_token': get_server_update_token(),
+        })
+    return JSONResponse.success(payload=payload)

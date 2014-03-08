@@ -19,4 +19,11 @@ urlpatterns = patterns('',
     url(r'^api/task/result/(?P<task_id>.+)/$',
         'website.views.api_task_result',
         name='api-website-task-result'),
+
+    url(r'^api/server-info/$',
+        'website.views.api_server_info',
+        name='api-website-server-info-no-token'),
+    url(r'^api/server-info/(?P<update_token>\w+)/$',
+        'website.views.api_server_info',
+        name='api-website-server-info'),
 )

@@ -39,6 +39,7 @@
                 <li>
                   <ul>
                     <li class="dropdown-header">{% trans %}Help center{% endtrans %}</li>
+                    <li><a id="id_menu_server_info" href="javascript:void(0)">{% trans %}Server info{% endtrans %}</a></li>
                     <li><a href="{% url website-contact %}">{% trans %}Contact support{% endtrans %}</a></li>
                   </ul>
                 </li>
@@ -92,7 +93,7 @@
                   <li id="nav_full_name" class="dropdown-header">{{ user.name }}</li>
                   <li class="divider"></li>
                 {% endif %}
-                <li><a id="id_menu_request_connection" href="javascript:void(0)">{% trans %}Request connection{% endtrans %}</a></li>
+                <li class='server-on'><a id="id_menu_request_connection" href="javascript:void(0)">{% trans %}Request connection{% endtrans %}</a></li>
                 {% if user.is_superuser or user.is_staff %}
                   <li><a href="{% url admin:index %}">{% trans %}Admin panel{% endtrans %}</a></li>
                 {% endif %}
@@ -147,10 +148,7 @@
         </h4>
       </div>
       <div class="modal-body">
-        <div class="progress progress-striped active">
-          <div class="progress-bar" role="progressbar" style="width: 100%"
-               aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
+        {% include "blocks/progress-bar-full.html" %}
         <div id="id_instructions" class="alerts-placeholder">
           <p>
             {% trans addressee="<code>Server</code>"|safe %}Copy instruction below and send it to {{ addressee }} in game chat.{% endtrans %}
@@ -160,6 +158,64 @@
         </div>
         <div class="alert alert-danger alerts-placeholder">
           <span class='form-message'></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal server info -->
+<div class="modal fade" id="id_modal_server_info" tabindex="-1" role="dialog"
+     aria-labelledby="id_modal_server_info_label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="id_modal_server_info_label">
+          {% trans %}Server info{% endtrans %}
+        </h4>
+      </div>
+      <div class="modal-body">
+        {% include "blocks/progress-bar-full.html" %}
+        <div class="server-off">
+          <p class="bg-warning">
+            {% trans %}Sorry, game server is not running now{% endtrans %}.
+          </p>
+        </div>
+        <div class="server-on">
+          <ul class="nav nav-tabs" id="id_server_info_tabs">
+            <li class="active"><a href="#id_tab_server_info_general" data-toggle="tab">{% trans %}General info{% endtrans %}</a></li>
+            <li><a href="#id_tab_server_info_connection" data-toggle="tab">{% trans %}Connection{% endtrans %}</a></li>
+            <li><a href="#id_tab_server_info_difficulty" data-toggle="tab">{% trans %}Difficulty{% endtrans %}</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="id_tab_server_info_general">
+
+              <div class="row">
+                <label class="col-sm-3 control-label" style='padding-top: 6px;'>{% trans %}Server name{% endtrans %}</label>
+                <div class="col-sm-9">
+                  <p class="form-control-static" id="id_server_name"></p>
+                </div>
+              </div>
+              <div class="row">
+                <label class="col-sm-3 control-label">{% trans %}Server version{% endtrans %}</label>
+                <div class="col-sm-9">
+                  <span class="label label-primary" id="id_server_version"></span>
+                </div>
+              </div>
+              <div class="row">
+                <label class="col-sm-3 control-label">{% trans %}MODs{% endtrans %}</label>
+                <div class="col-sm-9" id="id_server_mods"></div>
+              </div>
+
+            </div>
+            <div class="tab-pane fade" id="id_tab_server_info_connection">
+              connection
+            </div>
+            <div class="tab-pane fade" id="id_tab_server_info_difficulty">
+              difficulty
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -240,22 +296,93 @@
     })
   })
 
-  /* Text celector --------------------------------------------------------- */
+  /* Text selector --------------------------------------------------------- */
   function select_text(element_id) {
     var element = document.getElementById(element_id)
       , range, selection
     if (document.body.createTextRange) {
-        range = document.body.createTextRange();
-        range.moveToElementText(element);
-        range.select();
+        range = document.body.createTextRange()
+        range.moveToElementText(element)
+        range.select()
     } else if (window.getSelection) {
-        selection = window.getSelection();
-        range = document.createRange();
-        range.selectNodeContents(element);
-        selection.removeAllRanges();
-        selection.addRange(range);
+        selection = window.getSelection()
+        range = document.createRange()
+        range.selectNodeContents(element)
+        selection.removeAllRanges()
+        selection.addRange(range)
     }
   }
+
+  /* Display server info --------------------------------------------------- */
+  $('#id_menu_server_info').click(function(e) {
+    e.preventDefault()
+    $('#id_modal_server_info').modal('show')
+  })
+
+  function show_server_info(info) {
+    console.log(info)
+
+    $('#id_server_name').text(info.name)
+    $('#id_server_version').text(info.version)
+
+    var mods_containter = $('#id_server_mods')
+    mods_containter.empty()
+
+    function add_mod(name) {
+      mods_containter.append('<span class="label label-info">' + name +
+                             '</span>')
+    }
+
+    if (info.mods.length) {
+      for (var i in info.mods) {
+        add_mod(info.mods[i])
+      }
+    } else {
+      add_mod("{% trans %}No MODs{% endtrans %}")
+    }
+
+    $('.server-on').show()
+    $('.server-off').hide()
+  }
+
+  function hide_server_info() {
+    $('.server-on').hide()
+    $('.server-off').show()
+  }
+
+  (function() {
+    var server_info_update_token = undefined
+
+    function request_sender() {
+      if (server_info_update_token == undefined) {
+        var url = '{% url api-website-server-info-no-token %}'
+      } else {
+        var url = "{% url api-website-server-info update_token='update_token' %}".replace(
+                  'update_token', server_info_update_token)
+      }
+      $.get(url
+        , function(response) {
+          if (!response.changed) {
+            return
+          }
+          if (server_info_update_token == undefined) {
+            $('#id_modal_server_info div.progress').hide()
+          }
+          server_info_update_token = response.server_info_update_token
+          if (response.server_info == null) {
+            hide_server_info()
+          } else {
+            show_server_info(response.server_info)
+          }
+        }
+        , "json"
+      )
+    }
+
+    request_sender()
+    setInterval(request_sender, 5000)
+  })()
+
 </script>
 
 <!-- Anonymous section START -->

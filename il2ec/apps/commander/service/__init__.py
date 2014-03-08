@@ -20,7 +20,8 @@ from twisted.internet.protocol import Factory
 
 from commander import log
 from commander import settings
-from commander.sharing import (get_storage, KEY_SERVER_RUNNING,
+from commander.helpers import set_server_update_token
+from commander.sharing import (shared_storage, KEY_SERVER_RUNNING,
     KEY_SERVER_NAME, KEY_SERVER_LOCAL_ADDRESS, KEY_SERVER_USER_PORT,
     KEY_SERVER_CHANNELS, KEY_SERVER_DIFFICULTY, )
 from commander.protocol.async import APIServerProtocol, ConsoleClientFactory
@@ -62,10 +63,6 @@ class CommanderService(MultiService, CommanderServiceMixin):
         # Place to store some of server confs values
         self.confs = {}
 
-        # Init shared storage which is used to share information about server
-        # to the ouside world
-        self.shared_storage = get_storage()
-
         # Init pilots service
         from commander.service.pilot import PilotService
         pilots = PilotService()
@@ -96,7 +93,6 @@ class CommanderService(MultiService, CommanderServiceMixin):
             field_names=['pilots', 'objects', 'missions'])(
             pilots, objects, missions)
 
-
     def startService(self):
         """
         Start commander service. This will start all main work to be done by
@@ -122,9 +118,9 @@ class CommanderService(MultiService, CommanderServiceMixin):
         config.read(settings.IL2_CONFIG_PATH)
 
         self.confs.update({
-            'name'      : config.get('NET', 'serverName'),
-            'user_port' : config.getint('NET', 'localPort'),
-            'channels'  : config.getint('NET', 'serverChannels'),
+            'name': config.get('NET', 'serverName'),
+            'user_port': config.getint('NET', 'localPort'),
+            'channels': config.getint('NET', 'serverChannels'),
             'difficulty': config.getint('NET', 'difficulty'),
         })
 
@@ -132,14 +128,15 @@ class CommanderService(MultiService, CommanderServiceMixin):
         """
         Load information about game server into a shared storage.
         """
-        self.shared_storage.set(KEY_SERVER_RUNNING, True)
-        self.shared_storage.set(KEY_SERVER_NAME, self.confs['name'])
-        self.shared_storage.set(KEY_SERVER_LOCAL_ADDRESS,
-                                self.cl_client.transport.getHost().host)
-        self.shared_storage.set(KEY_SERVER_USER_PORT, self.confs['user_port'])
-        self.shared_storage.set(KEY_SERVER_CHANNELS, self.confs['channels'])
-        self.shared_storage.set(KEY_SERVER_DIFFICULTY,
-                                self.confs['difficulty'])
+        shared_storage.update({
+            KEY_SERVER_RUNNING: True,
+            KEY_SERVER_NAME: self.confs['name'],
+            KEY_SERVER_LOCAL_ADDRESS: self.cl_client.transport.getPeer().host,
+            KEY_SERVER_USER_PORT: self.confs['user_port'],
+            KEY_SERVER_CHANNELS: self.confs['channels'],
+            KEY_SERVER_DIFFICULTY: self.confs['difficulty'],
+        })
+        set_server_update_token()
 
     @defer.inlineCallbacks
     def _greet_n_kick_all(self):
@@ -195,8 +192,8 @@ class CommanderService(MultiService, CommanderServiceMixin):
 
         yield MultiService.stopService(self)
         self.confs.clear()
-        if not self.shared_storage.flushdb():
-            LOG.error("Failed to flush commander's shared storage")
+        shared_storage.clear()
+        set_server_update_token()
 
     def stopService(self):
         """
