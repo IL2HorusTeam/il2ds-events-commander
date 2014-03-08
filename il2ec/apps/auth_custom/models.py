@@ -25,14 +25,15 @@ from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.http import (urlquote, urlsafe_base64_decode,
     urlsafe_base64_encode, )
-from django.utils.translation import activate, deactivate, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 try:
     from urllib.parse import urljoin
 except ImportError:
     from urlparse import urljoin
 
-from auth_custom.helpers import sign_up_confirmation, update_current_language
+from auth_custom.helpers import (Translator, sign_up_confirmation,
+    update_current_language, )
 from auth_custom.settings import (EMAIL_CONFIRMATION_DAYS,
     CONNECTION_PASSWORD_LENGTH, )
 from auth_custom.validators import validate_callsign
@@ -44,7 +45,7 @@ from misc.tasks import send_mail
 LOG = logging.getLogger(__name__)
 
 
-class SignUpRequestManager(models.Manager): # pylint: disable=R0904
+class SignUpRequestManager(models.Manager):
     """
     Sign-up requests manager.
     """
@@ -140,6 +141,10 @@ class SignUpRequest(models.Model):
         verbose_name_plural = _("sign up requests")
         ordering = ('email', '-expiration_date', )
 
+    def __init__(self, *args, **kwargs):
+        super(SignUpRequest, self).__init__(*args, **kwargs)
+        self.translator = Translator(self)
+
     def reset(self, commit=False):
         """
         Reset date when sign up request is considered to be expired and update
@@ -148,7 +153,7 @@ class SignUpRequest(models.Model):
         self.expiration_date = \
             timezone.now() + datetime.timedelta(days=EMAIL_CONFIRMATION_DAYS)
         self.confirmation_key = sign_up_confirmation.generate_key(
-                                    self.email, unicode(self.expiration_date))
+            self.email, unicode(self.expiration_date))
 
         if commit:
             self.save()
@@ -237,20 +242,6 @@ class UserManager(BaseUserManager):
                 raise ValueError(_("Invalid callsign or email."))
 
         return self.get(**kwargs)
-
-
-class Translator(object):
-    """
-    Helps getting strings in language preferred by user.
-    """
-    def __init__(self, user):
-        self.user = user
-
-    def __enter__(self):
-        activate(self.user.language)
-
-    def __exit__(self, *args):
-        deactivate()
 
 
 class User(AbstractBaseUser, PermissionsMixin):
