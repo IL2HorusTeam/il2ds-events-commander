@@ -250,6 +250,12 @@ body {
 #id_channels {
   padding-left: 10px;
 }
+#id_tab_server_info_difficulty .text-success {
+  color: #48B84A;
+}
+#id_tab_server_info_difficulty .text-danger {
+  color: #C51A16;
+}
 .setting-off {
   text-decoration: line-through; color: rgb(86,86,86);
 }

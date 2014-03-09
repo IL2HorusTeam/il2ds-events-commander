@@ -405,14 +405,14 @@
 
         if (setting.value) {
           var li_class = ''
-          , icon_name = 'ok'
+          , icon_class = 'glyphicon-ok text-success'
         } else {
           var li_class = 'setting-off'
-          , icon_name = 'remove'
+          , icon_class = 'glyphicon-remove text-danger'
         }
 
         var li = $('<li class="' + li_class + '" id="id_difficulty_setting_' + setting.code + '">' +
-                   '<span class="glyphicon glyphicon-' + icon_name + '"></span> ' + setting.title + '</li>')
+                   '<span class="glyphicon ' + icon_class + '"></span> ' + setting.title + '</li>')
         settings_list.append(li)
 
         if (setting.description != null) {
