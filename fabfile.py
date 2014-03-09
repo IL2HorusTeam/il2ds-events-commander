@@ -94,6 +94,7 @@ def update(action='check'):
         fab staging update
     """
     pull_project()
+    execute(messages_compile)
     execute(reload_all)
 
 
