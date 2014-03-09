@@ -21,11 +21,11 @@ msgstr ""
 
 #: service/__init__.py:159
 msgid "Everyone will be kicked in {sec}..."
-msgstr "Все будут выгнаны через {sec}..."
+msgstr "Все будут отключены от сервера через {sec}..."
 
 #: service/__init__.py:161
 msgid "Everyone will be kicked NOW!"
-msgstr "Все будут выгнаны СЕЙЧАС!"
+msgstr "Все будут отключены от сервера СЕЙЧАС!"
 
 #: service/__init__.py:162
 msgid "Please, reconnect after kick."
@@ -37,11 +37,13 @@ msgstr "Здравствуйте! Этот сервер захвачен ком�
 
 #: service/__init__.py:192
 msgid "Commander is quitting. Goodbye everyone!"
-msgstr "Коммандер уходит. Всем до свидания!"
+msgstr "Коммандер выключается. Всем до свидания!"
 
 #: service/pilot.py:53
 msgid "{callsign}, please enter your password or you will be kicked."
-msgstr "{callsign}, пожалуйста, введите Ваш пароль или Вы будете выгнаны."
+msgstr ""
+"{callsign}, пожалуйста, введите Ваш пароль или Вы будете отключены от "
+"сервера."
 
 #: service/pilot.py:100
 msgid "{callsign}, your callsign is already used."
