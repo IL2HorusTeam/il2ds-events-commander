@@ -477,7 +477,7 @@ msgstr "Извините, нам не удалось Вам письмо. Пож
 
 #: templates/auth_custom/pages/sign-up.html:4
 msgid "Sign up"
-msgstr "Реристрация"
+msgstr "Регистрация"
 
 #: templates/auth_custom/pages/sign-up.html:12
 msgid "Finish sign up"
