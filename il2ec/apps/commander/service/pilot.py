@@ -145,15 +145,12 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
 
         if callsign in self.pending:
             LOG.debug("Removing pending pilot {0}".format(callsign))
-            pending = self.pending[callsign]
-            pending.stop()
-            pending.user.clear_connection_password(update=True)
+            self.pending[callsign].stop()
             del self.pending[callsign]
 
         elif callsign in self.active:
             LOG.debug("Removing active pilot {0}".format(callsign))
             # TODO: do all necessary clean up
-            self.active[callsign].user.clear_connection_password(update=True)
             del self.active[callsign]
 
     def user_chat(self, (callsign, message)):
@@ -182,7 +179,7 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
             except TypeError:
                 LOG.debug("Invalid arguments for command '{0}' from {1}: '{2}'"
                           .format(command.value, callsign, ', '.join(args)))
-                with online_pilot.user.translator:
+                with pilot.user.translator:
                     self.cl_client.chat_user(
                         _("Invalid arguments for command '{command}'.").format(
                           command=command.value), callsign)
@@ -210,6 +207,7 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
 
         if user.check_connection_password(password):
             LOG.debug("Activate {0}".format(user.callsign))
+            user.clear_connection_password(update=True)
 
             self.pending[user.callsign].stop()
             del self.pending[user.callsign]
