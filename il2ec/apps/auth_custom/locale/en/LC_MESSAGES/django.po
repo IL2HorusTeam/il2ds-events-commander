@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-06 16:34+0200\n"
+"POT-Creation-Date: 2014-03-09 08:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Stay signed in on website"
 msgstr ""
 
-#: forms.py:234 models.py:237
+#: forms.py:234 models.py:242
 msgid "Invalid callsign or email."
 msgstr ""
 
@@ -126,138 +126,138 @@ msgstr ""
 msgid "Email for contacting you"
 msgstr ""
 
-#: helpers.py:30
+#: helpers.py:44
 msgid "Enter a valid email confirmation key."
 msgstr ""
 
-#: helpers.py:62
+#: helpers.py:76
 msgid "Remind data"
 msgstr ""
 
-#: models.py:90
+#: models.py:91
 msgid "Invalid parameters."
 msgstr ""
 
-#: models.py:98
+#: models.py:99
 msgid "Sign up request does not exist."
 msgstr ""
 
-#: models.py:100
+#: models.py:101
 msgid "Confirmation key does not match."
 msgstr ""
 
-#: models.py:102
+#: models.py:103
 msgid "Sign up request has expired. Please, create another one."
 msgstr ""
 
-#: models.py:115
+#: models.py:116
 msgid "email"
 msgstr ""
 
-#: models.py:118 models.py:299
+#: models.py:119 models.py:290
 msgid "preferred language"
 msgstr ""
 
-#: models.py:124
+#: models.py:125
 msgid "confirmation key"
 msgstr ""
 
-#: models.py:128
+#: models.py:129
 msgid "base URL"
 msgstr ""
 
-#: models.py:129
+#: models.py:130
 msgid "URL to website base for particular user. Can have name or IP, etc."
 msgstr ""
 
-#: models.py:133
+#: models.py:134
 msgid "expiration date"
 msgstr ""
 
-#: models.py:139
+#: models.py:140
 msgid "sign up request"
 msgstr ""
 
-#: models.py:140
+#: models.py:141
 msgid "sign up requests"
 msgstr ""
 
-#: models.py:168
+#: models.py:173
 msgid "Confirmation instructions"
 msgstr ""
 
-#: models.py:193
+#: models.py:198
 msgid "Sign up request for {email}"
 msgstr ""
 
-#: models.py:262
+#: models.py:253
 msgid "callsign"
 msgstr ""
 
-#: models.py:270
+#: models.py:261
 msgid "name"
 msgstr ""
 
-#: models.py:273
+#: models.py:264
 msgid "Any name to address user."
 msgstr ""
 
-#: models.py:275
+#: models.py:266
 msgid "email address"
 msgstr ""
 
-#: models.py:279
+#: models.py:270
 msgid "staff status"
 msgstr ""
 
-#: models.py:281
+#: models.py:272
 msgid "Designates whether the user can sign into this admin site."
 msgstr ""
 
-#: models.py:284
+#: models.py:275
 msgid "active"
 msgstr ""
 
-#: models.py:286
+#: models.py:277
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts. Inactive users can sign in to reactivate their "
 "accounts."
 msgstr ""
 
-#: models.py:291
+#: models.py:282
 msgid "blocked"
 msgstr ""
 
-#: models.py:293
+#: models.py:284
 msgid ""
 "Designates whether this user is blocked. Blocked users can not sign in "
 "without intervention of administration."
 msgstr ""
 
-#: models.py:296
+#: models.py:287
 msgid "date joined"
 msgstr ""
 
-#: models.py:304
+#: models.py:295
 msgid ""
 "Language in which messages will be shown to user in gamechat and at this "
 "website."
 msgstr ""
 
-#: models.py:307
+#: models.py:298
 msgid "connection password"
 msgstr ""
 
-#: models.py:309
+#: models.py:300
 msgid "One time password for connecting to game server"
 msgstr ""
 
-#: models.py:317
+#: models.py:308
 msgid "user"
 msgstr ""
 
-#: models.py:318
+#: models.py:309
 msgid "users"
 msgstr ""
 
@@ -440,7 +440,7 @@ msgid "Go!"
 msgstr ""
 
 #: templates/auth_custom/pages/sign-up-request.html:81
-#: templates/auth_custom/pages/user-settings.html:413
+#: templates/auth_custom/pages/user-settings.html:403
 msgid ""
 "Sorry, we failed to send an email to you. Please, try again a bit later."
 msgstr ""
@@ -466,101 +466,101 @@ msgid "Join right now"
 msgstr ""
 
 #: templates/auth_custom/pages/user-settings.html:4
-#: templates/auth_custom/pages/user-settings.html:38
+#: templates/auth_custom/pages/user-settings.html:30
 msgid "Account settings"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:42
+#: templates/auth_custom/pages/user-settings.html:34
 msgid "General settings"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:89
+#: templates/auth_custom/pages/user-settings.html:81
 msgid "Apply settings"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:97
+#: templates/auth_custom/pages/user-settings.html:89
 msgid "Change password"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:107
+#: templates/auth_custom/pages/user-settings.html:99
 msgid "Password was successfully updated"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:141
+#: templates/auth_custom/pages/user-settings.html:133
 msgid "Update"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:143
+#: templates/auth_custom/pages/user-settings.html:135
 msgid "Forgot password"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:151
-#: templates/auth_custom/pages/user-settings.html:157
+#: templates/auth_custom/pages/user-settings.html:143
+#: templates/auth_custom/pages/user-settings.html:149
 msgid "Change callsign"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:155
+#: templates/auth_custom/pages/user-settings.html:147
 msgid "Changing your callsign can have side effects"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:164
+#: templates/auth_custom/pages/user-settings.html:156
 msgid "Deactivate account"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:168
+#: templates/auth_custom/pages/user-settings.html:160
 msgid "Tired of this service? Deactivate your account and forget about it."
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:169
+#: templates/auth_custom/pages/user-settings.html:161
 msgid "Deactivate"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:184
+#: templates/auth_custom/pages/user-settings.html:176
 msgid "Password reset request"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:217
+#: templates/auth_custom/pages/user-settings.html:206
 msgid "Really change your callsign"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:222
+#: templates/auth_custom/pages/user-settings.html:211
 msgid "Unexpected bad things may happen if you don't read this"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:225
+#: templates/auth_custom/pages/user-settings.html:214
 msgid "Links to your profile from external sources will be broken"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:226
+#: templates/auth_custom/pages/user-settings.html:215
 msgid "Your callsign in texts will not be replaced"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:229
+#: templates/auth_custom/pages/user-settings.html:218
 msgid "Okay, let's change my callsign"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:236
+#: templates/auth_custom/pages/user-settings.html:225
 msgid "Enter new callsign"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:254
+#: templates/auth_custom/pages/user-settings.html:243
 msgid "Change my callsign"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:271
+#: templates/auth_custom/pages/user-settings.html:260
 msgid "Are you sure you want to leave us"
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:275
+#: templates/auth_custom/pages/user-settings.html:264
 msgid ""
 "Deactivation means that no one will see your profile and you will be signed "
 "out immediately."
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:276
+#: templates/auth_custom/pages/user-settings.html:265
 msgid "We'll miss you, but you are welcome back any time."
 msgstr ""
 
-#: templates/auth_custom/pages/user-settings.html:286
+#: templates/auth_custom/pages/user-settings.html:275
 msgid "Yes, I'm totally sure"
 msgstr ""

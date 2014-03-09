@@ -59,6 +59,7 @@ class CommanderService(MultiService, CommanderServiceMixin):
 
     def __init__(self):
         MultiService.__init__(self)
+        self.clear_shared_storage()
 
         # Place to store some of server confs values
         self.confs = {}
@@ -192,6 +193,9 @@ class CommanderService(MultiService, CommanderServiceMixin):
 
         yield MultiService.stopService(self)
         self.confs.clear()
+        self.clear_shared_storage()
+
+    def clear_shared_storage(self):
         shared_storage.clear()
         set_server_update_token()
 

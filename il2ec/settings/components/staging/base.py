@@ -17,6 +17,7 @@ PROJECT_NAME = _("Awesome IL-2 events")
 SECRET_KEY = 'h7#gw(#))b@r8z)xcio_g*du&^pky_x0)atn&*naxf6nh0j8y#'
 
 TIME_ZONE = 'Europe/Moscow'
+CELERY_TIMEZONE = TIME_ZONE
 
 DATABASES = {
     'default': {

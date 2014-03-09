@@ -11,8 +11,10 @@
   <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap.min.css">
 
   {% compress css %}
-  <!-- Optional theme -->
+  <!-- Bootstrap theme -->
   <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap/css/bootstrap-theme.min.css">
+  <!-- Bootstrap vertical tabs -->
+  <link rel="stylesheet" href="{{ STATIC_URL }}lib/bootstrap.vertical-tabs/css/bootstrap.vertical-tabs.min.css">
   <!-- Ladda button spinner -->
   <link rel="stylesheet" href="{{ STATIC_URL }}lib/ladda/ladda-themeless.min.css">
   <!-- Application's styles  -->
@@ -225,7 +227,14 @@
               </div>
             </div>
             <div class="tab-pane fade" id="id_tab_server_info_difficulty">
-              difficulty
+              <div class='row'>
+                <div class="col-xs-4">
+                  <ul class="nav nav-tabs tabs-left"></ul>
+                </div>
+                <div class="col-xs-8">
+                  <div class="tab-content"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -338,8 +347,8 @@
   })
 
   function show_server_info(info) {
-    console.log(info)
 
+    /* Show general server info -------------------------------------------- */
     $('#id_server_name').text(info.name)
     $('#id_server_version').text(info.version)
 
@@ -359,6 +368,7 @@
       add_mod("{% trans %}No MODs{% endtrans %}")
     }
 
+    /* Show server connaction info ----------------------------------------- */
     if (info.address.external == null) {
       $('#id_row_external_address').hide()
     } else {
@@ -370,6 +380,56 @@
     $('#id_local_address').text(info.address.local + ":" + info.address.port)
     $('#id_channels').text(info.channels)
 
+    /* Show server difficulty ---------------------------------------------- */
+    var tabs_list = $('#id_tab_server_info_difficulty .nav-tabs')
+    , tabs_content = $('#id_tab_server_info_difficulty .tab-content')
+
+    tabs_list.empty()
+    tabs_content.empty()
+
+    for (var i in info.difficulty) {
+      var tab = info.difficulty[i]
+      , tab_id = 'id_difficulty_tab_' + tab.code
+
+      tabs_list.append('<li><a href="#' + tab_id + '" data-toggle="tab">' +
+                       tab.title + '</a></li>')
+
+      var settings_tab = $('<div class="tab-pane" id="' + tab_id + '"></div>')
+      tabs_content.append(settings_tab)
+
+      var settings_list = $('<ul class="list-unstyled"></li>')
+      settings_tab.append(settings_list)
+
+      for (var j in tab.settings) {
+        var setting = tab.settings[j]
+
+        if (setting.value) {
+          var li_class = ''
+          , icon_name = 'ok'
+        } else {
+          var li_class = 'setting-off'
+          , icon_name = 'remove'
+        }
+
+        var li = $('<li class="' + li_class + '" id="id_difficulty_setting_' + setting.code + '">' +
+                   '<span class="glyphicon glyphicon-' + icon_name + '"></span> ' + setting.title + '</li>')
+        settings_list.append(li)
+
+        if (setting.description != null) {
+          li.attr('data-toggle', 'tooltip')
+          li.attr('title', setting.description)
+        }
+      }
+    }
+
+    tabs_list.find('li').first().addClass('active')
+    tabs_content.find('.tab-pane').first().addClass('active')
+    tabs_content.find('[data-toggle="tooltip"]').tooltip({
+      placement: 'top',
+      delay: tooltip_delay,
+    })
+
+    /* Show UI elements ---------------------------------------------------- */
     $('.server-on').show()
     $('.server-off').hide()
   }
@@ -409,7 +469,7 @@
     }
 
     request_sender()
-    setInterval(request_sender, 5000)
+    setInterval(request_sender, 60000)
   })()
 
 </script>

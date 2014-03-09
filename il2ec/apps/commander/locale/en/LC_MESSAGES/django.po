@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-06 16:34+0200\n"
+"POT-Creation-Date: 2014-03-09 08:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,23 +17,23 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: service/__init__.py:161
+#: service/__init__.py:159
 msgid "Everyone will be kicked in {sec}..."
 msgstr ""
 
-#: service/__init__.py:163
+#: service/__init__.py:161
 msgid "Everyone will be kicked NOW!"
 msgstr ""
 
-#: service/__init__.py:164
+#: service/__init__.py:162
 msgid "Please, reconnect after kick."
 msgstr ""
 
-#: service/__init__.py:167
+#: service/__init__.py:165
 msgid "Hello everyone! This server is captured by IL-2 events commander."
 msgstr ""
 
-#: service/__init__.py:194
+#: service/__init__.py:192
 msgid "Commander is quitting. Goodbye everyone!"
 msgstr ""
 

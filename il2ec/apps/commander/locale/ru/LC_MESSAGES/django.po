@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-06 16:34+0200\n"
+"POT-Creation-Date: 2014-03-09 08:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,23 +19,23 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: service/__init__.py:161
+#: service/__init__.py:159
 msgid "Everyone will be kicked in {sec}..."
 msgstr "Все будут выгнаны через {sec}..."
 
-#: service/__init__.py:163
+#: service/__init__.py:161
 msgid "Everyone will be kicked NOW!"
 msgstr "Все будут выгнаны СЕЙЧАС!"
 
-#: service/__init__.py:164
+#: service/__init__.py:162
 msgid "Please, reconnect after kick."
 msgstr "Пожалуйста, пересоединитесь после отключения."
 
-#: service/__init__.py:167
+#: service/__init__.py:165
 msgid "Hello everyone! This server is captured by IL-2 events commander."
 msgstr "Здравствуйте! Этот сервер захвачен коммандером событий Ил-2."
 
-#: service/__init__.py:194
+#: service/__init__.py:192
 msgid "Commander is quitting. Goodbye everyone!"
 msgstr "Коммандер уходит. Всем до свидания!"
 

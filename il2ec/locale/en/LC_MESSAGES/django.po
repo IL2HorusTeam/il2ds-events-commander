@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-06 16:34+0200\n"
+"POT-Creation-Date: 2014-03-09 08:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,48 +34,52 @@ msgstr ""
 msgid "Awesome IL-2 events"
 msgstr ""
 
-#: templates/base.html:41
+#: templates/base.html:43
 msgid "Help center"
 msgstr ""
 
-#: templates/base.html:42
+#: templates/base.html:44 templates/base.html.py:177
+msgid "Server info"
+msgstr ""
+
+#: templates/base.html:45
 msgid "Contact support"
 msgstr ""
 
-#: templates/base.html:50
+#: templates/base.html:53
 msgid "Go to home page"
 msgstr ""
 
-#: templates/base.html:60
+#: templates/base.html:63
 msgid "Language"
 msgstr ""
 
-#: templates/base.html:76
+#: templates/base.html:79
 msgid "Sign in"
 msgstr ""
 
-#: templates/base.html:95
+#: templates/base.html:98
 msgid "Request connection"
 msgstr ""
 
-#: templates/base.html:97
+#: templates/base.html:100
 msgid "Admin panel"
 msgstr ""
 
-#: templates/base.html:99
+#: templates/base.html:102
 msgid "Settings"
 msgstr ""
 
-#: templates/base.html:101
+#: templates/base.html:104
 msgid "Sign out"
 msgstr ""
 
-#: templates/base.html:132
+#: templates/base.html:135
 #, python-format
 msgid "Powered by <a %(anchor_attr)s>IL-2 events commander</a>"
 msgstr ""
 
-#: templates/base.html:146
+#: templates/base.html:149
 msgid "Request connection to game server"
 msgstr ""
 
@@ -84,15 +88,51 @@ msgstr ""
 msgid "Copy instruction below and send it to %(addressee)s in game chat."
 msgstr ""
 
-#: templates/base.html:159
+#: templates/base.html:159 templates/base.html.py:212 templates/base.html:219
 msgid "Press CTRL-C to copy"
 msgstr ""
 
-#: templates/base.html:226 templates/base.html.py:429
+#: templates/base.html:184
+msgid "Sorry, game server is not running now"
+msgstr ""
+
+#: templates/base.html:189
+msgid "General info"
+msgstr ""
+
+#: templates/base.html:190
+msgid "Difficulty"
+msgstr ""
+
+#: templates/base.html:195
+msgid "Server name"
+msgstr ""
+
+#: templates/base.html:201
+msgid "Server version"
+msgstr ""
+
+#: templates/base.html:209
+msgid "External address"
+msgstr ""
+
+#: templates/base.html:216
+msgid "Local address"
+msgstr ""
+
+#: templates/base.html:223
+msgid "Channels"
+msgstr ""
+
+#: templates/base.html:303 templates/base.html.py:645
 msgid "Request execution error"
 msgstr ""
 
-#: templates/base.html:350
+#: templates/base.html:368
+msgid "No MODs"
+msgstr ""
+
+#: templates/base.html:566
 msgid ""
 "Sorry, we failed to send an email to you. Please, try again a bit later."
 msgstr ""

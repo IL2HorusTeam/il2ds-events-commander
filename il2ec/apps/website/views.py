@@ -11,6 +11,7 @@ from coffin.views.generic import TemplateView
 
 from django.conf import settings
 from django.http import HttpResponseBadRequest
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_protect
 from django.utils.translation import ugettext as _
 
@@ -150,6 +151,7 @@ def api_contact(request, template_name='website/emails/contact.html'):
 
 
 @ajax_api(method='GET')
+@cache_page(30)
 def api_server_info(request, update_token=None):
     changed = server_info_was_updated(update_token)
     payload = {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-06 16:34+0200\n"
+"POT-Creation-Date: 2014-03-09 08:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -116,7 +116,7 @@ msgstr "Язык для сообщений на сайте и в чате игр
 msgid "Stay signed in on website"
 msgstr "Оставаться на сайте"
 
-#: forms.py:234 models.py:237
+#: forms.py:234 models.py:242
 msgid "Invalid callsign or email."
 msgstr "Неверный позывной или почта."
 
@@ -128,100 +128,100 @@ msgstr "Пользователь не найден."
 msgid "Email for contacting you"
 msgstr "Почтовый адрес для связи с Вами"
 
-#: helpers.py:30
+#: helpers.py:44
 msgid "Enter a valid email confirmation key."
 msgstr "Введите верный ключ подтверждения почтового адреса."
 
-#: helpers.py:62
+#: helpers.py:76
 msgid "Remind data"
 msgstr "Напоминание данных"
 
-#: models.py:90
+#: models.py:91
 msgid "Invalid parameters."
 msgstr "Неверные параметры."
 
-#: models.py:98
+#: models.py:99
 msgid "Sign up request does not exist."
 msgstr "Запрос на регистрацию не существует."
 
-#: models.py:100
+#: models.py:101
 msgid "Confirmation key does not match."
 msgstr "Ключ подтверждения не подходит."
 
-#: models.py:102
+#: models.py:103
 msgid "Sign up request has expired. Please, create another one."
 msgstr ""
 "Истек срок действия запроса на регистрацию. Пожалуйста, повторите запрос."
 
-#: models.py:115
+#: models.py:116
 msgid "email"
 msgstr "почтовый адрес"
 
-#: models.py:118 models.py:299
+#: models.py:119 models.py:290
 msgid "preferred language"
 msgstr "предпочитаемый язык"
 
-#: models.py:124
+#: models.py:125
 msgid "confirmation key"
 msgstr "ключ подтверждения"
 
-#: models.py:128
+#: models.py:129
 msgid "base URL"
 msgstr "базовый URL"
 
-#: models.py:129
+#: models.py:130
 msgid "URL to website base for particular user. Can have name or IP, etc."
 msgstr "URL сайта для конкретного пользователя. Может содержать имя, IP и т.д."
 
-#: models.py:133
+#: models.py:134
 msgid "expiration date"
 msgstr "дата истечения срока"
 
-#: models.py:139
+#: models.py:140
 msgid "sign up request"
 msgstr "запрос на регистрацию"
 
-#: models.py:140
+#: models.py:141
 msgid "sign up requests"
 msgstr "запросы на регистрацию"
 
-#: models.py:168
+#: models.py:173
 msgid "Confirmation instructions"
 msgstr "Инструкции подтверждения"
 
-#: models.py:193
+#: models.py:198
 msgid "Sign up request for {email}"
 msgstr "Запрос на регистрацию для {email}"
 
-#: models.py:262
+#: models.py:253
 msgid "callsign"
 msgstr "позывной"
 
-#: models.py:270
+#: models.py:261
 msgid "name"
 msgstr "имя"
 
-#: models.py:273
+#: models.py:264
 msgid "Any name to address user."
 msgstr "Любое имя для обращения к пользователю."
 
-#: models.py:275
+#: models.py:266
 msgid "email address"
 msgstr "почтовый адрес"
 
-#: models.py:279
+#: models.py:270
 msgid "staff status"
 msgstr "статус персонала"
 
-#: models.py:281
+#: models.py:272
 msgid "Designates whether the user can sign into this admin site."
 msgstr "Определяет, имеет ли пользователь доступ в панель управления."
 
-#: models.py:284
+#: models.py:275
 msgid "active"
 msgstr "активен"
 
-#: models.py:286
+#: models.py:277
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts. Inactive users can sign in to reactivate their "
@@ -231,11 +231,11 @@ msgstr ""
 "настройку вместо удаления учетных записей. Неактивные пользователи могут "
 "входить на сайт и восстанавливать свои учетные записи."
 
-#: models.py:291
+#: models.py:282
 msgid "blocked"
 msgstr "заблокирован"
 
-#: models.py:293
+#: models.py:284
 msgid ""
 "Designates whether this user is blocked. Blocked users can not sign in "
 "without intervention of administration."
@@ -244,11 +244,11 @@ msgstr ""
 "пользователи не могут войти в свои учетные записи без вмешательства "
 "администрации."
 
-#: models.py:296
+#: models.py:287
 msgid "date joined"
 msgstr "дата регистрации"
 
-#: models.py:304
+#: models.py:295
 msgid ""
 "Language in which messages will be shown to user in gamechat and at this "
 "website."
@@ -256,19 +256,19 @@ msgstr ""
 "Язык, на котором пользователю будут выводиться сообщения в игровом чате и на "
 "этом сайте."
 
-#: models.py:307
+#: models.py:298
 msgid "connection password"
 msgstr "пароль соединения"
 
-#: models.py:309
+#: models.py:300
 msgid "One time password for connecting to game server"
 msgstr "Одноразовый пароль для соединения с сервером"
 
-#: models.py:317
+#: models.py:308
 msgid "user"
 msgstr "пользователь"
 
-#: models.py:318
+#: models.py:309
 msgid "users"
 msgstr "пользователи"
 
@@ -470,7 +470,7 @@ msgid "Go!"
 msgstr "Вперед!"
 
 #: templates/auth_custom/pages/sign-up-request.html:81
-#: templates/auth_custom/pages/user-settings.html:413
+#: templates/auth_custom/pages/user-settings.html:403
 msgid ""
 "Sorry, we failed to send an email to you. Please, try again a bit later."
 msgstr "Извините, нам не удалось Вам письмо. Пожалуйста, попробуйте позже."
@@ -496,92 +496,92 @@ msgid "Join right now"
 msgstr "Присоединиться прямо сейчас"
 
 #: templates/auth_custom/pages/user-settings.html:4
-#: templates/auth_custom/pages/user-settings.html:38
+#: templates/auth_custom/pages/user-settings.html:30
 msgid "Account settings"
 msgstr "Настройки учетной записи"
 
-#: templates/auth_custom/pages/user-settings.html:42
+#: templates/auth_custom/pages/user-settings.html:34
 msgid "General settings"
 msgstr "Общие настройки"
 
-#: templates/auth_custom/pages/user-settings.html:89
+#: templates/auth_custom/pages/user-settings.html:81
 msgid "Apply settings"
 msgstr "Применить настройки"
 
-#: templates/auth_custom/pages/user-settings.html:97
+#: templates/auth_custom/pages/user-settings.html:89
 msgid "Change password"
 msgstr "Изменить пароль"
 
-#: templates/auth_custom/pages/user-settings.html:107
+#: templates/auth_custom/pages/user-settings.html:99
 msgid "Password was successfully updated"
 msgstr "Пароль был успешно обновлен"
 
-#: templates/auth_custom/pages/user-settings.html:141
+#: templates/auth_custom/pages/user-settings.html:133
 msgid "Update"
 msgstr "Обновить"
 
-#: templates/auth_custom/pages/user-settings.html:143
+#: templates/auth_custom/pages/user-settings.html:135
 msgid "Forgot password"
 msgstr "Забыли пароль"
 
-#: templates/auth_custom/pages/user-settings.html:151
-#: templates/auth_custom/pages/user-settings.html:157
+#: templates/auth_custom/pages/user-settings.html:143
+#: templates/auth_custom/pages/user-settings.html:149
 msgid "Change callsign"
 msgstr "Изменить позывной"
 
-#: templates/auth_custom/pages/user-settings.html:155
+#: templates/auth_custom/pages/user-settings.html:147
 msgid "Changing your callsign can have side effects"
 msgstr "Изменение позывного может привести к побочным эффектам"
 
-#: templates/auth_custom/pages/user-settings.html:164
+#: templates/auth_custom/pages/user-settings.html:156
 msgid "Deactivate account"
 msgstr "Отключить учетную запись"
 
-#: templates/auth_custom/pages/user-settings.html:168
+#: templates/auth_custom/pages/user-settings.html:160
 msgid "Tired of this service? Deactivate your account and forget about it."
 msgstr "Устали от этого сервиса? Отключите учетную запись и забудьте о нем."
 
-#: templates/auth_custom/pages/user-settings.html:169
+#: templates/auth_custom/pages/user-settings.html:161
 msgid "Deactivate"
 msgstr "Отключить"
 
-#: templates/auth_custom/pages/user-settings.html:184
+#: templates/auth_custom/pages/user-settings.html:176
 msgid "Password reset request"
 msgstr "Запрос на сброс пароля"
 
-#: templates/auth_custom/pages/user-settings.html:217
+#: templates/auth_custom/pages/user-settings.html:206
 msgid "Really change your callsign"
 msgstr "Действительно сменить позывной"
 
-#: templates/auth_custom/pages/user-settings.html:222
+#: templates/auth_custom/pages/user-settings.html:211
 msgid "Unexpected bad things may happen if you don't read this"
 msgstr "Если Вы не прочтете это, могут возникнуть непредвиденные последствия"
 
-#: templates/auth_custom/pages/user-settings.html:225
+#: templates/auth_custom/pages/user-settings.html:214
 msgid "Links to your profile from external sources will be broken"
 msgstr "Ссылки на Ваш профиль из внешних источников станут недействительны"
 
-#: templates/auth_custom/pages/user-settings.html:226
+#: templates/auth_custom/pages/user-settings.html:215
 msgid "Your callsign in texts will not be replaced"
 msgstr "Ваш позывной не будет автоматически заменен в текстах"
 
-#: templates/auth_custom/pages/user-settings.html:229
+#: templates/auth_custom/pages/user-settings.html:218
 msgid "Okay, let's change my callsign"
 msgstr "Да, изменить позывной"
 
-#: templates/auth_custom/pages/user-settings.html:236
+#: templates/auth_custom/pages/user-settings.html:225
 msgid "Enter new callsign"
 msgstr "Введите новый позывной"
 
-#: templates/auth_custom/pages/user-settings.html:254
+#: templates/auth_custom/pages/user-settings.html:243
 msgid "Change my callsign"
 msgstr "Изменить мой позывной"
 
-#: templates/auth_custom/pages/user-settings.html:271
+#: templates/auth_custom/pages/user-settings.html:260
 msgid "Are you sure you want to leave us"
 msgstr "Вы уверены, что хотите покинуть нас"
 
-#: templates/auth_custom/pages/user-settings.html:275
+#: templates/auth_custom/pages/user-settings.html:264
 msgid ""
 "Deactivation means that no one will see your profile and you will be signed "
 "out immediately."
@@ -589,10 +589,10 @@ msgstr ""
 "Отключение учетной записи означает, что никто не сможет просматривать Вашу "
 "учетную запись, и будет выполнен автоманический выход из неё."
 
-#: templates/auth_custom/pages/user-settings.html:276
+#: templates/auth_custom/pages/user-settings.html:265
 msgid "We'll miss you, but you are welcome back any time."
 msgstr "Мы будем скучать за Вами, но мы всегда будем рады увидеть Вас снова."
 
-#: templates/auth_custom/pages/user-settings.html:286
+#: templates/auth_custom/pages/user-settings.html:275
 msgid "Yes, I'm totally sure"
 msgstr "Да, я полностью уверен"

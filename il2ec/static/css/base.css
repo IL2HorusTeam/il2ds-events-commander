@@ -250,6 +250,9 @@ body {
 #id_channels {
   padding-left: 10px;
 }
+.setting-off {
+  text-decoration: line-through; color: rgb(86,86,86);
+}
 
 /* Other ------------------------------------------------------------------- */
 div.panel-heading[data-toggle="collapse"]:hover {
