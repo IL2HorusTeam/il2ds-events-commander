@@ -300,6 +300,8 @@ COMPRESS_CSS_FILTERS = ()
 # Commander settitngs
 #------------------------------------------------------------------------------
 IL2_VERSION = '4.12.2'
+IL2_PRESENT_MODS = ()
+
 IL2_EXTERNAL_ADDRESS = HOSTNAME
 
 IL2_SERVER_PATH = "path to your IL-2 DS"

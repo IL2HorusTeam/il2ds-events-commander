@@ -48,6 +48,9 @@ SUPPORTERS = ADMINS
 #------------------------------------------------------------------------------
 # Commander
 #------------------------------------------------------------------------------
+IL2_VERSION = '4.12.2'
+IL2_PRESENT_MODS = ()
+IL2_EXTERNAL_ADDRESS = HOSTNAME
 
 IL2_CONNECTION = dict(IL2_CONNECTION, **{
     'host': 'il2ds-host',
