@@ -15,7 +15,7 @@ from twisted.protocols.basic import LineOnlyReceiver
 from commander import log
 from commander.constants import APIOpcode
 from commander.protocol.requests import (REQ_KICK_CALLSIGN, REQ_KICK_NUMBER,
-    REQ_USERS_ALL, )
+    REQ_USERS_COMMON_INFO, REQ_USERS_STATISTICS, )
 from commander import stop_everything_n_quit
 
 
@@ -120,6 +120,23 @@ class ConsoleClient(DefaultConsoleClient): # pylint: disable=R0904
         strings = yield self._request_user_table()
         defer.returnValue(len(strings) - 1) # '1' is for user table's header
 
+    @defer.inlineCallbacks
+    def users_common_info(self):
+        """
+        Get common information about pilots shown by 'user' command.
+        """
+        strings = yield self._request_user_table()
+        defer.returnValue(self.parser.users_common_info(strings))
+
+    @defer.inlineCallbacks
+    def users_statistics(self):
+        """
+        Get full information about pilots' statistics shown by 'user STAT'
+        command.
+        """
+        strings = yield self._send_request(REQ_USERS_STATISTICS)
+        defer.returnValue(self.parser.users_statistics(strings))
+
     def _request_user_table(self):
         """
         Request output from 'user' command.
@@ -129,7 +146,7 @@ class ConsoleClient(DefaultConsoleClient): # pylint: disable=R0904
         " N       Name           Ping    Score   Army        Aircraft"
         " 1      oblalex          3       0      (0)None             "
         """
-        return self._send_request(REQ_USERS_ALL)
+        return self._send_request(REQ_USERS_COMMON_INFO)
 
 
 class ConsoleClientFactory(ReconnectingClientFactory):

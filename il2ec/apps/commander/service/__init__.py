@@ -8,8 +8,7 @@ from collections import namedtuple
 
 from django.utils.translation import ugettext as _
 
-from il2ds_middleware.parser import (ConsoleParser, DeviceLinkParser,
-    EventLogParser, )
+from il2ds_middleware.parser import DeviceLinkParser, EventLogParser
 from il2ds_middleware.protocol import DeviceLinkClient
 from il2ds_middleware.service import LogWatchingService
 
@@ -21,6 +20,7 @@ from twisted.internet.protocol import Factory
 from commander import log
 from commander import settings
 from commander.helpers import set_server_update_token
+from commander.parser import ConsoleParser
 from commander.sharing import (shared_storage, KEY_SERVER_RUNNING,
     KEY_SERVER_NAME, KEY_SERVER_LOCAL_ADDRESS, KEY_SERVER_USER_PORT,
     KEY_SERVER_CHANNELS, KEY_SERVER_DIFFICULTY, )
