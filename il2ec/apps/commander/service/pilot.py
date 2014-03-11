@@ -4,6 +4,7 @@ Commander's pilots service.
 """
 from django.utils.translation import ugettext as _
 
+from twisted.internet import defer
 from twisted.internet.task import LoopingCall
 
 from il2ds_middleware.service import PilotBaseService
@@ -61,12 +62,19 @@ class PendingPilot(Pilot):
             self.client.kick_callsign(self.user.callsign)
 
 
-class ActivePilot(Pilot):
+class ConfirmedPilot(Pilot):
     """
     Represents a pilot who has successfully confirmed connection password.
     """
     def __init__(self, user, client):
-        super(ActivePilot, self).__init__(user, client)
+        super(ConfirmedPilot, self).__init__(user, client)
+
+        self.ping = 0
+        self.score = 0
+        self.army = None
+        self.weapons = {}
+        self.aircraft = {}
+        self.position = {}
 
     @classmethod
     def from_pilot(cls, instance):
@@ -77,8 +85,8 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
     """
     Custom service for managing online pilots.
     """
-    # Dictionary which maps callsign to active pilots
-    active = {}
+    # Dictionary which maps callsign to confirmed pilots
+    confirmed = {}
     # Dictionary which maps callsign to pending pilots
     pending = {}
 
@@ -87,6 +95,7 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
         self.command_handlers = {
             Commands.CONNECTION_INSTRUCTIONS: self.on_connection_instructions,
         }
+        self.info_collector = LoopingCall.withCount(self.collect_info)
 
     def user_joined(self, info):
         callsign = info['callsign']
@@ -133,12 +142,13 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
         pending.start()
 
     def is_callsign_used(self, callsign):
-        return callsign in self.active or callsign in self.pending
+        return callsign in self.confirmed or callsign in self.pending
 
     def _delayed_kick(self, callsign, delay=10):
         from twisted.internet import reactor
         reactor.callLater(delay, self.cl_client.kick_callsign, callsign)
 
+    @CommanderServiceMixin.radar_refresher
     def user_left(self, info):
         callsign = info['callsign']
         LOG.debug("{0} has left".format(callsign))
@@ -148,10 +158,11 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
             self.pending[callsign].stop()
             del self.pending[callsign]
 
-        elif callsign in self.active:
-            LOG.debug("Removing active pilot {0}".format(callsign))
-            # TODO: do all necessary clean up
-            del self.active[callsign]
+        elif callsign in self.confirmed:
+            LOG.debug("Removing confirmed pilot {0}".format(callsign))
+            del self.confirmed[callsign]
+            if not self.confirmed:
+                self.info_collector.stop()
 
     def user_chat(self, (callsign, message)):
         pilot = self.get_pilot(callsign)
@@ -186,8 +197,8 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
                 return
 
     def get_pilot(self, callsign):
-        if callsign in self.active:
-            return self.active[callsign]
+        if callsign in self.confirmed:
+            return self.confirmed[callsign]
         elif callsign in self.pending:
             return self.pending[callsign]
         else:
@@ -196,7 +207,7 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
     def on_connection_instructions(self, pilot, password):
         if isinstance(pilot, PendingPilot):
             self._process_password(pilot, password)
-        elif isinstance(pilot, ActivePilot):
+        elif isinstance(pilot, ConfirmedPilot):
             with pilot.user.translator:
                 self.cl_client.chat_user(
                     _("Your password was already accepted. Happy flying!"),
@@ -212,20 +223,90 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
             self.pending[user.callsign].stop()
             del self.pending[user.callsign]
 
-            active = ActivePilot.from_pilot(pilot)
-            self.active[user.callsign] = active
+            confirmed = ConfirmedPilot.from_pilot(pilot)
+            self.confirmed[user.callsign] = confirmed
 
             with user.translator:
                 self.cl_client.chat_user(
                     _("Password accepted. Welcome to server!"), user.callsign)
 
-            # TODO: process active pilot, e.g. start something
+            if not self.info_collector.running:
+                self.info_collector.start(3)
         else:
             with user.translator:
                 self.cl_client.chat_user(
                     _("Wrong password. Try again please."), user.callsign)
 
+    @defer.inlineCallbacks
+    def collect_info(self, count):
+        if count > 1:
+            return
+
+        all_infos = yield self.cl_client.users_common_info()
+        all_statistics = yield self.cl_client.users_statistics()
+        all_positions = yield self.dl_client.all_pilots_pos()
+        all_positions = {
+            data['callsign']: data['pos']
+            for data in all_positions if data is not None
+        }
+
+        callsigns = set(all_infos.keys()).intersection(
+                    set(all_statistics.keys())).intersection(
+                    set(self.confirmed.keys()))
+
+        for callsign in callsigns:
+            pilot, info = self.confirmed[callsign], all_infos[callsign]
+
+            pilot.ping = info['ping']
+            pilot.score = info['score']
+
+            if 'aircraft_code' in info:
+                pilot.aircraft['code'] = info['aircraft_code']
+                pilot.aircraft['designation'] = info['designation']
+            else:
+                pilot.aircraft.clear()
+
+            pilot.weapons.update(all_statistics[callsign]['weapons'])
+
+            if callsign in all_positions:
+                pilot.position.update(all_positions[callsign])
+            else:
+                pilot.position.clear()
+
+    @CommanderServiceMixin.radar_refresher
+    def weapons_loaded(self, info):
+        pass
+
+    @CommanderServiceMixin.radar_refresher
+    def was_killed(self, info):
+        pass
+
+    @CommanderServiceMixin.radar_refresher
+    def was_killed_by_user(self, info):
+        pass
+
+    @CommanderServiceMixin.radar_refresher
+    def shot_down_self(self, info):
+        pass
+
+    @CommanderServiceMixin.radar_refresher
+    def was_shot_down_by_user(self, info):
+        pass
+
+    @CommanderServiceMixin.radar_refresher
+    def was_shot_down_by_static(self, info):
+        pass
+
+    @CommanderServiceMixin.radar_refresher
+    def bailed_out(self, info):
+        pass
+
+    @CommanderServiceMixin.radar_refresher
+    def went_to_menu(self, info):
+        pass
+
     def stopService(self):
-        # TODO: do all necessary clean up
-        self.active.clear()
+        if self.info_collector.running:
+            self.info_collector.stop()
+        self.confirmed.clear()
         self.pending.clear()

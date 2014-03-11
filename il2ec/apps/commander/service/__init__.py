@@ -3,12 +3,13 @@
 Commander main services.
 """
 import ConfigParser
+import socket
 
 from collections import namedtuple
 
 from django.utils.translation import ugettext as _
 
-from il2ds_middleware.parser import DeviceLinkParser, EventLogParser
+from il2ds_middleware.parser import EventLogParser
 from il2ds_middleware.protocol import DeviceLinkClient
 from il2ds_middleware.service import LogWatchingService
 
@@ -20,7 +21,7 @@ from twisted.internet.protocol import Factory
 from commander import log
 from commander import settings
 from commander.helpers import set_server_update_token
-from commander.parser import ConsoleParser
+from commander.parser import ConsoleParser, DeviceLinkParser
 from commander.sharing import (shared_storage, KEY_SERVER_RUNNING,
     KEY_SERVER_NAME, KEY_SERVER_LOCAL_ADDRESS, KEY_SERVER_USER_PORT,
     KEY_SERVER_CHANNELS, KEY_SERVER_DIFFICULTY, )
@@ -49,6 +50,13 @@ class CommanderServiceMixin(object):
         Get instance of server DeviceLink client protocol.
         """
         return self.parent.dl_client
+
+    @staticmethod
+    def radar_refresher(func):
+        def decorator(self, *args, **kwargs):
+            self.dl_client.refresh_radar()
+            func(self, *args, **kwargs)
+        return decorator
 
 
 class CommanderService(MultiService, CommanderServiceMixin):
@@ -242,7 +250,7 @@ class RootService(Service):
 
         # Prepare DeviceLink client
         self.dl_client = DeviceLinkClient(
-            address=(settings.IL2_CONNECTION['host'],
+            address=(socket.gethostbyname(settings.IL2_CONNECTION['host']),
                      settings.IL2_CONNECTION['dl_port']),
             parser=self.commander.parsers.device_link,
             timeout_value=settings.COMMANDER_TIMEOUT['device_link'])

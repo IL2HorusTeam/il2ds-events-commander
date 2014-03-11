@@ -4,7 +4,8 @@ Custom parsers of DS output.
 """
 import re
 
-from il2ds_middleware.parser import ConsoleParser as BaseConsoleParser
+from il2ds_middleware.parser import (ConsoleParser as BaseConsoleParser,
+    DeviceLinkParser as BaseDeviceLinkParser, )
 
 
 class ConsoleParser(BaseConsoleParser):
@@ -182,3 +183,26 @@ class ConsoleParser(BaseConsoleParser):
                 info['weapons'][weapon][attr] = int(value)
 
         return result
+
+
+class DeviceLinkParser(BaseDeviceLinkParser):
+
+    def _parse_pos(self, data, name_attr='name', strip_idx=False):
+        idx, info = data.split(':')
+
+        try:
+            attr, x, y, z = info.split(';')
+        except ValueError:
+            return None
+
+        if strip_idx:
+            attr = attr[:attr.rindex("_")]
+        return {
+            'id': int(idx),
+            name_attr: attr,
+            'pos': {
+                'x': int(x),
+                'y': int(y),
+                'z': int(z),
+            },
+        }
