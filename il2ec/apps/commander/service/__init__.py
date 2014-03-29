@@ -3,63 +3,46 @@
 Commander main services.
 """
 import ConfigParser
-import socket
+import tx_logging
 
 from collections import namedtuple
 
 from django.utils.translation import ugettext as _
 
-from il2ds_middleware.parser import EventLogParser
-from il2ds_middleware.protocol import DeviceLinkClient
-from il2ds_middleware.service import LogWatchingService
+from il2ds_middleware.parser import (ConsoleParser, DeviceLinkParser,
+    EventLogParser, )
+from il2ds_middleware.protocol import (DeviceLinkClient,
+    ReconnectingConsoleClientFactory, )
+from il2ds_middleware.service import (LogWatchingService,
+    ClientServiceMixin as DefaultClientServiceMixin, )
 
 from twisted.application.service import MultiService, Service
-from twisted.internet import defer
-from twisted.internet import task
+from twisted.internet import defer, task
 from twisted.internet.protocol import Factory
 
-from commander import log
 from commander import settings
 from commander.helpers import set_server_update_token
-from commander.parser import ConsoleParser, DeviceLinkParser
+from commander.protocol.async import APIServerProtocol
 from commander.sharing import (shared_storage, KEY_SERVER_RUNNING,
     KEY_SERVER_NAME, KEY_SERVER_LOCAL_ADDRESS, KEY_SERVER_USER_PORT,
     KEY_SERVER_CHANNELS, KEY_SERVER_DIFFICULTY, )
-from commander.protocol.async import APIServerProtocol, ConsoleClientFactory
 
 
-LOG = log.get_logger(__name__)
+LOG = tx_logging.getLogger(__name__)
 
 
-class CommanderServiceMixin(object):
-    """
-    Mixin for commander services which provides gives ability to access
-    console and DeviceLink clients directly within services.
-    """
+class ClientServiceMixin(DefaultClientServiceMixin):
 
     @property
     def cl_client(self):
-        """
-        Get instance of server console client protocol.
-        """
         return self.parent.cl_client
 
     @property
     def dl_client(self):
-        """
-        Get instance of server DeviceLink client protocol.
-        """
         return self.parent.dl_client
 
-    @staticmethod
-    def radar_refresher(func):
-        def decorator(self, *args, **kwargs):
-            self.dl_client.refresh_radar()
-            func(self, *args, **kwargs)
-        return decorator
 
-
-class CommanderService(MultiService, CommanderServiceMixin):
+class CommanderService(MultiService, ClientServiceMixin):
     """
     Service which puts together all working services. Works only when the
     connection with server's console is established.
@@ -69,32 +52,32 @@ class CommanderService(MultiService, CommanderServiceMixin):
         MultiService.__init__(self)
         self.clear_shared_storage()
 
-        # Place to store some of server confs values
+        # Place to store some of server confs values --------------------------
         self.confs = {}
 
-        # Init pilots service
-        from commander.service.pilot import PilotService
-        pilots = PilotService()
+        # Init pilots service -------------------------------------------------
+        from commander.service.pilots import PilotsService
+        pilots = PilotsService()
         pilots.setServiceParent(self)
 
-        # Init objects service
-        from commander.service.game_object import GameObjectService
-        objects = GameObjectService()
+        # Init objects service ------------------------------------------------
+        from commander.service.objects import ObjectsService
+        objects = ObjectsService()
         objects.setServiceParent(self)
 
-        # Init missions service with log watcher
-        from commander.service.mission import MissionService
+        # Init missions service with log watcher ------------------------------
+        from commander.service.missions import MissionsService
         log_watcher = LogWatchingService(settings.IL2_EVENTS_LOG_PATH)
-        missions = MissionService(log_watcher)
+        missions = MissionsService(log_watcher)
         log_parser = EventLogParser((pilots, objects, missions, ))
         log_watcher.set_parser(log_parser)
         missions.setServiceParent(self)
 
-        # Init console and DeviceLink parsers
+        # Init console and DeviceLink parsers ---------------------------------
         console_parser = ConsoleParser((pilots, missions, ))
         device_link_parser = DeviceLinkParser()
 
-        # Group parsers and services
+        # Group parsers and services ------------------------------------------
         self.parsers = namedtuple('commander_parsers',
             field_names=['console', 'device_link', 'log'])(
             console_parser, device_link_parser, log_parser)
@@ -102,22 +85,17 @@ class CommanderService(MultiService, CommanderServiceMixin):
             field_names=['pilots', 'objects', 'missions'])(
             pilots, objects, missions)
 
+    @defer.inlineCallbacks
     def startService(self):
         """
         Start commander service. This will start all main work to be done by
         subservices. Call this method after the connection with game console is
         successfully established.
         """
-        def on_everyone_kicked(dummy_result):
-            """
-            A callback which is called after everyone is kicked from game
-            server.
-            """
-            MultiService.startService(self)
-
         self._load_server_config()
         self._share_data()
-        self._greet_n_kick_all().addCallback(on_everyone_kicked)
+        yield self._greet_n_kick_all()
+        yield MultiService.startService(self)
 
     def _load_server_config(self):
         """
@@ -154,7 +132,7 @@ class CommanderService(MultiService, CommanderServiceMixin):
         after they reconnect. If there are some connected users, notify them
         about kick during 5 seconds.
         """
-        count = yield self.cl_client.user_count()
+        count = yield self.cl_client.users_count()
         if not count:
             LOG.debug("No users to kick")
             defer.returnValue(None)
@@ -179,7 +157,7 @@ class CommanderService(MultiService, CommanderServiceMixin):
             yield task.deferLater(reactor, 1, notify_users, i)
 
         LOG.debug("Kicking all users")
-        self.cl_client.kick_all(self.confs['channels'])
+        yield self.cl_client.kick_all(self.confs['channels'], timeout=3)
 
     @defer.inlineCallbacks
     def stop(self, clean=False):
@@ -240,6 +218,7 @@ class RootService(Service):
     """
 
     dl_client = None
+    cl_client = None
 
     def __init__(self):
         self.cl_connector = None
@@ -248,28 +227,21 @@ class RootService(Service):
         self.commander = CommanderService()
         self.commander.parent = self
 
-        # Prepare DeviceLink client
+        # Prepare Device Link client ------------------------------------------
         self.dl_client = DeviceLinkClient(
-            address=(socket.gethostbyname(settings.IL2_CONNECTION['host']),
+            address=(settings.IL2_CONNECTION['host'],
                      settings.IL2_CONNECTION['dl_port']),
             parser=self.commander.parsers.device_link,
-            timeout_value=settings.COMMANDER_TIMEOUT['device_link'])
+            timeout=settings.COMMANDER_TIMEOUT['device_link'])
 
-        # Prepare for connection with server
-        self.client_factory = ConsoleClientFactory(
+        # Prepare for connection with server ----------------------------------
+        self.client_factory = ReconnectingConsoleClientFactory(
             parser=self.commander.parsers.console,
-            timeout_value=settings.COMMANDER_TIMEOUT['console'])
+            timeout=settings.COMMANDER_TIMEOUT['console'])
 
-        # Prepare API listener
+        # Prepare API listener ------------------------------------------------
         self.api_service = APIService()
         self.api_service.parent = self
-
-    @property
-    def cl_client(self):
-        """
-        Get instance of concole protocol.
-        """
-        return self.client_factory.client
 
     def startService(self):
         """
@@ -279,12 +251,12 @@ class RootService(Service):
         This method is called by application.
         """
         self.api_service.startService()
-        self.dl_client.on_start.addCallback(self.startConsoleConnection)
+        self.dl_client.on_start.addCallback(self.start_console_connection)
 
         from twisted.internet import reactor
         self.dl_connector = reactor.listenUDP(0, self.dl_client)
 
-    def startConsoleConnection(self, reason): # pylint: disable=W0613
+    def start_console_connection(self, client): # pylint: disable=W0613
         """
         Start reliable connection to game server's console with reconnectinon
         support.
@@ -302,14 +274,14 @@ class RootService(Service):
         Stop everything. This method is called automatically when the reactor
         is stopped.
         """
-        # Stop commander service if running
+        # Stop commander service if running -----------------------------------
         if self.commander.running:
             yield self.commander.stop(clean=True)
 
-        # Stop API listener
+        # Stop API listener ---------------------------------------------------
         yield self.api_service.stopService()
 
-        # Stop DeviceLink UDP listener
+        # Stop Device Link UDP listener ---------------------------------------
         yield defer.maybeDeferred(self.dl_connector.stopListening)
 
         # Disconnect from game server's console, if connecting was started
@@ -323,20 +295,23 @@ class RootService(Service):
         Update callbacks which are called after the connection with game
         server's console is established or lost.
         """
-        self.client_factory.on_connected.addCallback(self.on_connected)
-        self.client_factory.on_disconnected.addErrback(self.on_disconnected)
+        self.client_factory.on_connecting.addCallback(self.on_connection_done)
+        self.client_factory.on_connection_lost.addErrback(
+            self.on_connection_lost)
 
-    def on_connected(self, client): # pylint: disable=W0613
+    def on_connection_done(self, client):
         """
         This method is called after the connection with server's console is
         established. Main work starts from here.
         """
+        self.cl_client = client
         self.commander.startService()
 
-    def on_disconnected(self, reason): # pylint: disable=W0613
+    def on_connection_lost(self, reason):
         """
         This method is called after the connection with server's console is
         lost. Stop every work and clean up resources.
         """
+        self.cl_client, self.dl_client = None, None
         self._update_connection_callbacks()
         return self.commander.stopService()

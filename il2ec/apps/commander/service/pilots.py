@@ -2,23 +2,24 @@
 """
 Commander's pilots service.
 """
+import tx_logging
+
 from django.utils.translation import ugettext as _
 
 from twisted.internet import defer
 from twisted.internet.task import LoopingCall
 
-from il2ds_middleware.service import PilotBaseService
+from il2ds_middleware.service import MutedPilotsService
 
-from commander import log
 from commander.constants import UserCommand as Commands
-from commander.service import CommanderServiceMixin
+from commander.service import ClientServiceMixin
 
 from auth_custom.models import User
 from auth_custom.settings import (CONNECTION_PASSWORD_REQUESTS_COUNT,
     CONNECTION_PASSWORD_REQUESTS_PERIOD, )
 
 
-LOG = log.get_logger(__name__)
+LOG = tx_logging.getLogger(__name__)
 
 
 class Pilot(object):
@@ -81,7 +82,7 @@ class ConfirmedPilot(Pilot):
         return cls(instance.user, instance.client)
 
 
-class PilotService(PilotBaseService, CommanderServiceMixin):
+class PilotsService(MutedPilotsService, ClientServiceMixin):
     """
     Custom service for managing online pilots.
     """
@@ -148,7 +149,7 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
         from twisted.internet import reactor
         reactor.callLater(delay, self.cl_client.kick_callsign, callsign)
 
-    @CommanderServiceMixin.radar_refresher
+    @ClientServiceMixin.radar_refresher
     def user_left(self, info):
         callsign = info['callsign']
         LOG.debug("{0} has left".format(callsign))
@@ -239,6 +240,8 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
 
     @defer.inlineCallbacks
     def collect_info(self, count):
+        LOG.info('connect info')
+
         if count > 1:
             return
 
@@ -246,8 +249,7 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
         all_statistics = yield self.cl_client.users_statistics()
         all_positions = yield self.dl_client.all_pilots_pos()
         all_positions = {
-            data['callsign']: data['pos']
-            for data in all_positions if data is not None
+            data['callsign']: data['pos'] for data in all_positions
         }
 
         callsigns = set(all_infos.keys()).intersection(
@@ -273,35 +275,35 @@ class PilotService(PilotBaseService, CommanderServiceMixin):
             else:
                 pilot.position.clear()
 
-    @CommanderServiceMixin.radar_refresher
+    @ClientServiceMixin.radar_refresher
     def weapons_loaded(self, info):
         pass
 
-    @CommanderServiceMixin.radar_refresher
+    @ClientServiceMixin.radar_refresher
     def was_killed(self, info):
         pass
 
-    @CommanderServiceMixin.radar_refresher
+    @ClientServiceMixin.radar_refresher
     def was_killed_by_user(self, info):
         pass
 
-    @CommanderServiceMixin.radar_refresher
+    @ClientServiceMixin.radar_refresher
     def shot_down_self(self, info):
         pass
 
-    @CommanderServiceMixin.radar_refresher
+    @ClientServiceMixin.radar_refresher
     def was_shot_down_by_user(self, info):
         pass
 
-    @CommanderServiceMixin.radar_refresher
+    @ClientServiceMixin.radar_refresher
     def was_shot_down_by_static(self, info):
         pass
 
-    @CommanderServiceMixin.radar_refresher
+    @ClientServiceMixin.radar_refresher
     def bailed_out(self, info):
         pass
 
-    @CommanderServiceMixin.radar_refresher
+    @ClientServiceMixin.radar_refresher
     def went_to_menu(self, info):
         pass
 

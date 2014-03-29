@@ -24,7 +24,7 @@ django-split-settings==0.1.1
 django-transmeta==0.7.3
 
 hiredis==0.1.2
-il2ds-middleware>=0.9.1
+il2ds-middleware>=0.10.0
 il2ds-difficulty>=1.0.0
 Jinja2==2.7.2
 logsna==1.2
@@ -34,5 +34,6 @@ redis==2.9.0
 simplejson==3.3.0
 Sphinx==1.2.1
 south==0.7.6
-twisted==13.2.0
+twisted>=13.2.0
+tx-logging>=1.0.0
 uWSGI==2.0.1

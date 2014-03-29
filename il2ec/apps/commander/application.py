@@ -12,17 +12,19 @@ from twisted.application import service
 from twisted.python.log import ILogObserver
 from twisted.python.logfile import LogFile
 
-from commander.log import LevelFileLogObserver
+from tx_logging.observers import LevelFileLogObserver
+
 from commander.service import RootService
 from commander.settings import COMMANDER_LOG as LOG_SETTINGS
 
 
 # Init logging ----------------------------------------------------------------
 filename = LOG_SETTINGS['filename']
-log_file = LogFile.fromFullPath(filename,
-                rotateLength=LOG_SETTINGS['maxBytes'],
-                maxRotatedFiles=LOG_SETTINGS['backupCount']
-            ) if filename is not None else sys.stdout
+log_file = LogFile.fromFullPath(
+    filename,
+    rotateLength=LOG_SETTINGS['maxBytes'],
+    maxRotatedFiles=LOG_SETTINGS['backupCount']
+) if filename is not None else sys.stdout
 
 log_level = getattr(logging, LOG_SETTINGS['level'])
 

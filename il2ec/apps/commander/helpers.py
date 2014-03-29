@@ -3,8 +3,7 @@
 Commander helping functions.
 """
 import socket
-
-from commander import log
+import tx_logging
 
 from commander import settings
 from commander.protocol.blocking import api_create_client_socket
@@ -17,7 +16,7 @@ from il2ds_difficulty import decompose_difficulty_to_tabs
 from misc.helpers import current_time_hash
 
 
-LOG = log.get_logger(__name__)
+LOG = tx_logging.getLogger(__name__)
 
 
 def is_server_running():
