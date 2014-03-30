@@ -419,5 +419,5 @@ def api_deactivate_account(request):
 def api_request_connection(request):
     password = request.user.create_connection_password(update=True)
     return JSONResponse.success(payload={
-        'command': UserCommand.CONNECTION_INSTRUCTIONS.compose(password),
+        'command': UserCommand.CONNECTION_PASSWORD.compose(password),
     })

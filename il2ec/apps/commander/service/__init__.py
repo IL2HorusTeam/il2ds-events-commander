@@ -171,7 +171,7 @@ class CommanderService(MultiService, ClientServiceMixin):
                 with server was lost.
         """
         if clean:
-            count = yield self.cl_client.user_count()
+            count = yield self.cl_client.users_count()
             if count:
                 LOG.debug("Notifying users about quitting")
                 self.cl_client.chat_all(
@@ -295,6 +295,8 @@ class RootService(Service):
         Update callbacks which are called after the connection with game
         server's console is established or lost.
         """
+        if not self.client_factory.continueTrying:
+            return
         self.client_factory.on_connecting.addCallback(self.on_connection_done)
         self.client_factory.on_connection_lost.addErrback(
             self.on_connection_lost)
@@ -312,6 +314,6 @@ class RootService(Service):
         This method is called after the connection with server's console is
         lost. Stop every work and clean up resources.
         """
-        self.cl_client, self.dl_client = None, None
+        self.cl_client = None
         self._update_connection_callbacks()
         return self.commander.stopService()

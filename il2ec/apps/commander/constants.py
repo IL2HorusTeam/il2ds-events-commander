@@ -46,7 +46,7 @@ class UserCommand(Values):
     """
     Commands which can be sent by users to server from game chat.
     """
-    CONNECTION_INSTRUCTIONS = UserCommandValueConstant('pass')
+    CONNECTION_PASSWORD = UserCommandValueConstant('pass')
 
     @classmethod
     def decompose(cls, string):

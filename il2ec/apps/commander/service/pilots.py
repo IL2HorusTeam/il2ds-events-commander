@@ -94,7 +94,7 @@ class PilotsService(MutedPilotsService, ClientServiceMixin):
     def __init__(self):
         # Mapping of user commands to handlers
         self.command_handlers = {
-            Commands.CONNECTION_INSTRUCTIONS: self.on_connection_instructions,
+            Commands.CONNECTION_PASSWORD: self.on_connection_password,
         }
         self.info_collector = LoopingCall.withCount(self.collect_info)
 
@@ -162,7 +162,7 @@ class PilotsService(MutedPilotsService, ClientServiceMixin):
         elif callsign in self.confirmed:
             LOG.debug("Removing confirmed pilot {0}".format(callsign))
             del self.confirmed[callsign]
-            if not self.confirmed:
+            if not self.confirmed and self.info_collector.running:
                 self.info_collector.stop()
 
     def user_chat(self, (callsign, message)):
@@ -205,7 +205,7 @@ class PilotsService(MutedPilotsService, ClientServiceMixin):
         else:
             return None
 
-    def on_connection_instructions(self, pilot, password):
+    def on_connection_password(self, pilot, password):
         if isinstance(pilot, PendingPilot):
             self._process_password(pilot, password)
         elif isinstance(pilot, ConfirmedPilot):
@@ -246,12 +246,28 @@ class PilotsService(MutedPilotsService, ClientServiceMixin):
         if count > 1:
             return
 
-        all_infos = yield self.cl_client.users_common_info()
-        all_statistics = yield self.cl_client.users_statistics()
-        all_positions = yield self.dl_client.all_pilots_pos()
-        all_positions = {
-            data['callsign']: data['pos'] for data in all_positions
-        }
+        try:
+            all_infos = yield self.cl_client.users_common_info()
+        except Exception as e:
+            LOG.error("Failed to get pilots' common info: {err}".format(
+                      err=unicode(e)))
+            defer.returnValue(None)
+        try:
+            all_statistics = yield self.cl_client.users_statistics()
+        except Exception as e:
+            LOG.error("Failed to get pilots' statistics: {err}".format(
+                      err=unicode(e)))
+            defer.returnValue(None)
+        try:
+            all_positions = yield self.dl_client.all_pilots_pos()
+        except Exception as e:
+            LOG.error("Failed to get pilots' coordinates: {err}".format(
+                      err=unicode(e)))
+            defer.returnValue(None)
+        else:
+            all_positions = {
+                data['callsign']: data['pos'] for data in all_positions
+            }
 
         callsigns = set(all_infos.keys()).intersection(
                     set(all_statistics.keys())).intersection(
