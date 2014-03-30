@@ -18,8 +18,12 @@ class MissionsService(DefaultMissionsService, ClientServiceMixin):
 
     @ClientServiceMixin.radar_refresher
     def began(self, info=None):
-        DefaultMissionsService.began(self)
+        DefaultMissionsService.began(self, info)
 
     @ClientServiceMixin.radar_refresher
     def ended(self, info=None):
-        DefaultMissionsService.ended(self)
+        DefaultMissionsService.ended(self, info)
+
+    def startService(self):
+        DefaultMissionsService.startService(self)
+        return self.cl_client.mission_status()

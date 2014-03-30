@@ -240,8 +240,9 @@ class PilotsService(MutedPilotsService, ClientServiceMixin):
 
     @defer.inlineCallbacks
     def collect_info(self, count):
-        LOG.info('connect info')
-
+        """
+        `count` - the number of calls since last callback was invoked.
+        """
         if count > 1:
             return
 
