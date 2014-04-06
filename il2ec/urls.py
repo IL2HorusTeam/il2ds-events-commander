@@ -21,6 +21,7 @@ urlpatterns = patterns('',
 urlpatterns += i18n_patterns('',
     url(r'', include('auth_custom.urls')),
     url(r'', include('website.urls')),
+    url(r'^mockups/', include('mockups.urls')),
 
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block head_title %}
+{% trans %}HOME{% endtrans %} (mockup)
+{% endblock %}
+
+{% block head_extras %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}mockups/mockups.css">
+{% endblock %}
+
+{% block content %}
+<div class='row offset-bottom'>
+  <div id='id_left_bar' class="col-sm-3">
+
+    <div class="offset-bottom">
+    	<legend>Recent events</legend>
+
+      <div class="row recent-event recent-event-red">
+        <strong><a href="#">Some mass online event</a></strong>
+        <p>was won by <strong>red</strong> team</p>
+        <small class="pull-left"><span class="glyphicon glyphicon-comment"></span> <a href="#" >(39 comments)</a></small>
+        <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span> 12 mins ago</small>
+      </div>
+
+      <div class="row recent-event recent-event-blue">
+        <strong><a href="#">Another mass online event</a></strong>
+        <p>was won by <strong>blue</strong> team</p>
+        <small class="pull-left"><span class="glyphicon glyphicon-comment"></span> <a href="#" >(158 comments)</a></small>
+        <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span> 3 days ago</small>
+      </div>
+
+      <div class="row recent-event recent-event-none">
+        <strong><a href="#">Yet another nice online event</a></strong>
+        <p>was played in a draw</p>
+        <small class="pull-left"><span class="glyphicon glyphicon-comment"></span> <a href="#" >(309 comments)</a></small>
+        <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span> 5 months ago</small>
+      </div>
+
+      <p class="text-center"><a href="#">View more recent events</a></p>
+    </div>
+
+    <legend>Recent missions</legend>
+  </div>
+  <div id='id_current_mission_block' class='col-sm-6'>
+  <legend id='id_current_mission_legend'>Current mission</legend>
+  </div>
+  <div id='id_right_bar' class='col-sm-3'>
+  	<legend>Upcoming events</legend>
+    <legend>Next mission</legend>
+  </div>
+</div>
+{% endblock %}
