@@ -9,18 +9,21 @@
 #id_right_bar legend {
   color: #808080;
   font-size: 16px;
+  margin-bottom: 8px;
 }
 
-/* Recent events and missions ---------------------------------------------- */
+/* Events and missions ----------------------------------------------------- */
 .recent-event,
-.recent-mission {
+.recent-mission,
+.next-mission {
   font-size: 12px;
   margin: 4px 0;
   padding: 15px 10px 10px 15px;
   border-left: 3px solid #EEE;
 }
 .recent-event .text-muted,
-.recent-mission .text-muted {
+.recent-mission .text-muted
+.next-mission .text-muted {
   margin: 0;
   padding: 0;
 }
@@ -56,16 +59,19 @@
 }
 
 .recent-event-none,
-.recent-mission-none {
+.recent-mission-none,
+.next-mission {
   color: #7C7C7C;
   background-color: #F5F5F5;
   border-color: #B4B4B4;
 }
 .recent-event-none a,
-.recent-mission-none a {
+.recent-mission-none a,
+.next-mission a {
   color: #777777;
 }
 .recent-event-none .text-muted,
-.recent-mission-none .text-muted {
+.recent-mission-none .text-muted,
+.next-mission .text-muted {
   color: #AFAFAF;
 }
