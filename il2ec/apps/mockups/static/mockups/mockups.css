@@ -75,3 +75,49 @@
 .next-mission .text-muted {
   color: #AFAFAF;
 }
+
+.upcoming-event {
+  padding: 15px 10px 10px 15px;
+  background-color: #777777;
+  color: #fff;
+  border-radius: 3px;
+  margin: 4px 0;
+}
+.upcoming-event h5 a {
+  font-size: 16px;
+  color: #fff;
+}
+.upcoming-event div {
+  margin: 15px 0px;
+}
+.upcoming-event hr {
+  margin: 40px -10px 10px -15px;
+  border: 0 none;
+  height: 1px;
+  background-color: #fff;
+}
+.upcoming-event p {
+  margin: 0;
+}
+.upcoming-event .countdown {
+  font-size: 40px;
+}
+
+.upcoming-event-0 {
+  background-color: #ec3b83;
+}
+.upcoming-event-1 {
+  background-color: #ba79cb;
+}
+.upcoming-event-2 {
+  background-color: #00c0ef;
+}
+.upcoming-event-3 {
+  background-color: #00b29e;
+}
+.upcoming-event-4 {
+  background-color: #00a65b;
+}
+.upcoming-event-5 {
+  background-color: #f56954;
+}
